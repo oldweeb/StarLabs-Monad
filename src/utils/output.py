@@ -33,7 +33,7 @@ def show_dev_info():
     """Displays development and version information"""
     info_box = [
         "╔════════════════════════════════════════╗",
-        "║         StarLabs Monad 1.0             ║",
+        "║         StarLabs Monad 1.1             ║",
         "║----------------------------------------║",
         "║                                        ║",
         "║  GitHub: https://github.com/StarLabs   ║",
