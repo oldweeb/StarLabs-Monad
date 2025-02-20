@@ -35,6 +35,7 @@ FLOW:
   # "owlto" - deploy contract on Owlto
   # "bima" - lending and faucet
   # "faucet" - get tokens from faucet
+  # "collect_all_to_monad" - swap all tokens to native token (MON)
 
   # Example: tasks: ["connect_discord", "swaps"]
   TASKS: ["faucet"]
