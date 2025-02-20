@@ -9,6 +9,7 @@ import asyncio
 class SettingsConfig:
     THREADS: int
     ATTEMPTS: int
+    ACCOUNTS_RANGE: Tuple[int, int]
     PAUSE_BETWEEN_ATTEMPTS: Tuple[int, int]
     PAUSE_BETWEEN_SWAPS: Tuple[int, int]
     RANDOM_PAUSE_BETWEEN_ACCOUNTS: Tuple[int, int]
@@ -58,6 +59,7 @@ class Config:
             SETTINGS=SettingsConfig(
                 THREADS=data["SETTINGS"]["THREADS"],
                 ATTEMPTS=data["SETTINGS"]["ATTEMPTS"],
+                ACCOUNTS_RANGE=tuple(data["SETTINGS"]["ACCOUNTS_RANGE"]),
                 PAUSE_BETWEEN_ATTEMPTS=tuple(
                     data["SETTINGS"]["PAUSE_BETWEEN_ATTEMPTS"]
                 ),

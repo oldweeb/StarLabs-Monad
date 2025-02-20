@@ -26,21 +26,48 @@ async def start():
     show_dev_info()
     config = src.utils.get_config()
 
+    # Читаем все файлы
     proxies = src.utils.read_txt_file("proxies", "data/proxies.txt")
     private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
 
-    # Читаем токены только если соответствующие задачи есть в конфиге
-    discord_tokens = (
-        src.utils.read_txt_file("discord tokens", "data/discord_tokens.txt")
-        if "connect_discord" in config.FLOW.TASKS
-        else [""] * len(private_keys)
-    )
+    # Определяем диапазон аккаунтов
+    start_index = config.SETTINGS.ACCOUNTS_RANGE[0]
+    end_index = config.SETTINGS.ACCOUNTS_RANGE[1]
 
-    emails = (
-        src.utils.read_txt_file("emails", "data/emails.txt")
-        if config.FAUCET.THIRDWEB
-        else [""] * len(private_keys)
-    )
+    # Если оба 0, берем все аккаунты
+    if start_index == 0 and end_index == 0:
+        accounts_to_process = private_keys
+        start_index = 1
+        end_index = len(private_keys)
+    else:
+        # Python slice не включает последний элемент, поэтому +1
+        accounts_to_process = private_keys[start_index - 1 : end_index]
+
+    # Читаем токены только для нужных аккаунтов
+    discord_tokens = []
+    if "connect_discord" in config.FLOW.TASKS:
+        all_discord_tokens = src.utils.read_txt_file(
+            "discord tokens", "data/discord_tokens.txt"
+        )
+        discord_tokens = (
+            all_discord_tokens[start_index - 1 : end_index]
+            if all_discord_tokens
+            else [""] * len(accounts_to_process)
+        )
+    else:
+        discord_tokens = [""] * len(accounts_to_process)
+
+    # То же самое для email
+    emails = []
+    if config.FAUCET.THIRDWEB:
+        all_emails = src.utils.read_txt_file("emails", "data/emails.txt")
+        emails = (
+            all_emails[start_index - 1 : end_index]
+            if all_emails
+            else [""] * len(accounts_to_process)
+        )
+    else:
+        emails = [""] * len(accounts_to_process)
 
     threads = config.SETTINGS.THREADS
 
@@ -48,19 +75,23 @@ async def start():
         logger.error("No proxies found in data/proxies.txt")
         return
 
-    proxies = [proxies[i % len(proxies)] for i in range(len(private_keys))]
+    # Подготавливаем прокси для выбранных аккаунтов
+    cycled_proxies = [
+        proxies[i % len(proxies)] for i in range(len(accounts_to_process))
+    ]
 
-    logger.info("Starting...")
+    logger.info(f"Starting with accounts {start_index} to {end_index}...")
+
     lock = asyncio.Lock()
     semaphore = asyncio.Semaphore(value=threads)
     tasks = []
-    for index, private_key in enumerate(private_keys):
-        proxy = proxies[index % len(proxies)]
+
+    for index, private_key in enumerate(accounts_to_process):
         tasks.append(
             asyncio.create_task(
                 launch_wrapper(
-                    index,
-                    proxy,
+                    start_index + index - 1,  # Сохраняем оригинальный индекс
+                    cycled_proxies[index],
                     private_key,
                     discord_tokens[index],
                     emails[index],

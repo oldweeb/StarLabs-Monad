@@ -5,6 +5,12 @@ SETTINGS:
   # number of retries for ANY action
   ATTEMPTS: 5
 
+  # account range. 
+  # BY DEFAULT: [0, 0] - all accounts
+  # [3, 5] - only 3 4 5 accounts
+  # [7, 7] - only 7 account
+  ACCOUNTS_RANGE: [0, 0]
+
   # pause between attempts
   PAUSE_BETWEEN_ATTEMPTS: [5, 15]
 
