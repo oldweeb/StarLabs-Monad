@@ -12,6 +12,14 @@ This tool automates interactions with the Monad testnet, including various DeFi 
 
 ## Features Description
 
+### Faucet
+Gets tokens from ThirdWeb faucet
+```
+Paste mails into the data/emails.txt file in the email:pass format. 
+Buy mails at https://firstmail.ltd/.
+Then in src/extra/capsolver/assets/config.js in the field apiKey: “CAP-x”, insert your api key from capsolver.com.
+```
+
 ### Connect Discord
 Connects your Discord account to Monad testnet for additional rewards.
 
