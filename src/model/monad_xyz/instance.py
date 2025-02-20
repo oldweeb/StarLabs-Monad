@@ -81,6 +81,7 @@ class MonadXYZ:
             return True
 
         elif type == "collect_all_to_monad":
+            success = False
             for retry in range(self.config.SETTINGS.ATTEMPTS):
                 try:
                     swapper = MonadSwap(self.private_key, self.proxy)
@@ -91,16 +92,21 @@ class MonadXYZ:
                     logger.success(
                         f"[{self.account_index}] | Collected all to monad.xyz"
                     )
+                    success = True
+                    break  # Break the retry loop on success
+                    
                 except Exception as e:
                     random_pause = random.randint(
-                        self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
-                        self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                        self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[0],
+                        self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[1],
                     )
                     logger.error(
                         f"[{self.account_index}] | Error collect all to monad.xyz ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}. Next collect in {random_pause} seconds"
                     )
                     await asyncio.sleep(random_pause)
                     continue
+                
+            return success  # Return True if succeeded, False if all retries failed
         return False
 
     async def faucet(self):

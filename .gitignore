@@ -3,3 +3,4 @@
 /.idea
 # /TODO.md
 __pycache__
+/data/success_data

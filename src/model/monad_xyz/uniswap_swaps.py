@@ -147,6 +147,60 @@ class MonadSwap:
                         config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[1]
                     ))
 
+    async def generate_approve_transaction(self, token: str, amount: float, swap_tx_data: Dict) -> Dict:
+        """
+        Generate an approve transaction for the token.
+        
+        Args:
+            token: Token symbol to approve
+            amount: Amount to approve
+            swap_tx_data: Swap transaction data containing the spender address
+        
+        Returns:
+            Dict containing the approval transaction data
+        """
+        try:
+            # Get the token contract
+            token_address = self.web3.to_checksum_address(TOKENS[token])
+            token_contract = self.web3.eth.contract(address=token_address, abi=ERC20_ABI)
+            
+            # Get the spender address from swap transaction data
+            spender_address = self.web3.to_checksum_address(swap_tx_data['to'])
+            
+            # Convert amount to Wei
+            amount_wei = self.web3.to_wei(amount, 'ether')
+            
+            # Generate the approve function data
+            function_signature = self.web3.keccak(text="approve(address,uint256)")[0:4]
+            padded_address = spender_address[2:].zfill(64)
+            padded_amount = hex(amount_wei)[2:].zfill(64)
+            approve_data = function_signature.hex() + padded_address + padded_amount
+            
+            # Estimate gas for the approval
+            gas_estimate = await self.web3.eth.estimate_gas({
+                'to': token_address,
+                'from': self.account.address,
+                'data': '0x' + approve_data,
+                'value': 0
+            })
+            
+            # Add 10% buffer to gas estimate
+            gas_limit = int(gas_estimate * 1.1)
+            
+            # Create the transaction data
+            tx_data = {
+                "to": token_address,
+                "data": '0x' + approve_data,
+                "value": 0,
+                "gas": gas_limit
+            }
+            
+            logger.info(f"Generated approve transaction for {amount} {token} to spender {spender_address} (Gas: {gas_limit})")
+            return tx_data
+            
+        except Exception as e:
+            logger.error(f"Failed to generate approve transaction: {str(e)}")
+            raise
 
     async def execute_transaction(self, tx_data: Dict) -> str:
         nonce = await self.web3.eth.get_transaction_count(self.account.address)
@@ -172,7 +226,6 @@ class MonadSwap:
         else:
             logger.error(f"Transaction failed! Explorer URL: {EXPLORER_URL}{tx_hash.hex()}")
             raise Exception("Transaction failed")
-        
         return tx_hash.hex()
 
     async def swap(self, percentage_to_swap: float, token_out: str) -> str:
@@ -182,8 +235,11 @@ class MonadSwap:
                 logger.info("Swapping all token balances back to MON one by one...")    
                 tokens_with_balance = await self.get_tokens_with_balance()
                 for token, balance in tokens_with_balance:
-                    tx_data = await self.get_swap_quote(balance, "native", token_in=token)
-                    await self.execute_transaction(tx_data)
+                    swap_tx_data = await self.get_swap_quote(balance, "native", token_in=token)
+                    approve_tx_data = await self.generate_approve_transaction(token, balance, swap_tx_data)
+                    await self.execute_transaction(approve_tx_data)
+                    await asyncio.sleep(random.randint(5, 10))
+                    await self.execute_transaction(swap_tx_data)
             else:
                 logger.info(f"Swapping MON to {token_out}...")
                 tx_data = await self.get_swap_quote(percentage_to_swap, token_out)
