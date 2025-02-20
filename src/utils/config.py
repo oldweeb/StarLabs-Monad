@@ -34,12 +34,17 @@ class BimaConfig:
     PERCENT_OF_BALANCE_TO_LEND: Tuple[int, int]
 
 @dataclass
+class FaucetConfig:
+    THIRDWEB: bool
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     FLOW: FlowConfig
     APRIORI: AprioriConfig
     MAGMA: MagmaConfig
     BIMA: BimaConfig
+    FAUCET: FaucetConfig
     lock: asyncio.Lock = asyncio.Lock()
 
     @classmethod
@@ -79,6 +84,9 @@ class Config:
             BIMA=BimaConfig(
                 LEND=data["BIMA"]["LEND"],
                 PERCENT_OF_BALANCE_TO_LEND=tuple(data["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"]),
+            ),
+            FAUCET=FaucetConfig(
+                THIRDWEB=data["FAUCET"]["THIRDWEB"],
             ),
         )
 

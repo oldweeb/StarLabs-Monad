@@ -10,13 +10,14 @@ import src.model
 
 
 async def start():
-    async def launch_wrapper(index, proxy, private_key, discord_token):
+    async def launch_wrapper(index, proxy, private_key, discord_token, email):
         async with semaphore:
             await account_flow(
                 index + 1,
                 proxy,
                 private_key,
                 discord_token,
+                email,
                 config,
                 lock,
             )
@@ -32,6 +33,12 @@ async def start():
     discord_tokens = (
         src.utils.read_txt_file("discord tokens", "data/discord_tokens.txt")
         if "connect_discord" in config.FLOW.TASKS
+        else [""] * len(private_keys)
+    )
+
+    emails = (
+        src.utils.read_txt_file("emails", "data/emails.txt")
+        if config.FAUCET.THIRDWEB
         else [""] * len(private_keys)
     )
 
@@ -56,6 +63,7 @@ async def start():
                     proxy,
                     private_key,
                     discord_tokens[index],
+                    emails[index],
                 )
             )
         )
@@ -70,6 +78,7 @@ async def account_flow(
     proxy: str,
     private_key: str,
     discord_token: str,
+    email: str,
     config: src.utils.config.Config,
     lock: asyncio.Lock,
 ):
@@ -77,7 +86,7 @@ async def account_flow(
         report = False
 
         instance = src.model.Start(
-            account_index, proxy, private_key, discord_token, config
+            account_index, proxy, private_key, discord_token, email, config
         )
 
         result = await wrapper(instance.initialize, config)

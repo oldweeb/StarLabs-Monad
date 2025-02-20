@@ -1,6 +1,7 @@
 from loguru import logger
 import primp
 
+from src.model.thirdweb.instance import ThirdWeb
 from src.model.bima.instance import Bima
 from src.model.owlto.instance import Owlto
 from src.model.magma.instance import Magma
@@ -17,12 +18,14 @@ class Start:
         proxy: str,
         private_key: str,
         discord_token: str,
+        email: str,
         config: Config,
     ):
         self.account_index = account_index
         self.proxy = proxy
         self.private_key = private_key
         self.discord_token = discord_token
+        self.email = email
         self.config = config
 
         self.session: primp.AsyncClient | None = None
@@ -51,7 +54,16 @@ class Start:
                 await monad.connect_discord()
 
             if "faucet" in self.config.FLOW.TASKS:
-                await monad.faucet()
+                # await monad.faucet()
+                thirdweb = ThirdWeb(
+                    self.account_index,
+                    self.proxy,
+                    self.private_key,
+                    self.email,
+                    self.config,
+                    self.session,
+                )
+                await thirdweb.faucet()
 
             if "swaps" in self.config.FLOW.TASKS:
                 await monad.swaps(type="swaps")
