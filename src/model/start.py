@@ -97,7 +97,8 @@ class Start:
                     self.config,
                     self.session,
                 )
-                # await bima.get_faucet_tokens()
+                await bima.get_faucet_tokens()
+
                 if self.config.BIMA.LEND:
                     await bima.lend()
 
