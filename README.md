@@ -74,11 +74,7 @@ TASKS: ["connect_discord", "swaps", "apriori", "magma", "owlto", "bima"]
 NUMBER_OF_SWAPS: [1, 3]
 # percent of balance to swap
 PERCENT_OF_BALANCE_TO_SWAP: [10, 15]
-CAPTCHA:
-# Bestcaptchasolver.com API key
-BESTCAPTCHA_API_KEY: "YOUR_API_KEY"
-PROXY_FOR_CAPTCHA: ""
-CAPTCHA_SOLVE_ATTEMPTS: 5
+
 ```
 
 4. Add your data to the following files:

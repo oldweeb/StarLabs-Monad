@@ -21,12 +21,6 @@ class FlowConfig:
     PERCENT_OF_BALANCE_TO_SWAP: Tuple[int, int]
 
 @dataclass
-class CaptchaConfig:
-    BESTCAPTCHA_API_KEY: str
-    PROXY_FOR_CAPTCHA: str
-    CAPTCHA_SOLVE_ATTEMPTS: int
-
-@dataclass
 class AprioriConfig:
     AMOUNT_TO_STAKE: Tuple[float, float]
 
@@ -43,7 +37,6 @@ class BimaConfig:
 class Config:
     SETTINGS: SettingsConfig
     FLOW: FlowConfig
-    CAPTCHA: CaptchaConfig
     APRIORI: AprioriConfig
     MAGMA: MagmaConfig
     BIMA: BimaConfig
@@ -76,11 +69,6 @@ class Config:
                 TASKS=data["FLOW"]["TASKS"],
                 NUMBER_OF_SWAPS=tuple(data["FLOW"]["NUMBER_OF_SWAPS"]),
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(data["FLOW"]["PERCENT_OF_BALANCE_TO_SWAP"]),
-            ),
-            CAPTCHA=CaptchaConfig(
-                BESTCAPTCHA_API_KEY=data["CAPTCHA"]["BESTCAPTCHA_API_KEY"],
-                PROXY_FOR_CAPTCHA=data["CAPTCHA"]["PROXY_FOR_CAPTCHA"],
-                CAPTCHA_SOLVE_ATTEMPTS=data["CAPTCHA"]["CAPTCHA_SOLVE_ATTEMPTS"],
             ),
             APRIORI=AprioriConfig(
                 AMOUNT_TO_STAKE=tuple(data["APRIORI"]["AMOUNT_TO_STAKE"]),
