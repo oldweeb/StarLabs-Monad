@@ -1,26 +1,35 @@
 # Monad Testnet Automation
 
-This tool automates interactions with the Monad testnet, including faucet claims, Discord connections, and token swaps.
+This tool automates interactions with the Monad testnet, including various DeFi operations and token interactions.
 
 ## Features
 - 🌊 Connect Discord account
-- 💧 Claim from faucet
 - 💱 Perform token swaps
-- 💰 Collect all tokens to MON
+- 🏦 Stake MON on Apriori
+- 🌋 Stake MON on Magma
+- 🦉 Deploy contract on Owlto
+- 💎 Interact with Bima (lending & faucet)
 
 ## Features Description
 
 ### Connect Discord
 Connects your Discord account to Monad testnet for additional rewards.
 
-### Faucet
-Claims test tokens from the Monad testnet faucet.
-
 ### Swaps
-Performs random swaps between available tokens (DAK, YAKI, CHOG) with configurable amounts.
+Performs random swaps between available tokens with configurable amounts.
 
-### Collect All to Monad
-Swaps all available tokens back to MON (native token).
+### Apriori Staking
+Stakes MON tokens on Apriori platform with configurable amounts.
+
+### Magma Staking
+Stakes MON tokens on Magma platform with configurable amounts.
+
+### Owlto Contract Deployment
+Deploys smart contracts on Owlto platform.
+
+### Bima Operations
+- Claims tokens from Bima faucet
+- Performs lending operations with configurable percentage of balance
 
 ## Requirements
 - Python 3.11 or higher
@@ -54,15 +63,17 @@ RANDOM_PAUSE_BETWEEN_ACCOUNTS: [3, 10]
 RANDOM_PAUSE_BETWEEN_ACTIONS: [2, 5]
 FLOW:
 # Available tasks:
-# "faucet" - request ETH from faucet
 # "connect_discord" - connect discord account
 # "swaps" - swaps tokens
-# "collect_all_to_monad" - swaps all tokens to MON token
-TASKS: ["connect_discord", "faucet", "swaps", "collect_all_to_monad"]
+# "apriori" - stake MON token
+# "magma" - stake MON token on Magma
+# "owlto" - deploy contract on Owlto
+# "bima" - lending and faucet
+TASKS: ["connect_discord", "swaps", "apriori", "magma", "owlto", "bima"]
 # number of swaps
 NUMBER_OF_SWAPS: [1, 3]
 # percent of balance to swap
-PERCENT_OF_BALANCE_TO_SWAP: [30, 50]
+PERCENT_OF_BALANCE_TO_SWAP: [10, 15]
 CAPTCHA:
 # Bestcaptchasolver.com API key
 BESTCAPTCHA_API_KEY: "YOUR_API_KEY"
