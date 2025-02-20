@@ -79,13 +79,14 @@ class ThirdWeb:
                     f"--disable-extensions-except={metamask_path},{capsolver_path}",
                     f"--load-extension={metamask_path},{capsolver_path}",
                 ],
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
 
             # Создаем новую страницу для работы
             page = await context.new_page()
 
             # Даем время на загрузку расширения
-            await asyncio.sleep(5)
+            await asyncio.sleep(int(5 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # Ищем страницу метамаска среди открытых страниц
             metamask_page = None
@@ -130,103 +131,121 @@ class ThirdWeb:
         """Логин в MetaMask и импорт кошелька"""
         try:
             logger.info(f"[{self.account_index}] Logging into MetaMask...")
-            await asyncio.sleep(4)
+            await asyncio.sleep(int(4 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # Click "Get Started" button
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/ul/li[1]/div/input"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/ul/li[1]/div/input",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/ul/li[2]/button"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/ul/li[2]/button",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/button[2]"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/button[2]",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # Fill password fields
             await metamask_page.fill(
                 "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/form/div[1]/label/input",
                 "00000000",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
             await metamask_page.fill(
                 "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/form/div[2]/label/input",
                 "00000000",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
 
             # Click through import flow
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/form/div[3]/label/span[1]/input"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/form/div[3]/label/span[1]/input",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/form/button"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/form/button",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/button[1]"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/button[1]",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[2]/div/div/section/div[1]/div/div/label/input"
+                "xpath=/html/body/div[2]/div/div/section/div[1]/div/div/label/input",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[2]/div/div/section/div[2]/div/button[2]"
+                "xpath=/html/body/div[2]/div/div/section/div[2]/div/button[2]",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[3]/button"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[3]/button",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/button"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/button",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/button"
+                "xpath=/html/body/div[1]/div/div[2]/div/div/div/div[2]/button",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[1]/div/div[2]/div/div[2]/button"
+                "xpath=/html/body/div[1]/div/div[2]/div/div[2]/button",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[3]/div[3]/div/section/div[2]/button"
+                "xpath=/html/body/div[3]/div[3]/div/section/div[2]/button",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[3]/div[3]/div/section/div/div[2]/button"
+                "xpath=/html/body/div[3]/div[3]/div/section/div/div[2]/button",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # Import private key
             await metamask_page.fill(
                 "xpath=/html/body/div[3]/div[3]/div/section/div/div/div[1]/div/input",
                 self.private_key,
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
-            await asyncio.sleep(2)
+            await asyncio.sleep(int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             await metamask_page.click(
-                "xpath=/html/body/div[3]/div[3]/div/section/div/div/div[2]/button[2]"
+                "xpath=/html/body/div[3]/div[3]/div/section/div/div/div[2]/button[2]",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
             )
             await metamask_page.close()
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
             logger.success(f"[{self.account_index}] Successfully logged into MetaMask")
             return True
 
@@ -240,8 +259,11 @@ class ThirdWeb:
             logger.info(f"[{self.account_index}] Logging into ThirdWeb...")
 
             # 1. Нажимаем на кнопку MetaMask
-            await page.click('text="MetaMask"')
-            await asyncio.sleep(2)
+            await page.click(
+                'text="MetaMask"',
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # 2. Ждем и обрабатываем всплывающее окно MetaMask для подключения
             metamask_popup = None
@@ -254,12 +276,18 @@ class ThirdWeb:
                 raise Exception("MetaMask popup not found")
 
             # Нажимаем Connect в попапе
-            await metamask_popup.click('button[data-testid="confirm-btn"]')
-            await asyncio.sleep(2)
+            await metamask_popup.click(
+                'button[data-testid="confirm-btn"]',
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # 3. Нажимаем Sign in на основной странице
-            await page.click('button[data-testid="sign-in-button"]')
-            await asyncio.sleep(2)
+            await page.click(
+                'button[data-testid="sign-in-button"]',
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # 4. Ждем и обрабатываем второе всплывающее окно MetaMask
             metamask_popup = None
@@ -272,8 +300,13 @@ class ThirdWeb:
                 raise Exception("MetaMask signature popup not found")
 
             # Нажимаем Confirm в попапе
-            await metamask_popup.click('button[data-testid="confirm-footer-button"]')
-            await asyncio.sleep(10)  # Ждем загрузку страницы
+            await metamask_popup.click(
+                'button[data-testid="confirm-footer-button"]',
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(
+                int(10 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+            )  # Ждем загрузку страницы
 
             return True
 
@@ -287,8 +320,12 @@ class ThirdWeb:
             logger.info(f"[{self.account_index}] Starting ThirdWeb registration...")
 
             # 1. Заполняем email
-            await page.fill('input[id="email"]', self.email_login)
-            await asyncio.sleep(2)
+            await page.fill(
+                'input[id="email"]',
+                self.email_login,
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # 2. Генерируем и вводим имя компании (7-10 букв, первая заглавная)
             import random
@@ -300,12 +337,21 @@ class ThirdWeb:
             )
             company_name = company_name.capitalize()
 
-            await page.fill('input[id="name"]', company_name)
-            await asyncio.sleep(2)
+            await page.fill(
+                'input[id="name"]',
+                company_name,
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # 3. Нажимаем Get Started for Free
-            await page.click('button:has-text("Get Started for Free")')
-            await asyncio.sleep(5)  # Ждем письмо
+            await page.click(
+                'button:has-text("Get Started for Free")',
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(
+                int(5 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+            )  # Ждем письмо
 
             # 4. Получаем код с почты
             email_checker = SyncEmailChecker(self.email_login, self.email_password)
@@ -320,27 +366,57 @@ class ThirdWeb:
             # 5. Вводим код верификации - пробуем разные способы
             try:
                 # Способ 1: Вводим посимвольно
-                input_field = await page.query_selector('input[data-input-otp="true"]')
+                input_field = await page.query_selector(
+                    'input[data-input-otp="true"]',
+                    timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+                )
                 if input_field:
                     # Сначала кликаем чтобы активировать поле
-                    await input_field.click()
-                    await asyncio.sleep(1)
+                    await input_field.click(
+                        timeout=int(
+                            30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
+                        )
+                    )
+                    await asyncio.sleep(
+                        int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                    )
 
                     # Вводим каждый символ отдельно
                     for char in verification_code:
-                        await page.keyboard.press(char)
-                        await asyncio.sleep(0.2)
+                        await page.keyboard.press(
+                            char,
+                            timeout=int(
+                                30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
+                            ),
+                        )
+                        await asyncio.sleep(
+                            int(0.2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                        )
 
                 else:
                     # Способ 2: Ищем все поля для ввода кода
                     inputs = await page.query_selector_all(
-                        'input[data-input-otp="true"]'
+                        'input[data-input-otp="true"]',
+                        timeout=int(
+                            30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
+                        ),
                     )
                     if inputs:
                         for i, char in enumerate(verification_code):
                             if i < len(inputs):
-                                await inputs[i].fill(char)
-                                await asyncio.sleep(0.2)
+                                await inputs[i].fill(
+                                    char,
+                                    timeout=int(
+                                        30000
+                                        * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
+                                    ),
+                                )
+                                await asyncio.sleep(
+                                    int(
+                                        0.2
+                                        * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
+                                    )
+                                )
 
                     else:
                         # Способ 3: Пробуем через буфер обмена
@@ -351,7 +427,9 @@ class ThirdWeb:
                             }});
                         """
                         )
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(
+                            int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                        )
 
             except Exception as e:
                 logger.warning(
@@ -359,10 +437,13 @@ class ThirdWeb:
                 )
                 # Способ 4: Пробуем через type
                 await page.type(
-                    'input[data-input-otp="true"]', verification_code, delay=100
+                    'input[data-input-otp="true"]',
+                    verification_code,
+                    delay=int(100 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+                    timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
                 )
 
-            await asyncio.sleep(3)
+            await asyncio.sleep(int(3 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # Проверяем, что код введен
             page_content = await page.content()
@@ -370,16 +451,27 @@ class ThirdWeb:
                 logger.warning(
                     f"[{self.account_index}] Code might not be entered correctly, trying to press Enter"
                 )
-                await page.keyboard.press("Enter")
-                await asyncio.sleep(1)
+                await page.keyboard.press(
+                    "Enter",
+                    timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+                )
+                await asyncio.sleep(
+                    int(1 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                )
 
             # 6. Нажимаем Verify
-            await page.click('button:has-text("Verify")')
-            await asyncio.sleep(5)
+            await page.click(
+                'button:has-text("Verify")',
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(int(5 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # 7. Нажимаем Skip for now
-            await page.click('button:has-text("Skip for now")')
-            await asyncio.sleep(15)
+            await page.click(
+                'button:has-text("Skip for now")',
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(int(15 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # 8. Проверяем URL
             current_url = page.url
@@ -398,67 +490,72 @@ class ThirdWeb:
             return False
 
     async def faucet(self):
-        context = None
-        try:
-            _, context, page = await self.setup_browser()
-
-            # Находим страницу метамаска
-            metamask_page = None
-            for p in context.pages:
-                if "chrome-extension://" in p.url and "/home.html" in p.url:
-                    metamask_page = p
-                    break
-
-            if not metamask_page:
-                raise Exception("MetaMask page not found")
-
-            # Логинимся в метамаск
-            if not await self._login_metamask(metamask_page):
-                raise Exception("Failed to login to MetaMask")
-
-            # Переходим на thirdweb
-            await page.goto("https://thirdweb.com/login")
-            await asyncio.sleep(2)
-
-            # Логинимся на сайте
-            if not await self._login_thirdweb(page, metamask_page):
-                raise Exception("Failed to login to ThirdWeb")
-
-            # Проверяем URL после логина
-            current_url = page.url
-            if "thirdweb.com/login" in current_url:
-                logger.info(f"[{self.account_index}] Registration required")
-                if not await self._thirdweb_registration(page):
-                    raise Exception("Failed to register on ThirdWeb")
-            else:
-                logger.info(f"[{self.account_index}] Already registered, continuing...")
-
-            # Запрашиваем токены
-            if not await self._request_tokens(page):
-                raise Exception("Failed to request tokens from faucet")
-
-            return True
-
-        except Exception as e:
-            random_pause = random.randint(
-                self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
-                self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
-            )
-            logger.error(
-                f"[{self.account_index}] Error in ThirdWeb faucet: {e}. Sleeping for {random_pause} seconds"
-            )
-            await asyncio.sleep(random_pause)
-            return False
-        finally:
-            if context:
-                await context.close()
+        for retry in range(self.config.SETTINGS.ATTEMPTS):
+            context = None
             try:
-                shutil.rmtree(self.temp_dir)
-                logger.info(f"[{self.account_index}] Temporary directory removed")
-            except Exception as e:
-                logger.warning(
-                    f"[{self.account_index}] Error removing temporary directory: {e}"
+                _, context, page = await self.setup_browser()
+
+                # Находим страницу метамаска
+                metamask_page = None
+                for p in context.pages:
+                    if "chrome-extension://" in p.url and "/home.html" in p.url:
+                        metamask_page = p
+                        break
+
+                if not metamask_page:
+                    raise Exception("MetaMask page not found")
+
+                # Логинимся в метамаск
+                if not await self._login_metamask(metamask_page):
+                    raise Exception("Failed to login to MetaMask")
+
+                # Переходим на thirdweb
+                await page.goto(
+                    "https://thirdweb.com/login",
+                    timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
                 )
+                await asyncio.sleep(int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
+
+                # Логинимся на сайте
+                if not await self._login_thirdweb(page, metamask_page):
+                    raise Exception("Failed to login to ThirdWeb")
+
+                # Проверяем URL после логина
+                current_url = page.url
+                if "thirdweb.com/login" in current_url:
+                    logger.info(f"[{self.account_index}] Registration required")
+                    if not await self._thirdweb_registration(page):
+                        raise Exception("Failed to register on ThirdWeb")
+                else:
+                    logger.info(f"[{self.account_index}] Already registered, continuing...")
+
+                # Запрашиваем токены
+                if not await self._request_tokens(page):
+                    raise Exception("Failed to request tokens from faucet")
+
+                return True
+
+            except Exception as e:
+                random_pause = random.randint(
+                    self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
+                    self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
+                )
+                logger.error(
+                    f"[{self.account_index}] Error in ThirdWeb faucet: {e}. Sleeping for {random_pause} seconds"
+                )
+                await asyncio.sleep(random_pause)
+                return False
+            finally:
+                if context:
+                    await context.close()
+                try:
+                    shutil.rmtree(self.temp_dir)
+                    logger.info(f"[{self.account_index}] Temporary directory removed")
+                except Exception as e:
+                    logger.warning(
+                        f"[{self.account_index}] Error removing temporary directory: {e}"
+                    )
+        return False
 
     async def _request_tokens(self, page: Page) -> bool:
         """Запрос токенов из фаусета"""
@@ -466,8 +563,11 @@ class ThirdWeb:
             logger.info(f"[{self.account_index}] Requesting tokens from faucet...")
 
             # 1. Открываем страницу фаусета
-            await page.goto("https://thirdweb.com/monad-testnet")
-            await asyncio.sleep(30)  # Ждем загрузку страницы и решение капчи
+            await page.goto(
+                "https://thirdweb.com/monad-testnet",
+                timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+            )
+            await asyncio.sleep(int(30 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
 
             # Пробуем нажать кнопку получения токенов до 3 раз
             for attempt in range(3):
@@ -477,8 +577,15 @@ class ThirdWeb:
                     )
 
                     # Нажимаем кнопку
-                    await page.click('button:has-text("Get 0.01 MON")')
-                    await asyncio.sleep(30)  # Ждем результат
+                    await page.click(
+                        'button:has-text("Get 0.01 MON")',
+                        timeout=int(
+                            30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
+                        ),
+                    )
+                    await asyncio.sleep(
+                        int(30 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                    )
 
                     # Проверяем успешность
                     page_content = await page.content()
@@ -498,7 +605,9 @@ class ThirdWeb:
                     )
 
                 if attempt < 2:  # Не ждем после последней попытки
-                    await asyncio.sleep(30)
+                    await asyncio.sleep(
+                        int(30 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                    )
 
             raise Exception("Failed to claim tokens after 3 attempts")
 

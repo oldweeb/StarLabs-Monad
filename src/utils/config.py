@@ -13,6 +13,7 @@ class SettingsConfig:
     PAUSE_BETWEEN_SWAPS: Tuple[int, int]
     RANDOM_PAUSE_BETWEEN_ACCOUNTS: Tuple[int, int]
     RANDOM_PAUSE_BETWEEN_ACTIONS: Tuple[int, int]
+    BROWSER_PAUSE_MULTIPLIER: float
 
 @dataclass
 class FlowConfig:
@@ -69,6 +70,7 @@ class Config:
                 RANDOM_PAUSE_BETWEEN_ACTIONS=tuple(
                     data["SETTINGS"]["RANDOM_PAUSE_BETWEEN_ACTIONS"]
                 ),
+                BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
             ),
             FLOW=FlowConfig(
                 TASKS=data["FLOW"]["TASKS"],

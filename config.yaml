@@ -16,6 +16,8 @@ SETTINGS:
   # pause in seconds between actions
   RANDOM_PAUSE_BETWEEN_ACTIONS: [2, 5]
 
+  # pause multiplier for browser actions
+  BROWSER_PAUSE_MULTIPLIER: 1.1
   
 # --------------------------- #
 FLOW:
@@ -27,7 +29,7 @@ FLOW:
   # "owlto" - deploy contract on Owlto
   # "bima" - lending and faucet
   # "faucet" - get tokens from faucet
-  
+
   # Example: tasks: ["connect_discord", "swaps"]
   TASKS: ["faucet"]
 
