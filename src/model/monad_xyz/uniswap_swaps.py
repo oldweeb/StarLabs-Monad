@@ -44,7 +44,7 @@ class MonadSwap:
 
     async def get_token_balance_ether(self, token_out: str) -> Decimal:
         """Get balance of specified token."""
-        max_retries = 30  # Fixed number of retries
+        max_retries = 10  # Fixed number of retries
         
         for attempt in range(max_retries):
             try:
