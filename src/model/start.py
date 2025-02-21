@@ -68,6 +68,9 @@ class Start:
             if "swaps" in self.config.FLOW.TASKS:
                 await monad.swaps(type="swaps")
 
+            if "ambient" in self.config.FLOW.TASKS:
+                await monad.swaps(type="ambient")
+
             if "collect_all_to_monad" in self.config.FLOW.TASKS:
                 await monad.swaps(type="collect_all_to_monad")
 

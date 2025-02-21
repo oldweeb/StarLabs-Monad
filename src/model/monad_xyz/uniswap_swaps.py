@@ -227,7 +227,7 @@ class MonadSwap:
             logger.error(f"Transaction failed! Explorer URL: {EXPLORER_URL}{tx_hash.hex()}")
             raise Exception("Transaction failed")
         return tx_hash.hex()
-
+    
     async def swap(self, percentage_to_swap: float, token_out: str) -> str:
         """Swap tokens."""
         try:

@@ -14,7 +14,7 @@ SETTINGS:
   # pause between attempts
   PAUSE_BETWEEN_ATTEMPTS: [5, 15]
 
-  PAUSE_BETWEEN_SWAPS: [30, 60]
+  PAUSE_BETWEEN_SWAPS: [10, 20]
 
   # pause in seconds between accounts
   RANDOM_PAUSE_BETWEEN_ACCOUNTS: [3, 10]
@@ -36,9 +36,10 @@ FLOW:
   # "bima" - lending and faucet
   # "faucet" - get tokens from faucet
   # "collect_all_to_monad" - swap all tokens to native token (MON)
+  # "ambient" - swap tokens on Ambient DEX
 
   # Example: tasks: ["connect_discord", "swaps"]
-  TASKS: ["faucet"]
+  TASKS: ["swaps", "ambient", "collect_all_to_monad"]
 
   # number of swaps on monad.xyz
   NUMBER_OF_SWAPS: [2, 3]
