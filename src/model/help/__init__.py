@@ -1,3 +1,3 @@
-from .captcha import BestCaptchaSolver, TwentyFourCaptchaSolver
+from .captcha import Capsolver
 
-__all__ = ["BestCaptchaSolver", "TwentyFourCaptchaSolver"]
+__all__ = ["Capsolver"]

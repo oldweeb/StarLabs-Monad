@@ -514,7 +514,9 @@ class ThirdWeb:
                     "https://thirdweb.com/login",
                     timeout=int(30000 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
                 )
-                await asyncio.sleep(int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
+                await asyncio.sleep(
+                    int(2 * self.config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                )
 
                 # Логинимся на сайте
                 if not await self._login_thirdweb(page, metamask_page):
@@ -527,7 +529,9 @@ class ThirdWeb:
                     if not await self._thirdweb_registration(page):
                         raise Exception("Failed to register on ThirdWeb")
                 else:
-                    logger.info(f"[{self.account_index}] Already registered, continuing...")
+                    logger.info(
+                        f"[{self.account_index}] Already registered, continuing..."
+                    )
 
                 # Запрашиваем токены
                 if not await self._request_tokens(page):

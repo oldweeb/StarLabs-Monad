@@ -38,6 +38,9 @@ class BimaConfig:
 @dataclass
 class FaucetConfig:
     THIRDWEB: bool
+    MONAD_XYZ: bool
+    CAPSOLVER_API_KEY: str
+    PROXY_FOR_CAPTCHA: str
 
 @dataclass
 class Config:
@@ -91,6 +94,9 @@ class Config:
             ),
             FAUCET=FaucetConfig(
                 THIRDWEB=data["FAUCET"]["THIRDWEB"],
+                MONAD_XYZ=data["FAUCET"]["MONAD_XYZ"],
+                CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],
+                PROXY_FOR_CAPTCHA=data["FAUCET"]["PROXY_FOR_CAPTCHA"],
             ),
         )
 

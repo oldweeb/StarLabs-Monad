@@ -55,16 +55,19 @@ class Start:
                 await monad.connect_discord()
 
             if "faucet" in self.config.FLOW.TASKS:
-                # await monad.faucet()
-                thirdweb = ThirdWeb(
-                    self.account_index,
-                    self.proxy,
-                    self.private_key,
-                    self.email,
-                    self.config,
-                    self.session,
-                )
-                await thirdweb.faucet()
+                if self.config.FAUCET.MONAD_XYZ:
+                    await monad.faucet()
+                    
+                if self.config.FAUCET.THIRDWEB:
+                    thirdweb = ThirdWeb(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.email,
+                        self.config,
+                        self.session,
+                    )
+                    await thirdweb.faucet()
 
             if "swaps" in self.config.FLOW.TASKS:
                 await monad.swaps(type="swaps")
@@ -127,7 +130,6 @@ class Start:
                     self.session,
                 )
                 await monadverse_mint.mint()
-            
 
             # if "kuru" in self.config.FLOW.TASKS:
             #     kuru = Kuru(self.account_index, self.proxy, self.private_key, self.config, self.session)

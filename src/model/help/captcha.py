@@ -268,10 +268,10 @@ class Capsolver:
         data = {
             "clientKey": self.api_key,
             "task": {
-                "type": "ReCaptchaV2Task" if self.proxy else "ReCaptchaV2TaskProxyLess",
+                "type": "ReCaptchaV3Task" if self.proxy else "ReCaptchaV3TaskProxyLess",
                 "websiteURL": pageurl,
                 "websiteKey": sitekey,
-                "isInvisible": invisible,
+                "pageAction": "drip_request",
             },
         }
 

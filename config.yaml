@@ -50,7 +50,12 @@ FLOW:
 
 
 FAUCET:
-  THIRDWEB: true
+  THIRDWEB: false
+  MONAD_XYZ: true
+
+  CAPSOLVER_API_KEY: "CAP-"
+  PROXY_FOR_CAPTCHA: "user:pass@ip:port"
+
 
 APRIORI:
   AMOUNT_TO_STAKE: [0.0001, 0.0003]
