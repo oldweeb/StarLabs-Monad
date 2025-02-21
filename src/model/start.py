@@ -1,5 +1,6 @@
 from loguru import logger
 import primp
+import random
 
 from src.model.monadverse_mint.instance import MonadverseMint
 from src.model.thirdweb.instance import ThirdWeb
@@ -39,7 +40,9 @@ class Start:
             # Добавляем получение статистики кошелька
             if "logs" in self.config.FLOW.TASKS:
                 wallet_stats = WalletStats(self.config)
-                await wallet_stats.get_wallet_stats(self.private_key, self.account_index)
+                await wallet_stats.get_wallet_stats(
+                    self.private_key, self.account_index
+                )
 
             return True
         except Exception as e:
@@ -57,88 +60,102 @@ class Start:
                 self.session,
             )
 
-            if "connect_discord" in self.config.FLOW.TASKS:
-                await monad.connect_discord()
+            # Создаем копию списка задач и перемешиваем их
+            available_tasks = self.config.FLOW.TASKS.copy()
+            random.shuffle(available_tasks)
 
-            if "faucet" in self.config.FLOW.TASKS:
-                if self.config.FAUCET.MONAD_XYZ:
-                    await monad.faucet()
+            logger.info(f"[{self.account_index}] Tasks order: {available_tasks}")
 
-                if self.config.FAUCET.THIRDWEB:
-                    thirdweb = ThirdWeb(
+            # Проходим по перемешанным задачам
+            for task in available_tasks:
+                if task == "connect_discord":
+                    await monad.connect_discord()
+
+                elif task == "faucet":
+                    if self.config.FAUCET.MONAD_XYZ:
+                        await monad.faucet()
+
+                    if self.config.FAUCET.THIRDWEB:
+                        thirdweb = ThirdWeb(
+                            self.account_index,
+                            self.proxy,
+                            self.private_key,
+                            self.email,
+                            self.config,
+                            self.session,
+                        )
+                        await thirdweb.faucet()
+
+                elif task == "swaps":
+                    await monad.swaps(type="swaps")
+
+                elif task == "ambient":
+                    await monad.swaps(type="ambient")
+
+                elif task == "bean":
+                    await monad.swaps(type="bean")
+
+                elif task == "collect_all_to_monad":
+                    await monad.swaps(type="collect_all_to_monad")
+
+                elif task == "apriori":
+                    apriori = Apriori(
                         self.account_index,
                         self.proxy,
                         self.private_key,
-                        self.email,
                         self.config,
                         self.session,
                     )
-                    await thirdweb.faucet()
+                    await apriori.stake_mon()
 
-            if "swaps" in self.config.FLOW.TASKS:
-                await monad.swaps(type="swaps")
+                elif task == "magma":
+                    magma = Magma(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await magma.stake_mon()
 
-            if "ambient" in self.config.FLOW.TASKS:
-                await monad.swaps(type="ambient")
-            
-            if "bean" in self.config.FLOW.TASKS:
-                await monad.swaps(type="bean")
+                elif task == "owlto":
+                    owlto = Owlto(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await owlto.deploy_contract()
 
-            if "collect_all_to_monad" in self.config.FLOW.TASKS:
-                await monad.swaps(type="collect_all_to_monad")
+                elif task == "bima":
+                    bima = Bima(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await bima.get_faucet_tokens()
 
-            if "apriori" in self.config.FLOW.TASKS:
-                apriori = Apriori(
-                    self.account_index,
-                    self.proxy,
-                    self.private_key,
-                    self.config,
-                    self.session,
-                )
-                await apriori.stake_mon()
+                    if self.config.BIMA.LEND:
+                        await bima.lend()
 
-            if "magma" in self.config.FLOW.TASKS:
-                magma = Magma(
-                    self.account_index,
-                    self.proxy,
-                    self.private_key,
-                    self.config,
-                    self.session,
-                )
-                await magma.stake_mon()
+                elif task == "monadverse_mint":
+                    monadverse_mint = MonadverseMint(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await monadverse_mint.mint()
 
-            if "owlto" in self.config.FLOW.TASKS:
-                owlto = Owlto(
-                    self.account_index,
-                    self.proxy,
-                    self.private_key,
-                    self.config,
-                    self.session,
-                )
-                await owlto.deploy_contract()
-
-            if "bima" in self.config.FLOW.TASKS:
-                bima = Bima(
-                    self.account_index,
-                    self.proxy,
-                    self.private_key,
-                    self.config,
-                    self.session,
-                )
-                await bima.get_faucet_tokens()
-
-                if self.config.BIMA.LEND:
-                    await bima.lend()
-
-            if "monadverse_mint" in self.config.FLOW.TASKS:
-                monadverse_mint = MonadverseMint(
-                    self.account_index,
-                    self.proxy,
-                    self.private_key,
-                    self.config,
-                    self.session,
-                )
-                await monadverse_mint.mint()
+                elif task == "logs":
+                    wallet_stats = WalletStats(self.config)
+                    await wallet_stats.get_wallet_stats(
+                        self.private_key, self.account_index
+                    )
 
             # if "kuru" in self.config.FLOW.TASKS:
             #     kuru = Kuru(self.account_index, self.proxy, self.private_key, self.config, self.session)
