@@ -14,6 +14,7 @@ SETTINGS:
   # pause between attempts
   PAUSE_BETWEEN_ATTEMPTS: [5, 15]
 
+  # pause between swaps
   PAUSE_BETWEEN_SWAPS: [10, 20]
 
   # pause in seconds between accounts
@@ -21,6 +22,10 @@ SETTINGS:
 
   # pause in seconds between actions
   RANDOM_PAUSE_BETWEEN_ACTIONS: [2, 5]
+
+  # random pause before start of every account
+  # to make sure that all accounts will be started at different times
+  RANDOM_INITIALIZATION_PAUSE: [3, 10]
 
   # pause multiplier for browser actions
   BROWSER_PAUSE_MULTIPLIER: 3

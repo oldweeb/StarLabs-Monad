@@ -14,7 +14,7 @@ async def start():
     async def launch_wrapper(index, proxy, private_key, discord_token, email):
         async with semaphore:
             await account_flow(
-                index + 1,
+                index,
                 proxy,
                 private_key,
                 discord_token,
@@ -81,21 +81,31 @@ async def start():
         proxies[i % len(proxies)] for i in range(len(accounts_to_process))
     ]
 
-    logger.info(f"Starting with accounts {start_index} to {end_index}...")
+    # Создаем список индексов и перемешиваем его
+    shuffled_indices = list(range(len(accounts_to_process)))
+    random.shuffle(shuffled_indices)
+
+    # Создаем строку с порядком аккаунтов
+    account_order = " ".join(str(start_index + idx) for idx in shuffled_indices)
+    logger.info(
+        f"Starting with accounts {start_index} to {end_index} in random order..."
+    )
+    logger.info(f"Accounts order: {account_order}")
 
     lock = asyncio.Lock()
     semaphore = asyncio.Semaphore(value=threads)
     tasks = []
 
-    for index, private_key in enumerate(accounts_to_process):
+    # Используем перемешанные индексы для создания задач
+    for shuffled_idx in shuffled_indices:
         tasks.append(
             asyncio.create_task(
                 launch_wrapper(
-                    start_index + index - 1,  # Сохраняем оригинальный индекс
-                    cycled_proxies[index],
-                    private_key,
-                    discord_tokens[index],
-                    emails[index],
+                    start_index + shuffled_idx,
+                    cycled_proxies[shuffled_idx],
+                    accounts_to_process[shuffled_idx],
+                    discord_tokens[shuffled_idx],
+                    emails[shuffled_idx],
                 )
             )
         )
@@ -118,6 +128,13 @@ async def account_flow(
     lock: asyncio.Lock,
 ):
     try:
+        pause = random.randint(
+            config.SETTINGS.RANDOM_INITIALIZATION_PAUSE[0],
+            config.SETTINGS.RANDOM_INITIALIZATION_PAUSE[1],
+        )
+        logger.info(f"[{account_index}] Sleeping for {pause} seconds before start...")
+        await asyncio.sleep(pause)
+
         report = False
 
         instance = src.model.Start(

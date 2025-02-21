@@ -1,6 +1,7 @@
 from loguru import logger
 import primp
 import random
+import asyncio
 
 from src.model.monadverse_mint.instance import MonadverseMint
 from src.model.thirdweb.instance import ThirdWeb
@@ -70,10 +71,12 @@ class Start:
             for task in available_tasks:
                 if task == "connect_discord":
                     await monad.connect_discord()
+                    await self.sleep("connect_discord")
 
                 elif task == "faucet":
                     if self.config.FAUCET.MONAD_XYZ:
                         await monad.faucet()
+                        await self.sleep("monad_faucet")
 
                     if self.config.FAUCET.THIRDWEB:
                         thirdweb = ThirdWeb(
@@ -85,18 +88,23 @@ class Start:
                             self.session,
                         )
                         await thirdweb.faucet()
+                        await self.sleep("thirdweb_faucet")
 
                 elif task == "swaps":
                     await monad.swaps(type="swaps")
+                    await self.sleep("swaps")
 
                 elif task == "ambient":
                     await monad.swaps(type="ambient")
+                    await self.sleep("ambient")
 
                 elif task == "bean":
                     await monad.swaps(type="bean")
+                    await self.sleep("bean")
 
                 elif task == "collect_all_to_monad":
                     await monad.swaps(type="collect_all_to_monad")
+                    await self.sleep("collect_all_to_monad")
 
                 elif task == "apriori":
                     apriori = Apriori(
@@ -107,6 +115,7 @@ class Start:
                         self.session,
                     )
                     await apriori.stake_mon()
+                    await self.sleep("apriori")
 
                 elif task == "magma":
                     magma = Magma(
@@ -117,6 +126,7 @@ class Start:
                         self.session,
                     )
                     await magma.stake_mon()
+                    await self.sleep("magma")
 
                 elif task == "owlto":
                     owlto = Owlto(
@@ -127,6 +137,7 @@ class Start:
                         self.session,
                     )
                     await owlto.deploy_contract()
+                    await self.sleep("owlto")
 
                 elif task == "bima":
                     bima = Bima(
@@ -137,9 +148,11 @@ class Start:
                         self.session,
                     )
                     await bima.get_faucet_tokens()
+                    await self.sleep("bima_faucet")
 
                     if self.config.BIMA.LEND:
                         await bima.lend()
+                        await self.sleep("bima_lend")
 
                 elif task == "monadverse_mint":
                     monadverse_mint = MonadverseMint(
@@ -150,12 +163,14 @@ class Start:
                         self.session,
                     )
                     await monadverse_mint.mint()
+                    await self.sleep("monadverse_mint")
 
                 elif task == "logs":
                     wallet_stats = WalletStats(self.config)
                     await wallet_stats.get_wallet_stats(
                         self.private_key, self.account_index
                     )
+                    await self.sleep("logs")
 
             # if "kuru" in self.config.FLOW.TASKS:
             #     kuru = Kuru(self.account_index, self.proxy, self.private_key, self.config, self.session)
@@ -165,3 +180,15 @@ class Start:
         except Exception as e:
             logger.error(f"[{self.account_index}] | Error: {e}")
             return False
+
+
+    async def sleep(self, task_name: str):
+        """Делает рандомную паузу между действиями"""
+        pause = random.randint(
+            self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
+            self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
+        )
+        logger.info(
+            f"[{self.account_index}] Sleeping {pause} seconds after {task_name}"
+        )
+        await asyncio.sleep(pause)
