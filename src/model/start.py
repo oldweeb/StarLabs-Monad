@@ -1,6 +1,7 @@
 from loguru import logger
 import primp
 
+from src.model.monadverse_mint.instance import MonadverseMint
 from src.model.thirdweb.instance import ThirdWeb
 from src.model.bima.instance import Bima
 from src.model.owlto.instance import Owlto
@@ -116,6 +117,17 @@ class Start:
 
                 if self.config.BIMA.LEND:
                     await bima.lend()
+
+            if "monadverse_mint" in self.config.FLOW.TASKS:
+                monadverse_mint = MonadverseMint(
+                    self.account_index,
+                    self.proxy,
+                    self.private_key,
+                    self.config,
+                    self.session,
+                )
+                await monadverse_mint.mint()
+            
 
             # if "kuru" in self.config.FLOW.TASKS:
             #     kuru = Kuru(self.account_index, self.proxy, self.private_key, self.config, self.session)

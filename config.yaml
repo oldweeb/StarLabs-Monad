@@ -23,7 +23,7 @@ SETTINGS:
   RANDOM_PAUSE_BETWEEN_ACTIONS: [2, 5]
 
   # pause multiplier for browser actions
-  BROWSER_PAUSE_MULTIPLIER: 1.1
+  BROWSER_PAUSE_MULTIPLIER: 3
   
 # --------------------------- #
 FLOW:
@@ -37,9 +37,10 @@ FLOW:
   # "faucet" - get tokens from faucet
   # "collect_all_to_monad" - swap all tokens to native token (MON)
   # "ambient" - swap tokens on Ambient DEX
+  # "monadverse_mint" - mint Monadverse NFT - https://www.monadverse.land/mint
 
   # Example: tasks: ["connect_discord", "swaps"]
-  TASKS: ["swaps", "ambient", "collect_all_to_monad"]
+  TASKS: ["faucet"]
 
   # number of swaps on monad.xyz
   NUMBER_OF_SWAPS: [2, 3]
