@@ -34,7 +34,7 @@ SETTINGS:
 FLOW:
   # tasks to do.
   # "connect_discord" - connect discord account
-  # "swaps" - swaps tokens
+  # "swaps" - https://testnet.monad.xyz/ page token swaps
   # "apriori" - stake MON token
   # "magma" - stake MON token on Magma
   # "owlto" - deploy contract on Owlto
