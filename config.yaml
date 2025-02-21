@@ -37,14 +37,15 @@ FLOW:
   # "faucet" - get tokens from faucet
   # "collect_all_to_monad" - swap all tokens to native token (MON)
   # "ambient" - swap tokens on Ambient DEX
+  # "bean" - swap tokens on Bean DEX
   # "monadverse_mint" - mint Monadverse NFT - https://www.monadverse.land/mint
   # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 
   # Example: tasks: ["connect_discord", "swaps"]
-  TASKS: ["faucet"]
+  TASKS: ["swaps", "bean", "ambient", "collect_all_to_monad"]
 
   # number of swaps on monad.xyz
-  NUMBER_OF_SWAPS: [2, 3]
+  NUMBER_OF_SWAPS: [1, 3]
 
   # percent of balance to swap on monad.xyz
   PERCENT_OF_BALANCE_TO_SWAP: [10, 15]

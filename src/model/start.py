@@ -80,6 +80,9 @@ class Start:
 
             if "ambient" in self.config.FLOW.TASKS:
                 await monad.swaps(type="ambient")
+            
+            if "bean" in self.config.FLOW.TASKS:
+                await monad.swaps(type="bean")
 
             if "collect_all_to_monad" in self.config.FLOW.TASKS:
                 await monad.swaps(type="collect_all_to_monad")
