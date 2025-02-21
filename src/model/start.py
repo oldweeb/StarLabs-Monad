@@ -10,6 +10,7 @@ from src.model.apriori import Apriori
 from src.model.monad_xyz.instance import MonadXYZ
 from src.utils.client import create_client
 from src.utils.config import Config
+from src.model.help.stats import WalletStats
 
 
 class Start:
@@ -35,6 +36,11 @@ class Start:
         try:
             self.session = await create_client(self.proxy)
 
+            # Добавляем получение статистики кошелька
+            if "logs" in self.config.FLOW.TASKS:
+                wallet_stats = WalletStats(self.config)
+                await wallet_stats.get_wallet_stats(self.private_key, self.account_index)
+
             return True
         except Exception as e:
             logger.error(f"[{self.account_index}] | Error: {e}")
@@ -57,7 +63,7 @@ class Start:
             if "faucet" in self.config.FLOW.TASKS:
                 if self.config.FAUCET.MONAD_XYZ:
                     await monad.faucet()
-                    
+
                 if self.config.FAUCET.THIRDWEB:
                     thirdweb = ThirdWeb(
                         self.account_index,

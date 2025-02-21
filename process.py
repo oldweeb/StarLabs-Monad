@@ -7,6 +7,7 @@ import src.utils
 from src.utils.logs import report_error, report_success
 from src.utils.output import show_dev_info, show_logo
 import src.model
+from src.utils.statistics import print_wallets_stats
 
 
 async def start():
@@ -102,6 +103,9 @@ async def start():
     await asyncio.gather(*tasks)
 
     logger.success("Saved accounts and private keys to a file.")
+
+    if "logs" in config.FLOW.TASKS:
+        print_wallets_stats(config)
 
 
 async def account_flow(

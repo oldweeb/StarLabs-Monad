@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Tuple, Optional
 import yaml
 from pathlib import Path
@@ -16,24 +16,29 @@ class SettingsConfig:
     RANDOM_PAUSE_BETWEEN_ACTIONS: Tuple[int, int]
     BROWSER_PAUSE_MULTIPLIER: float
 
+
 @dataclass
 class FlowConfig:
     TASKS: List[str]
     NUMBER_OF_SWAPS: Tuple[int, int]
     PERCENT_OF_BALANCE_TO_SWAP: Tuple[int, int]
 
+
 @dataclass
 class AprioriConfig:
     AMOUNT_TO_STAKE: Tuple[float, float]
+
 
 @dataclass
 class MagmaConfig:
     AMOUNT_TO_STAKE: Tuple[float, float]
 
+
 @dataclass
 class BimaConfig:
     LEND: bool
     PERCENT_OF_BALANCE_TO_LEND: Tuple[int, int]
+
 
 @dataclass
 class FaucetConfig:
@@ -41,6 +46,21 @@ class FaucetConfig:
     MONAD_XYZ: bool
     CAPSOLVER_API_KEY: str
     PROXY_FOR_CAPTCHA: str
+
+
+@dataclass
+class WalletInfo:
+    account_index: int
+    private_key: str
+    address: str
+    balance: float
+    transactions: int
+
+
+@dataclass
+class WalletsConfig:
+    wallets: List[WalletInfo] = field(default_factory=list)
+
 
 @dataclass
 class Config:
@@ -50,7 +70,8 @@ class Config:
     MAGMA: MagmaConfig
     BIMA: BimaConfig
     FAUCET: FaucetConfig
-    lock: asyncio.Lock = asyncio.Lock()
+    WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
+    lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
     @classmethod
     def load(cls, path: str = "config.yaml") -> "Config":
@@ -66,9 +87,7 @@ class Config:
                 PAUSE_BETWEEN_ATTEMPTS=tuple(
                     data["SETTINGS"]["PAUSE_BETWEEN_ATTEMPTS"]
                 ),
-                PAUSE_BETWEEN_SWAPS=tuple(
-                    data["SETTINGS"]["PAUSE_BETWEEN_SWAPS"]
-                ),
+                PAUSE_BETWEEN_SWAPS=tuple(data["SETTINGS"]["PAUSE_BETWEEN_SWAPS"]),
                 RANDOM_PAUSE_BETWEEN_ACCOUNTS=tuple(
                     data["SETTINGS"]["RANDOM_PAUSE_BETWEEN_ACCOUNTS"]
                 ),
@@ -80,7 +99,9 @@ class Config:
             FLOW=FlowConfig(
                 TASKS=data["FLOW"]["TASKS"],
                 NUMBER_OF_SWAPS=tuple(data["FLOW"]["NUMBER_OF_SWAPS"]),
-                PERCENT_OF_BALANCE_TO_SWAP=tuple(data["FLOW"]["PERCENT_OF_BALANCE_TO_SWAP"]),
+                PERCENT_OF_BALANCE_TO_SWAP=tuple(
+                    data["FLOW"]["PERCENT_OF_BALANCE_TO_SWAP"]
+                ),
             ),
             APRIORI=AprioriConfig(
                 AMOUNT_TO_STAKE=tuple(data["APRIORI"]["AMOUNT_TO_STAKE"]),
@@ -90,7 +111,9 @@ class Config:
             ),
             BIMA=BimaConfig(
                 LEND=data["BIMA"]["LEND"],
-                PERCENT_OF_BALANCE_TO_LEND=tuple(data["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"]),
+                PERCENT_OF_BALANCE_TO_LEND=tuple(
+                    data["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"]
+                ),
             ),
             FAUCET=FaucetConfig(
                 THIRDWEB=data["FAUCET"]["THIRDWEB"],

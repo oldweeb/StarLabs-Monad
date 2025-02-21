@@ -72,7 +72,7 @@ async def faucet(
                         f"[{account_index}] | Already claimed tokens from faucet"
                     )
                     return True
-                
+
                 if response.status_code == 200:
                     logger.success(
                         f"[{account_index}] | Successfully got tokens from faucet"

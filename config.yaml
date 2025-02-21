@@ -17,7 +17,7 @@ SETTINGS:
   PAUSE_BETWEEN_SWAPS: [10, 20]
 
   # pause in seconds between accounts
-  RANDOM_PAUSE_BETWEEN_ACCOUNTS: [3, 10]
+  RANDOM_PAUSE_BETWEEN_ACCOUNTS: [1, 5]
 
   # pause in seconds between actions
   RANDOM_PAUSE_BETWEEN_ACTIONS: [2, 5]
@@ -38,9 +38,10 @@ FLOW:
   # "collect_all_to_monad" - swap all tokens to native token (MON)
   # "ambient" - swap tokens on Ambient DEX
   # "monadverse_mint" - mint Monadverse NFT - https://www.monadverse.land/mint
+  # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 
   # Example: tasks: ["connect_discord", "swaps"]
-  TASKS: ["faucet"]
+  TASKS: ["logs"]
 
   # number of swaps on monad.xyz
   NUMBER_OF_SWAPS: [2, 3]
