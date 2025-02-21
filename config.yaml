@@ -41,7 +41,7 @@ FLOW:
   # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 
   # Example: tasks: ["connect_discord", "swaps"]
-  TASKS: ["logs"]
+  TASKS: ["faucet"]
 
   # number of swaps on monad.xyz
   NUMBER_OF_SWAPS: [2, 3]
