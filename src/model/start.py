@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.gaszip.instance import Gaszip
 from src.model.monadverse_mint.instance import MonadverseMint
 from src.model.thirdweb.instance import ThirdWeb
 from src.model.bima.instance import Bima
@@ -110,6 +111,16 @@ class Start:
                 elif task == "collect_all_to_monad":
                     await monad.swaps(type="collect_all_to_monad")
                     await self.sleep("collect_all_to_monad")
+
+                elif task == "gaszip":
+                    gaszip = Gaszip(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                    )
+                    await gaszip.refuel()
+                    await self.sleep("gaszip")
 
                 elif task == "apriori":
                     apriori = Apriori(

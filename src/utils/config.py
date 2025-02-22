@@ -64,6 +64,13 @@ class WalletsConfig:
 
 
 @dataclass
+class GaszipConfig:
+    NETWORKS_TO_REFUEL_FROM: List[str]
+    AMOUNT_TO_REFUEL: Tuple[float, float]
+    MINIMUM_BALANCE_TO_REFUEL: float
+
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     FLOW: FlowConfig
@@ -71,6 +78,7 @@ class Config:
     MAGMA: MagmaConfig
     BIMA: BimaConfig
     FAUCET: FaucetConfig
+    GASZIP: GaszipConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -96,10 +104,10 @@ class Config:
                 RANDOM_PAUSE_BETWEEN_ACTIONS=tuple(
                     data["SETTINGS"]["RANDOM_PAUSE_BETWEEN_ACTIONS"]
                 ),
-                BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
                 RANDOM_INITIALIZATION_PAUSE=tuple(
                     data["SETTINGS"]["RANDOM_INITIALIZATION_PAUSE"]
                 ),
+                BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
             ),
             FLOW=FlowConfig(
                 TASKS=data["FLOW"]["TASKS"],
@@ -125,6 +133,11 @@ class Config:
                 MONAD_XYZ=data["FAUCET"]["MONAD_XYZ"],
                 CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],
                 PROXY_FOR_CAPTCHA=data["FAUCET"]["PROXY_FOR_CAPTCHA"],
+            ),
+            GASZIP=GaszipConfig(
+                NETWORKS_TO_REFUEL_FROM=data["GASZIP"]["NETWORKS_TO_REFUEL_FROM"],
+                AMOUNT_TO_REFUEL=tuple(data["GASZIP"]["AMOUNT_TO_REFUEL"]),
+                MINIMUM_BALANCE_TO_REFUEL=data["GASZIP"]["MINIMUM_BALANCE_TO_REFUEL"],
             ),
         )
 

@@ -50,6 +50,7 @@ FLOW:
     # "ambient" - swap tokens on Ambient DEX
     # "bean" - swap tokens on Bean DEX
     # "monadverse_mint" - mint Monadverse NFT - https://www.monadverse.land/mint
+    # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad
     # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 
     # EXAMPLE: tasks: ["connect_discord", "swaps"]
@@ -61,7 +62,9 @@ FLOW:
     # 3. connect_discord
     TASKS:
         [
-            "logs",
+            "gaszip",
+            ["bean", "swaps"],
+            "collect_all_to_monad",
         ]
 
     # number of swaps on monad.xyz
@@ -86,3 +89,8 @@ MAGMA:
 BIMA:
     LEND: true
     PERCENT_OF_BALANCE_TO_LEND: [20, 30]
+
+GASZIP:
+    NETWORKS_TO_REFUEL_FROM: ["Arbitrum", "Base", "Optimism"]
+    AMOUNT_TO_REFUEL: [0.0001, 0.00015]
+    MINIMUM_BALANCE_TO_REFUEL: 10
