@@ -38,13 +38,6 @@ class Start:
         try:
             self.session = await create_client(self.proxy)
 
-            # Добавляем получение статистики кошелька
-            if "logs" in self.config.FLOW.TASKS:
-                wallet_stats = WalletStats(self.config)
-                await wallet_stats.get_wallet_stats(
-                    self.private_key, self.account_index
-                )
-
             return True
         except Exception as e:
             logger.error(f"[{self.account_index}] | Error: {e}")
@@ -61,14 +54,26 @@ class Start:
                 self.session,
             )
 
-            # Создаем копию списка задач и перемешиваем их
-            available_tasks = self.config.FLOW.TASKS.copy()
-            random.shuffle(available_tasks)
+            # Заранее определяем все задачи
+            planned_tasks = []
+            task_plan_msg = []
+            for i, task_item in enumerate(self.config.FLOW.TASKS, 1):
+                if isinstance(task_item, list):
+                    selected_task = random.choice(task_item)
+                    planned_tasks.append((i, selected_task, task_item))
+                    task_plan_msg.append(f"{i}. {selected_task}")
+                else:
+                    planned_tasks.append((i, task_item, None))
+                    task_plan_msg.append(f"{i}. {task_item}")
 
-            logger.info(f"[{self.account_index}] Tasks order: {available_tasks}")
+            # Выводим план выполнения одним сообщением
+            logger.info(
+                f"[{self.account_index}] Task execution plan: {' | '.join(task_plan_msg)}"
+            )
 
-            # Проходим по перемешанным задачам
-            for task in available_tasks:
+            # Выполняем задачи по плану
+            for _, task, _ in planned_tasks:
+                # Выполняем выбранную задачу
                 if task == "connect_discord":
                     await monad.connect_discord()
                     await self.sleep("connect_discord")
@@ -172,15 +177,10 @@ class Start:
                     )
                     await self.sleep("logs")
 
-            # if "kuru" in self.config.FLOW.TASKS:
-            #     kuru = Kuru(self.account_index, self.proxy, self.private_key, self.config, self.session)
-            #     await kuru.create_wallet()
-
             return True
         except Exception as e:
             logger.error(f"[{self.account_index}] | Error: {e}")
             return False
-
 
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""

@@ -114,8 +114,7 @@ async def start():
 
     logger.success("Saved accounts and private keys to a file.")
 
-    if "logs" in config.FLOW.TASKS:
-        print_wallets_stats(config)
+    print_wallets_stats(config)
 
 
 async def account_flow(
