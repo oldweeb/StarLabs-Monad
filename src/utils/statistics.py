@@ -29,7 +29,7 @@ def print_wallets_stats(config: Config):
                 str(wallet.account_index),  # Просто номер без ведущего нуля
                 wallet.address,  # Полный адрес
                 masked_key,
-                f"{wallet.balance:.4f} ETH",
+                f"{wallet.balance:.4f} MON",
                 f"{wallet.transactions:,}",  # Форматируем число с разделителями
             ]
             table_data.append(row)
@@ -41,7 +41,7 @@ def print_wallets_stats(config: Config):
                 "№ Account",
                 "Wallet Address",
                 "Private Key",
-                "Balance (ETH)",
+                "Balance (MON)",
                 "Total Txs",
             ]
 
