@@ -35,26 +35,48 @@ async def start():
     start_index = config.SETTINGS.ACCOUNTS_RANGE[0]
     end_index = config.SETTINGS.ACCOUNTS_RANGE[1]
 
-    # Если оба 0, берем все аккаунты
+    # Если оба 0, проверяем EXACT_ACCOUNTS_TO_USE
     if start_index == 0 and end_index == 0:
-        accounts_to_process = private_keys
-        start_index = 1
-        end_index = len(private_keys)
+        if config.SETTINGS.EXACT_ACCOUNTS_TO_USE:
+            # Преобразуем номера аккаунтов в индексы (номер - 1)
+            selected_indices = [i - 1 for i in config.SETTINGS.EXACT_ACCOUNTS_TO_USE]
+            accounts_to_process = [private_keys[i] for i in selected_indices]
+            logger.info(
+                f"Using specific accounts: {config.SETTINGS.EXACT_ACCOUNTS_TO_USE}"
+            )
+
+            # Для совместимости с остальным кодом
+            start_index = min(config.SETTINGS.EXACT_ACCOUNTS_TO_USE)
+            end_index = max(config.SETTINGS.EXACT_ACCOUNTS_TO_USE)
+        else:
+            # Если список пустой, берем все аккаунты как раньше
+            accounts_to_process = private_keys
+            start_index = 1
+            end_index = len(private_keys)
     else:
         # Python slice не включает последний элемент, поэтому +1
         accounts_to_process = private_keys[start_index - 1 : end_index]
 
     # Читаем токены только для нужных аккаунтов
     discord_tokens = []
-    if "connect_discord" in config.FLOW.TASKS:
+    if task_exists_in_config("connect_discord", config.FLOW.TASKS):
         all_discord_tokens = src.utils.read_txt_file(
             "discord tokens", "data/discord_tokens.txt"
         )
-        discord_tokens = (
-            all_discord_tokens[start_index - 1 : end_index]
-            if all_discord_tokens
-            else [""] * len(accounts_to_process)
-        )
+        if config.SETTINGS.EXACT_ACCOUNTS_TO_USE and start_index == 0:
+            # Если указаны конкретные аккаунты, берем токены для них
+            discord_tokens = (
+                [all_discord_tokens[i] for i in selected_indices]
+                if all_discord_tokens
+                else [""] * len(accounts_to_process)
+            )
+        else:
+            # Иначе берем по диапазону как раньше
+            discord_tokens = (
+                all_discord_tokens[start_index - 1 : end_index]
+                if all_discord_tokens
+                else [""] * len(accounts_to_process)
+            )
     else:
         discord_tokens = [""] * len(accounts_to_process)
 
@@ -62,11 +84,20 @@ async def start():
     emails = []
     if config.FAUCET.THIRDWEB:
         all_emails = src.utils.read_txt_file("emails", "data/emails.txt")
-        emails = (
-            all_emails[start_index - 1 : end_index]
-            if all_emails
-            else [""] * len(accounts_to_process)
-        )
+        if config.SETTINGS.EXACT_ACCOUNTS_TO_USE and start_index == 0:
+            # Если указаны конкретные аккаунты, берем emails для них
+            emails = (
+                [all_emails[i] for i in selected_indices]
+                if all_emails
+                else [""] * len(accounts_to_process)
+            )
+        else:
+            # Иначе берем по диапазону как раньше
+            emails = (
+                all_emails[start_index - 1 : end_index]
+                if all_emails
+                else [""] * len(accounts_to_process)
+            )
     else:
         emails = [""] * len(accounts_to_process)
 
@@ -195,3 +226,14 @@ async def random_sleep(config: dict, task: str, address: str):
     )
     logger.info(f"{address} | Sleeping for {pause} seconds after {task}...")
     await asyncio.sleep(pause)
+
+
+def task_exists_in_config(task_name: str, tasks_list: list) -> bool:
+    """Рекурсивно проверяет наличие задачи в списке задач, включая вложенные списки"""
+    for task in tasks_list:
+        if isinstance(task, list):
+            if task_exists_in_config(task_name, task):
+                return True
+        elif task == task_name:
+            return True
+    return False

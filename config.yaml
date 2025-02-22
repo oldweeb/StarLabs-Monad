@@ -11,6 +11,12 @@ SETTINGS:
     # [7, 7] - only 7 account
     ACCOUNTS_RANGE: [0, 0]
 
+    # WORKS ONLY IF ACCOUNTS_RANGE IS [0, 0]
+    # exact accounts to use. 
+    # BY DEFAULT: [] - all accounts
+    # Example: [1, 4, 6] - bot will use only 1, 4 and 6 accounts
+    EXACT_ACCOUNTS_TO_USE: []
+
     # pause between attempts
     PAUSE_BETWEEN_ATTEMPTS: [5, 15]
 
@@ -55,10 +61,6 @@ FLOW:
     # 3. connect_discord
     TASKS:
         [
-            "faucet",
-            ["ambient", "bean", "monadverse_mint"],
-            ["swaps", "owlto"],
-            "collect_all_to_monad",
             "logs",
         ]
 

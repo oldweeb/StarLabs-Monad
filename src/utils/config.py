@@ -10,6 +10,7 @@ class SettingsConfig:
     THREADS: int
     ATTEMPTS: int
     ACCOUNTS_RANGE: Tuple[int, int]
+    EXACT_ACCOUNTS_TO_USE: List[int]
     PAUSE_BETWEEN_ATTEMPTS: Tuple[int, int]
     PAUSE_BETWEEN_SWAPS: Tuple[int, int]
     RANDOM_PAUSE_BETWEEN_ACCOUNTS: Tuple[int, int]
@@ -84,6 +85,7 @@ class Config:
                 THREADS=data["SETTINGS"]["THREADS"],
                 ATTEMPTS=data["SETTINGS"]["ATTEMPTS"],
                 ACCOUNTS_RANGE=tuple(data["SETTINGS"]["ACCOUNTS_RANGE"]),
+                EXACT_ACCOUNTS_TO_USE=data["SETTINGS"]["EXACT_ACCOUNTS_TO_USE"],
                 PAUSE_BETWEEN_ATTEMPTS=tuple(
                     data["SETTINGS"]["PAUSE_BETWEEN_ATTEMPTS"]
                 ),
