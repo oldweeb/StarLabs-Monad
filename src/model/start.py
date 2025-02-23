@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.orbiter.instance import Orbiter
 from src.model.accountable.instance import Accountable
 from src.model.shmonad.instance import Shmonad
 from src.model.gaszip.instance import Gaszip
@@ -204,6 +205,17 @@ class Start:
                     )
                     await accountable.mint()
                     await self.sleep("accountable")
+
+                elif task == "orbiter":
+                    orbiter = Orbiter(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await orbiter.bridge()
+                    await self.sleep("orbiter")
 
                 elif task == "logs":
                     wallet_stats = WalletStats(self.config)

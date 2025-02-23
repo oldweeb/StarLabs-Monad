@@ -81,6 +81,14 @@ class AccountableConfig:
 
 
 @dataclass
+class OrbiterConfig:
+    AMOUNT_TO_BRIDGE: Tuple[float, float]
+    BRIDGE_ALL: bool
+    WAIT_FOR_FUNDS_TO_ARRIVE: bool
+    MAX_WAIT_TIME: int
+
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     FLOW: FlowConfig
@@ -91,6 +99,7 @@ class Config:
     GASZIP: GaszipConfig
     SHMONAD: ShmonadConfig
     ACCOUNTABLE: AccountableConfig
+    ORBITER: OrbiterConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -158,6 +167,12 @@ class Config:
             ),
             ACCOUNTABLE=AccountableConfig(
                 NFT_PER_ACCOUNT_LIMIT=data["ACCOUNTABLE"]["NFT_PER_ACCOUNT_LIMIT"],
+            ),
+            ORBITER=OrbiterConfig(
+                AMOUNT_TO_BRIDGE=tuple(data["ORBITER"]["AMOUNT_TO_BRIDGE"]),
+                BRIDGE_ALL=data["ORBITER"]["BRIDGE_ALL"],
+                WAIT_FOR_FUNDS_TO_ARRIVE=data["ORBITER"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
+                MAX_WAIT_TIME=data["ORBITER"]["MAX_WAIT_TIME"],
             ),
         )
 

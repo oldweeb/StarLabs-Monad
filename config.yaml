@@ -54,6 +54,7 @@ FLOW:
     # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
     # "shmonad" - buy and stake shmon on shmonad.xyz | LOOK SETTINGS BELOW
     # "accountable" - mint accountable nft
+    # "orbiter" - bridge ETH from Sepolia to Monad via Orbiter
 
     # EXAMPLE: tasks: ["connect_discord", "swaps"]
     # RANDOM TASKS EXAMPLE:
@@ -107,3 +108,9 @@ SHMONAD:
 
 ACCOUNTABLE:
     NFT_PER_ACCOUNT_LIMIT: 3
+
+ORBITER:
+    AMOUNT_TO_BRIDGE: [0.1, 0.2]
+    BRIDGE_ALL: false
+    WAIT_FOR_FUNDS_TO_ARRIVE: true
+    MAX_WAIT_TIME: 999999999
