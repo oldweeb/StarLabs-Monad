@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.accountable.instance import Accountable
 from src.model.shmonad.instance import Shmonad
 from src.model.gaszip.instance import Gaszip
 from src.model.monadverse_mint.instance import MonadverseMint
@@ -193,6 +194,16 @@ class Start:
                     await shmonad.swaps()
                     await self.sleep("shmonad")
 
+                elif task == "accountable":
+                    accountable = Accountable(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await accountable.mint()
+                    await self.sleep("accountable")
 
                 elif task == "logs":
                     wallet_stats = WalletStats(self.config)

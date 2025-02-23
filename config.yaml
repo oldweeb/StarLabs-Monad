@@ -53,6 +53,7 @@ FLOW:
     # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad
     # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
     # "shmonad" - buy and stake shmon on shmonad.xyz | LOOK SETTINGS BELOW
+    # "accountable" - mint accountable nft
 
     # EXAMPLE: tasks: ["connect_discord", "swaps"]
     # RANDOM TASKS EXAMPLE:
@@ -66,6 +67,7 @@ FLOW:
             "gaszip",
             ["bean", "swaps"],
             "collect_all_to_monad",
+            "accountable"
         ]
 
     # number of swaps on monad.xyz
@@ -102,3 +104,6 @@ SHMONAD:
 
     # percent of balance to swap on shmonad.xyz
     PERCENT_OF_BALANCE_TO_SWAP: [2, 3]
+
+ACCOUNTABLE:
+    NFT_PER_ACCOUNT_LIMIT: 3

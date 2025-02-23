@@ -76,6 +76,11 @@ class ShmonadConfig:
     UNSTAKE_AND_SELL_SHMON: bool
 
 @dataclass
+class AccountableConfig:
+    NFT_PER_ACCOUNT_LIMIT: int
+
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     FLOW: FlowConfig
@@ -85,6 +90,7 @@ class Config:
     FAUCET: FaucetConfig
     GASZIP: GaszipConfig
     SHMONAD: ShmonadConfig
+    ACCOUNTABLE: AccountableConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -149,6 +155,9 @@ class Config:
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(data["SHMONAD"]["PERCENT_OF_BALANCE_TO_SWAP"]),
                 BUY_AND_STAKE_SHMON=data["SHMONAD"]["BUY_AND_STAKE_SHMON"],
                 UNSTAKE_AND_SELL_SHMON=data["SHMONAD"]["UNSTAKE_AND_SELL_SHMON"],
+            ),
+            ACCOUNTABLE=AccountableConfig(
+                NFT_PER_ACCOUNT_LIMIT=data["ACCOUNTABLE"]["NFT_PER_ACCOUNT_LIMIT"],
             ),
         )
 
