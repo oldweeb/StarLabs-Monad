@@ -19,10 +19,11 @@ async def faucet(
             solver = Capsolver(
                 config.FAUCET.CAPSOLVER_API_KEY,
                 config.FAUCET.PROXY_FOR_CAPTCHA,
+                session,
             )
             for _ in range(3):
-                result = solver.solve_recaptcha(
-                    "6Le4e90qAAAAAFmgNU7C2dwxuRHj9lO7x54cKaJt",
+                result = await solver.solve_recaptcha(
+                    "6Lf_xd8qAAAAANYpu_MCMXZA0A2_0F9wgB3pKs5j",
                     "https://testnet.monad.xyz/",
                     True,
                 )
@@ -67,6 +68,7 @@ async def faucet(
                     headers=headers,
                     json=json_data,
                 )
+
                 if "Claimed already" in response.text:
                     logger.success(
                         f"[{account_index}] | Already claimed tokens from faucet"

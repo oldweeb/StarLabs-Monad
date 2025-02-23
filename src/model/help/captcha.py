@@ -1,8 +1,10 @@
-import time
+import asyncio
 from loguru import logger
+from primp import AsyncClient
 import requests
 from typing import Optional, Dict
 from enum import Enum
+import time
 
 
 class CaptchaError(Exception):
@@ -246,10 +248,12 @@ class Capsolver:
         self,
         api_key: str,
         proxy: Optional[str] = None,
+        session: AsyncClient = None,
     ):
         self.api_key = api_key
         self.base_url = "https://api.capsolver.com"
         self.proxy = self._format_proxy(proxy) if proxy else None
+        self.session = session or AsyncClient(verify=False)
 
     def _format_proxy(self, proxy: str) -> str:
         if not proxy:
@@ -258,7 +262,7 @@ class Capsolver:
             return proxy
         return proxy
 
-    def create_task(
+    async def create_task(
         self,
         sitekey: str,
         pageurl: str,
@@ -279,44 +283,44 @@ class Capsolver:
             data["task"]["proxy"] = self.proxy
 
         try:
-            response = requests.post(
+            response = await self.session.post(
                 f"{self.base_url}/createTask",
                 json=data,
                 timeout=30,
-                verify=False,
-            ).json()
+            )
+            result = response.json()
 
-            if "taskId" in response:
-                return response["taskId"]
+            if "taskId" in result:
+                return result["taskId"]
 
-            logger.error(f"Error creating task: {response}")
+            logger.error(f"Error creating task: {result}")
             return None
 
         except Exception as e:
             logger.error(f"Error creating task: {e}")
             return None
 
-    def get_task_result(self, task_id: str) -> Optional[str]:
+    async def get_task_result(self, task_id: str) -> Optional[str]:
         """Получает результат решения капчи"""
         data = {"clientKey": self.api_key, "taskId": task_id}
 
         max_attempts = 30
         for _ in range(max_attempts):
             try:
-                response = requests.post(
+                response = await self.session.post(
                     f"{self.base_url}/getTaskResult",
                     json=data,
                     timeout=30,
-                    verify=False,
-                ).json()
+                )
+                result = response.json()
 
-                if response.get("status") == "ready":
-                    return response["solution"]["gRecaptchaResponse"]
-                elif "errorId" in response and response["errorId"] != 0:
-                    logger.error(f"Error getting result: {response}")
+                if result.get("status") == "ready":
+                    return result["solution"]["gRecaptchaResponse"]
+                elif "errorId" in result and result["errorId"] != 0:
+                    logger.error(f"Error getting result: {result}")
                     return None
 
-                time.sleep(3)
+                await asyncio.sleep(3)
 
             except Exception as e:
                 logger.error(f"Error getting result: {e}")
@@ -324,15 +328,15 @@ class Capsolver:
 
         return None
 
-    def solve_recaptcha(
+    async def solve_recaptcha(
         self,
         sitekey: str,
         pageurl: str,
         invisible: bool = False,
     ) -> Optional[str]:
         """Решает RecaptchaV2 и возвращает токен"""
-        task_id = self.create_task(sitekey, pageurl, invisible)
+        task_id = await self.create_task(sitekey, pageurl, invisible)
         if not task_id:
             return None
 
-        return self.get_task_result(task_id)
+        return await self.get_task_result(task_id)
