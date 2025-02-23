@@ -128,6 +128,13 @@ class MonadSwap:
                     response = await client.post(url=url, json=json_data)
                     response_data = response.json()
                     
+                    # Check for balance-related error messages
+                    if isinstance(response_data, dict) and 'error' in response_data:
+                        error_msg = str(response_data.get('error', '')).lower()
+                        if 'number greater than' in error_msg:
+                            logger.warning(f"Balance too small for swap, skipping: {response_data['error']}")
+                            return None
+                    
                     if not response_data.get('transaction'):
                         raise ValueError(f"No transaction data in response: {response_data}")
                     
