@@ -69,6 +69,11 @@ class GaszipConfig:
     AMOUNT_TO_REFUEL: Tuple[float, float]
     MINIMUM_BALANCE_TO_REFUEL: float
 
+@dataclass
+class ShmonadConfig:
+    PERCENT_OF_BALANCE_TO_SWAP: Tuple[int, int]
+    BUY_AND_STAKE_SHMON: bool
+    UNSTAKE_AND_SELL_SHMON: bool
 
 @dataclass
 class Config:
@@ -79,6 +84,7 @@ class Config:
     BIMA: BimaConfig
     FAUCET: FaucetConfig
     GASZIP: GaszipConfig
+    SHMONAD: ShmonadConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -138,6 +144,11 @@ class Config:
                 NETWORKS_TO_REFUEL_FROM=data["GASZIP"]["NETWORKS_TO_REFUEL_FROM"],
                 AMOUNT_TO_REFUEL=tuple(data["GASZIP"]["AMOUNT_TO_REFUEL"]),
                 MINIMUM_BALANCE_TO_REFUEL=data["GASZIP"]["MINIMUM_BALANCE_TO_REFUEL"],
+            ),
+            SHMONAD=ShmonadConfig(
+                PERCENT_OF_BALANCE_TO_SWAP=tuple(data["SHMONAD"]["PERCENT_OF_BALANCE_TO_SWAP"]),
+                BUY_AND_STAKE_SHMON=data["SHMONAD"]["BUY_AND_STAKE_SHMON"],
+                UNSTAKE_AND_SELL_SHMON=data["SHMONAD"]["UNSTAKE_AND_SELL_SHMON"],
             ),
         )
 

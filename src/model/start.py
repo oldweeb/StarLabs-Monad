@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.shmonad.instance import Shmonad
 from src.model.gaszip.instance import Gaszip
 from src.model.monadverse_mint.instance import MonadverseMint
 from src.model.thirdweb.instance import ThirdWeb
@@ -180,6 +181,18 @@ class Start:
                     )
                     await monadverse_mint.mint()
                     await self.sleep("monadverse_mint")
+
+                elif task == "shmonad":
+                    shmonad = Shmonad(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await shmonad.swaps()
+                    await self.sleep("shmonad")
+
 
                 elif task == "logs":
                     wallet_stats = WalletStats(self.config)

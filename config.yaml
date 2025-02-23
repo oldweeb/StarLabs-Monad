@@ -21,7 +21,7 @@ SETTINGS:
     PAUSE_BETWEEN_ATTEMPTS: [5, 15]
 
     # pause between swaps
-    PAUSE_BETWEEN_SWAPS: [10, 20]
+    PAUSE_BETWEEN_SWAPS: [20, 40]
 
     # pause in seconds between accounts
     RANDOM_PAUSE_BETWEEN_ACCOUNTS: [3, 15]
@@ -31,7 +31,7 @@ SETTINGS:
 
     # random pause before start of every account
     # to make sure that all accounts will be started at different times
-    RANDOM_INITIALIZATION_PAUSE: [3, 15]
+    RANDOM_INITIALIZATION_PAUSE: [5, 20]
 
     # pause multiplier for browser actions
     BROWSER_PAUSE_MULTIPLIER: 3
@@ -52,6 +52,7 @@ FLOW:
     # "monadverse_mint" - mint Monadverse NFT - https://www.monadverse.land/mint
     # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad
     # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
+    # "shmonad" - buy and stake shmon on shmonad.xyz | LOOK SETTINGS BELOW
 
     # EXAMPLE: tasks: ["connect_discord", "swaps"]
     # RANDOM TASKS EXAMPLE:
@@ -94,3 +95,10 @@ GASZIP:
     NETWORKS_TO_REFUEL_FROM: ["Arbitrum", "Base", "Optimism"]
     AMOUNT_TO_REFUEL: [0.0001, 0.00015]
     MINIMUM_BALANCE_TO_REFUEL: 0.5
+
+SHMONAD:
+    BUY_AND_STAKE_SHMON: true
+    UNSTAKE_AND_SELL_SHMON: true
+
+    # percent of balance to swap on shmonad.xyz
+    PERCENT_OF_BALANCE_TO_SWAP: [2, 3]

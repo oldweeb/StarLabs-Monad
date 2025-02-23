@@ -144,7 +144,7 @@ async def start():
     await asyncio.gather(*tasks)
 
     logger.success("Saved accounts and private keys to a file.")
-
+    
     print_wallets_stats(config)
 
 
@@ -217,15 +217,6 @@ async def wrapper(function, config: src.utils.config.Config, *args, **kwargs):
             await asyncio.sleep(pause)
 
     return result
-
-
-async def random_sleep(config: dict, task: str, address: str):
-    pause = random.randint(
-        config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
-        config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
-    )
-    logger.info(f"{address} | Sleeping for {pause} seconds after {task}...")
-    await asyncio.sleep(pause)
 
 
 def task_exists_in_config(task_name: str, tasks_list: list) -> bool:
