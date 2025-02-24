@@ -48,7 +48,7 @@ Deploys smart contracts on Owlto platform.
 
 1. Clone the repository
 ```bash
-git clone https://github.com/StarLabsTech/StarLabs-Monad.git
+git clone https://github.com/0xStarLabs/StarLabs-Monad.git
 cd StarLabs-Monad
 ```
 
