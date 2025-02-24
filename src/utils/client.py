@@ -2,7 +2,7 @@ import primp
 
 
 async def create_client(proxy: str) -> primp.AsyncClient:
-    session = primp.AsyncClient(impersonate="chrome_131", verify=False)
+    session = primp.AsyncClient(impersonate="chrome_131")
 
     if proxy:
         session.proxy = proxy
