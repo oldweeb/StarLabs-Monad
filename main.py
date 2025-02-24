@@ -11,9 +11,6 @@ import platform
 if platform.system() == "Windows":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-print(platform.system())
-input()
-
 
 async def main():
     configuration()
