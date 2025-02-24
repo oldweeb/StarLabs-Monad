@@ -3,6 +3,8 @@ import random
 
 from loguru import logger
 
+from src.model.disperse_from_one.instance import DisperseFromOneWallet
+from src.model.disperse_one_one.instance import DisperseOneOne
 import src.utils
 from src.utils.logs import report_error, report_success
 from src.utils.output import show_dev_info, show_logo
@@ -29,7 +31,28 @@ async def start():
 
     # Читаем все файлы
     proxies = src.utils.read_txt_file("proxies", "data/proxies.txt")
-    private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
+    if len(proxies) == 0:
+        logger.error("No proxies found in data/proxies.txt")
+        return
+    
+    if "disperse_farm_accounts" in config.FLOW.TASKS:
+        main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
+        farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
+        disperse_one_one = DisperseOneOne(main_keys, farm_keys, proxies, config)
+        await disperse_one_one.disperse()
+        return
+    elif "disperse_from_one_wallet" in config.FLOW.TASKS:
+        main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
+        farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
+        disperse_one_wallet = DisperseFromOneWallet(farm_keys[0], main_keys, proxies, config)
+        await disperse_one_wallet.disperse()
+        return
+
+
+    if "farm_faucet" in config.FLOW.TASKS:
+        private_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
+    else:
+        private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
 
     # Определяем диапазон аккаунтов
     start_index = config.SETTINGS.ACCOUNTS_RANGE[0]
@@ -57,37 +80,11 @@ async def start():
         # Python slice не включает последний элемент, поэтому +1
         accounts_to_process = private_keys[start_index - 1 : end_index]
 
-    # Читаем токены только для нужных аккаунтов
-    discord_tokens = []
-    if task_exists_in_config("connect_discord", config.FLOW.TASKS):
-        all_discord_tokens = src.utils.read_txt_file(
-            "discord tokens", "data/discord_tokens.txt"
-        )
-        if config.SETTINGS.EXACT_ACCOUNTS_TO_USE and start_index == 0:
-            # Если указаны конкретные аккаунты, берем токены для них
-            discord_tokens = (
-                [all_discord_tokens[i] for i in selected_indices]
-                if all_discord_tokens
-                else [""] * len(accounts_to_process)
-            )
-        else:
-            # Иначе берем по диапазону как раньше
-            discord_tokens = (
-                all_discord_tokens[start_index - 1 : end_index]
-                if all_discord_tokens
-                else [""] * len(accounts_to_process)
-            )
-    else:
-        discord_tokens = [""] * len(accounts_to_process)
-
-    # То же самое для email
+    
+    discord_tokens = [""] * len(accounts_to_process)
     emails = [""] * len(accounts_to_process)
 
     threads = config.SETTINGS.THREADS
-
-    if len(proxies) == 0:
-        logger.error("No proxies found in data/proxies.txt")
-        return
 
     # Подготавливаем прокси для выбранных аккаунтов
     cycled_proxies = [

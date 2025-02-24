@@ -1,53 +1,78 @@
-from termcolor import cprint
-from pyfiglet import figlet_format
-from colorama import init
-import sys
 import os
+from rich.console import Console
+from rich.text import Text
+from tabulate import tabulate
+from rich.table import Table
+from rich import box
+import msvcrt
+from typing import List
+from prompt_toolkit import Application
+from prompt_toolkit.layout import Layout, Window, HSplit
+from prompt_toolkit.layout.controls import FormattedTextControl
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.formatted_text import HTML
+from prompt_toolkit.styles import Style
 
 
 def show_logo():
-    """Clears the console and displays the STAR LABS logo"""
+    """Отображает стильный логотип STARLABS"""
+    # Очищаем экран
     os.system("cls" if os.name == "nt" else "clear")
-    init(strip=not sys.stdout.isatty())
 
-    logo = figlet_format(
-        "STARLABS", font="slant"
-    )  # Using slant as it's closer to ANSI Shadow
+    console = Console()
 
-    # Create a gradient-like effect with multiple blue shades
-    gradient_lines = logo.split("\n")
-    blue_shades = [
-        "\033[38;2;65;105;225m",  # RoyalBlue
-        "\033[38;2;30;144;255m",  # DodgerBlue
-        "\033[38;2;0;191;255m",  # DeepSkyBlue
-        "\033[38;2;135;206;235m",
-    ]  # SkyBlue
-    
+    # Создаем звездное небо со стилизованным логотипом
+    logo_text = """
+✦ ˚ . ⋆   ˚ ✦  ˚  ✦  . ⋆ ˚   ✦  . ⋆ ˚   ✦ ˚ . ⋆   ˚ ✦  ˚  ✦  . ⋆   ˚ ✦  ˚  ✦  . ⋆ ✦ ˚ 
+. ⋆ ˚ ✧  . ⋆ ˚  ✦ ˚ . ⋆  ˚ ✦ . ⋆ ˚  ✦ ˚ . ⋆  ˚ ✦ . ⋆ ˚  ✦ ˚ . ⋆  ˚ ✦ . ⋆  ˚ ✦ .✦ ˚ . 
+·˚ ⋆｡⋆｡. ★ ·˚ ★ ·˚ ⋆｡⋆｡. ★ ·˚ ★ ·˚ ⋆｡⋆｡. ★ ·˚ ★ ·˚ ⋆｡⋆｡. ★ ·˚ ⋆｡⋆｡. ★ ·˚ ★ ·˚ ·˚ ★ ·˚
+✧ ⋆｡˚✦ ⋆｡  ███████╗████████╗ █████╗ ██████╗ ██╗      █████╗ ██████╗ ███████╗  ⋆｡ ✦˚⋆｡ 
+★ ·˚ ⋆｡˚   ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗██║     ██╔══██╗██╔══██╗██╔════╝  ✦˚⋆｡ ˚· 
+⋆｡✧ ⋆ ★    ███████╗   ██║   ███████║██████╔╝██║     ███████║██████╔╝███████╗   ˚· ★ ⋆
+˚· ★ ⋆｡    ╚════██║   ██║   ██╔══██║██╔══██╗██║     ██╔══██║██╔══██╗╚════██║   ⋆ ✧｡⋆ 
+✧ ⋆｡ ˚·    ███████║   ██║   ██║  ██║██║  ██║███████╗██║  ██║██████╔╝███████║   ★ ·˚ ｡
+★ ·˚ ✧     ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝   ｡⋆ ✧ 
+·˚ ⋆｡⋆｡. ★ ·˚ ★ ·˚ ⋆｡⋆｡. ★ ·˚ ★ ·˚ ⋆｡⋆｡. ★ ·˚ ★ ·˚ ⋆｡⋆｡. ★ ·˚ ⋆｡⋆｡. ★ ·˚ ★ ·˚·˚ ⋆｡⋆｡.
+. ⋆ ˚ ✧  . ⋆ ˚  ✦ ˚ . ⋆  ˚ ✦ . ⋆ ˚  ✦ ˚ . ⋆  ˚ ✦ . ⋆ ˚  ✦ ˚ . ⋆  ˚ ✦ . ⋆  ˚ ✦ .. ⋆  ˚ 
+✦ ˚ . ⋆   ˚ ✦  ˚  ✦  . ⋆ ˚   ✦  . ⋆ ˚   ✦ ˚ . ⋆   ˚ ✦  ˚  ✦  . ⋆   ˚ ✦  ˚  ✦  . ⋆  ✦"""
+
+    # Создаем градиентный текст
+    gradient_logo = Text(logo_text)
+    gradient_logo.stylize("bold bright_cyan")
+
+    # Выводим с отступами
+    console.print(gradient_logo)
     print()
-    for i, line in enumerate(gradient_lines):
-        shade = blue_shades[min(i % len(blue_shades), len(blue_shades) - 1)]
-        print(f"{shade}{line}\033[0m")
 
 
 def show_dev_info():
     """Displays development and version information"""
-    info_box = [
-        "╔════════════════════════════════════════╗",
-        "║         StarLabs Monad 1.5             ║",
-        "║----------------------------------------║",
-        "║                                        ║",
-        "║  GitHub: https://github.com/StarLabs   ║",
-        "║                                        ║",
-        "║  Developer: https://t.me/StarLabsTech  ║",
-        "║  Chat: https://t.me/StarLabsChat       ║",
-        "║                                        ║",
-        "╚════════════════════════════════════════╝",
-    ]
+    console = Console()
 
-    # Light blue color for the info box
-    blue_color = "\033[38;2;0;191;255m"  # DeepSkyBlue
+    # Создаем красивую таблицу
+    table = Table(
+        show_header=False,
+        box=box.DOUBLE,
+        border_style="bright_cyan",
+        pad_edge=False,
+        width=49,
+        highlight=True,
+    )
 
-    for line in info_box:
-        print(f"{blue_color}{line}\033[0m")
+    # Добавляем колонки
+    table.add_column("Content", style="bright_cyan", justify="center")
+
+    # Добавляем строки с контактами
+    table.add_row("✨ StarLabs Monad Bot 1.6 ✨")
+    table.add_row("─" * 43)
+    table.add_row("")
+    table.add_row("⚡ GitHub: [link]https://github.com/StarLabs[/link]")
+    table.add_row("👤 Dev: [link]https://t.me/StarLabsTech[/link]")
+    table.add_row("💬 Chat: [link]https://t.me/StarLabsChat[/link]")
+    table.add_row("")
+
+    # Выводим таблицу с отступом
+    print("   ", end="")
     print()
-
+    console.print(table)
+    print()

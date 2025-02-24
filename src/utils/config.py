@@ -88,6 +88,11 @@ class OrbiterConfig:
 
 
 @dataclass
+class DisperseConfig:
+    MIN_BALANCE_FOR_DISPERSE: Tuple[float, float]
+
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     FLOW: FlowConfig
@@ -99,6 +104,7 @@ class Config:
     SHMONAD: ShmonadConfig
     ACCOUNTABLE: AccountableConfig
     ORBITER: OrbiterConfig
+    DISPERSE: DisperseConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -171,6 +177,9 @@ class Config:
                 BRIDGE_ALL=data["ORBITER"]["BRIDGE_ALL"],
                 WAIT_FOR_FUNDS_TO_ARRIVE=data["ORBITER"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
                 MAX_WAIT_TIME=data["ORBITER"]["MAX_WAIT_TIME"],
+            ),
+            DISPERSE=DisperseConfig(
+                MIN_BALANCE_FOR_DISPERSE=tuple(data["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"]),
             ),
         )
 

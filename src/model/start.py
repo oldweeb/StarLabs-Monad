@@ -58,6 +58,10 @@ class Start:
                 self.session,
             )
 
+            if "farm_faucet" in self.config.FLOW.TASKS:
+                await monad.faucet()
+                return True
+
             # Заранее определяем все задачи
             planned_tasks = []
             task_plan_msg = []
