@@ -271,6 +271,7 @@ class Capsolver:
         """Создает задачу на решение капчи"""
         data = {
             "clientKey": self.api_key,
+            "appId": "0F6B2D90-7CA4-49AC-B0D3-D32C70238AD8",
             "task": {
                 "type": "ReCaptchaV3Task" if self.proxy else "ReCaptchaV3TaskProxyLess",
                 "websiteURL": pageurl,
