@@ -228,8 +228,14 @@ class AmbientDex:
                 # Swap all tokens to native
                 for token_in, balance in tokens_to_swap:
                     try:
-                        # Use full balance for token
                         decimals = AMBIENT_TOKENS[token_in.lower()]["decimals"]
+                        
+                        # Special handling for SETH token
+                        if token_in.lower() == "seth":
+                            # Leave a small random amount between 0.00001 and 0.0001
+                            leave_amount = random.uniform(0.00001, 0.0001)
+                            balance = balance - leave_amount
+                            
                         amount_wei = int(Decimal(str(balance)) * Decimal(str(10 ** decimals)))
                         
                         # Approve token spending
@@ -271,6 +277,12 @@ class AmbientDex:
                 # For other tokens, use full balance
                 decimals = AMBIENT_TOKENS[token_in.lower()]["decimals"]
                 balance_decimal = Decimal(str(balance))
+                
+                # Special handling for SETH - only leave small random amount
+                if token_in.lower() == "seth":
+                    leave_amount = random.uniform(0.00001, 0.0001)
+                    balance_decimal = balance_decimal - Decimal(str(leave_amount))
+                
                 amount_wei = int(balance_decimal * Decimal(str(10 ** decimals)))
                 amount_token = float(balance_decimal)
                 

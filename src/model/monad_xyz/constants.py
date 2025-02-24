@@ -27,8 +27,14 @@ AMBIENT_TOKENS = {
     "wbtc": {
         "address": "0xcf5a6076cfa32686c0Df13aBaDa2b40dec133F1d",
         "decimals": 8
+    },
+    "seth": {
+        "address": "0x836047a99e11F376522B447bffb6e3495Dd0637c",
+        "decimals": 18
     }
 }
+
+
 BEAN_CONTRACT = "0xCa810D095e90Daae6e867c19DF6D9A8C56db2c89"
 
 BEAN_TOKENS = {
