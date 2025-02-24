@@ -39,7 +39,6 @@ SETTINGS:
 # --------------------------- #
 FLOW:
     # tasks to do.
-    # "connect_discord" - connect discord account to monad.xyz
     # "swaps" - https://testnet.monad.xyz/ page token swaps
     # "apriori" - stake MON token
     # "magma" - stake MON token on Magma
@@ -56,13 +55,13 @@ FLOW:
     # "accountable" - mint accountable nft
     # "orbiter" - bridge ETH from Sepolia to Monad via Orbiter
 
-    # EXAMPLE: tasks: ["connect_discord", "swaps"]
+    # EXAMPLE: tasks: ["gaszip", "swaps"]
     # RANDOM TASKS EXAMPLE:
-    # TASKS: ["swaps", ["bean", "logs"], "connect_discord"]
+    # TASKS: ["swaps", ["bean", "logs"], "collect_all_to_monad"]
     # in this case, the tasks will be executed in the following order:
     # 1. swaps
     # 2. bean or logs (randomly)
-    # 3. connect_discord
+    # 3. collect_all_to_monad
     TASKS:
         [
             "gaszip",
