@@ -232,6 +232,10 @@ class AmbientDex:
                         
                         # Special handling for SETH token
                         if token_in.lower() == "seth":
+                            # Skip if SETH balance is too low
+                            if balance < 0.001:
+                                logger.info(f"Skipping SETH collection due to low balance ({balance} SETH)")
+                                continue
                             # Leave a small random amount between 0.00001 and 0.0001
                             leave_amount = random.uniform(0.00001, 0.0001)
                             balance = balance - leave_amount
