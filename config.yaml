@@ -77,7 +77,6 @@ FLOW:
     PERCENT_OF_BALANCE_TO_SWAP: [10, 15]
 
 FAUCET:
-    THIRDWEB: false
     MONAD_XYZ: true
 
     CAPSOLVER_API_KEY: "CAP-"

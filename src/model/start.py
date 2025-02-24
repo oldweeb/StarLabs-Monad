@@ -87,17 +87,17 @@ class Start:
                         await monad.faucet()
                         await self.sleep("monad_faucet")
 
-                    if self.config.FAUCET.THIRDWEB:
-                        thirdweb = ThirdWeb(
-                            self.account_index,
-                            self.proxy,
-                            self.private_key,
-                            self.email,
-                            self.config,
-                            self.session,
-                        )
-                        await thirdweb.faucet()
-                        await self.sleep("thirdweb_faucet")
+                    # if self.config.FAUCET.THIRDWEB:
+                    #     thirdweb = ThirdWeb(
+                    #         self.account_index,
+                    #         self.proxy,
+                    #         self.private_key,
+                    #         self.email,
+                    #         self.config,
+                    #         self.session,
+                    #     )
+                    #     await thirdweb.faucet()
+                    #     await self.sleep("thirdweb_faucet")
 
                 elif task == "swaps":
                     await monad.swaps(type="swaps")

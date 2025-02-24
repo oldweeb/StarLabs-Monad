@@ -81,25 +81,7 @@ async def start():
         discord_tokens = [""] * len(accounts_to_process)
 
     # То же самое для email
-    emails = []
-    if config.FAUCET.THIRDWEB:
-        all_emails = src.utils.read_txt_file("emails", "data/emails.txt")
-        if config.SETTINGS.EXACT_ACCOUNTS_TO_USE and start_index == 0:
-            # Если указаны конкретные аккаунты, берем emails для них
-            emails = (
-                [all_emails[i] for i in selected_indices]
-                if all_emails
-                else [""] * len(accounts_to_process)
-            )
-        else:
-            # Иначе берем по диапазону как раньше
-            emails = (
-                all_emails[start_index - 1 : end_index]
-                if all_emails
-                else [""] * len(accounts_to_process)
-            )
-    else:
-        emails = [""] * len(accounts_to_process)
+    emails = [""] * len(accounts_to_process)
 
     threads = config.SETTINGS.THREADS
 
