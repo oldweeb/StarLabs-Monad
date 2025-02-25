@@ -6,7 +6,7 @@ import random
 
 from src.utils.config import Config
 from src.utils.constants import RPC_URL
-from .utils import get_monad_balance, WalletInfo, get_all_balances
+from .utils import get_monad_balance, WalletInfo
 
 
 class DisperseFromOneWallet:
@@ -21,58 +21,88 @@ class DisperseFromOneWallet:
 
     async def disperse(self):
         try:
-            # Get farm wallet info
+            logger.info("Starting disperse from one wallet process")
+            # Get farm wallet account
             farm_account = self.web3.eth.account.from_key(self.farm_key)
-            farm_balance_wei, farm_balance_eth = await get_monad_balance(
-                self.web3, farm_account.address
-            )
+            logger.info(f"Farm wallet address: {farm_account.address[:8]}...")
 
-            if farm_balance_eth is None or farm_balance_eth <= 0:
-                logger.error("Farm wallet has no balance")
-                return False
-
-            # Get main wallets info
-            main_wallets = await get_all_balances(
-                web3=self.web3,
-                private_keys=self.main_keys,
-                max_threads=1,  # Use single thread
-            )
-
-            min_balance_range = self.config.DISPERSE.MIN_BALANCE_FOR_DISPERSE
             success_count = 0
             total_transfers = 0
 
             # Get initial nonce
             nonce = await self.web3.eth.get_transaction_count(farm_account.address)
 
-            for wallet in main_wallets:
-                # Generate random target balance for each wallet
+            logger.info(f"Processing {len(self.main_keys)} main wallets")
+            for index, main_key in enumerate(self.main_keys):
+                logger.info(f"Processing wallet {index+1}/{len(self.main_keys)}")
+
+                # Check farm wallet balance for each iteration
+                farm_balance_wei, farm_balance_eth = await get_monad_balance(
+                    self.web3, farm_account.address
+                )
+                logger.info(f"Farm wallet balance: {farm_balance_eth} MON")
+
+                if farm_balance_eth is None or farm_balance_eth <= 0:
+                    logger.error("Farm wallet has no balance")
+                    break
+
+                # Get main wallet info
+                main_account = self.web3.eth.account.from_key(main_key)
+                logger.info(
+                    f"Checking balance for wallet {main_account.address[:8]}..."
+                )
+                main_balance_wei, main_balance_eth = await get_monad_balance(
+                    self.web3, main_account.address
+                )
+
+                if main_balance_eth is None:
+                    logger.error(
+                        f"Failed to get balance for wallet {main_account.address[:8]}..."
+                    )
+                    continue
+
+                logger.info(
+                    f"Wallet {main_account.address[:8]}... balance: {main_balance_eth} MON"
+                )
+
+                # Generate random target balance
+                min_balance_range = self.config.DISPERSE.MIN_BALANCE_FOR_DISPERSE
                 target_balance = random.uniform(
                     min_balance_range[0], min_balance_range[1]
                 )
+                logger.info(f"Target balance: {target_balance} MON")
 
                 # Skip if wallet already has enough balance
-                if wallet.balance_eth >= target_balance:
+                if main_balance_eth >= target_balance:
+                    logger.info(
+                        f"Wallet {main_account.address[:8]}... already has sufficient balance: {main_balance_eth} MON"
+                    )
                     continue
 
-                amount_needed = target_balance - wallet.balance_eth
+                amount_needed = target_balance - main_balance_eth
+                logger.info(f"Amount needed: {amount_needed} MON")
 
                 # Check if farm wallet has enough balance
                 if amount_needed > farm_balance_eth:
                     logger.warning(
-                        "Farm wallet doesn't have enough balance for remaining transfers"
+                        f"Farm wallet doesn't have enough balance ({farm_balance_eth} MON) for transfer of {amount_needed} MON"
                     )
-                    break
+                    continue
 
                 # Process transfer
+                logger.info(
+                    f"Initiating transfer of {amount_needed} MON to {main_account.address[:8]}..."
+                )
                 success = await self.transfer_to_wallet(
-                    farm_account, wallet.address, amount_needed, nonce
+                    farm_account, main_account.address, amount_needed, nonce
                 )
 
                 if success:
                     success_count += 1
-                    farm_balance_eth -= amount_needed
                     nonce += 1
+                    logger.info(f"Transfer successful. New nonce: {nonce}")
+                else:
+                    logger.error("Transfer failed")
 
                 total_transfers += 1
 
