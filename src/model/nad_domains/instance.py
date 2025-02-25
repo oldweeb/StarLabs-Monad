@@ -137,12 +137,6 @@ class NadDomains:
             
             # Use fixed fee of 0.02 MON
             fee = self.web3.to_wei(0.02, 'ether')
-            logger.info(f"[{self.account_index}] Using fixed registration fee of 0.02 MON for {name}")
-            
-            # Debug log the signature and parameters
-            logger.debug(f"[{self.account_index}] Signature: {signature_data['signature']}")
-            logger.debug(f"[{self.account_index}] Nonce: {signature_data['nonce']}")
-            logger.debug(f"[{self.account_index}] Deadline: {signature_data['deadline']}")
             
             register_data = [
                 name,                                 # name
