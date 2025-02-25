@@ -273,10 +273,11 @@ class Capsolver:
             "clientKey": self.api_key,
             "appId": "0F6B2D90-7CA4-49AC-B0D3-D32C70238AD8",
             "task": {
-                "type": "ReCaptchaV3Task" if self.proxy else "ReCaptchaV3TaskProxyLess",
+                "type": "ReCaptchaV2Task",
                 "websiteURL": pageurl,
                 "websiteKey": sitekey,
-                "pageAction": "drip_request",
+                "isInvisible": False,
+                # "pageAction": "drip_request",
             },
         }
 
