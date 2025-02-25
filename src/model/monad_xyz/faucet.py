@@ -90,6 +90,11 @@ async def faucet(
                             f"[{account_index}] | FAUCET DOES NOT WORK, QUICKNODE IS DOWN"
                         )
                         continue
+                    elif "Over Enterprise free quota" in response.text:
+                        logger.error(
+                            f"[{account_index}] | MONAD IS SHIT, FAUCET DOES NOT WORK, TRY LATER"
+                        )
+                        return False
                     else:
                         logger.error(
                             f"[{account_index}] | Failed to get tokens from faucet: {response.text}"
