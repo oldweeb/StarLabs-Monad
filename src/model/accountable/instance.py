@@ -58,9 +58,11 @@ class Accountable:
 
         for attempt in range(max_retries):
             try:
+                # Add 15 second timeout to prevent request hanging
                 response = await self.session.post(
                     'https://game.accountable.capital/api/generate-signature-mint',
                     json=json_data,
+                    timeout=15  # Add 15 second timeout
                 )
                 
                 if response.status_code != 200:
