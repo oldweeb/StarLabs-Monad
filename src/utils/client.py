@@ -7,7 +7,7 @@ async def create_client(proxy: str) -> primp.AsyncClient:
     if proxy:
         session.proxy = proxy
 
-    session.timeout_seconds = 30
+    session.timeout = 30
 
     session.headers.update(HEADERS)
 
