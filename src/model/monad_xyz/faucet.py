@@ -85,6 +85,11 @@ async def faucet(
                         logger.error(
                             f"[{account_index}] | Failed to get tokens from faucet: server is not responding, wait..."
                         )
+                    elif "Server error on QuickNode API" in response.text:
+                        logger.error(
+                            f"[{account_index}] | FAUCET DOES NOT WORK, QUICKNODE IS DOWN"
+                        )
+                        continue
                     else:
                         logger.error(
                             f"[{account_index}] | Failed to get tokens from faucet: {response.text}"
