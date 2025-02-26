@@ -25,6 +25,13 @@ def configuration():
         colorize=True,
         format="<light-cyan>{time:HH:mm:ss}</light-cyan> | <level>{level: <8}</level> | <fg #ffffff>{name}:{line}</fg #ffffff> - <bold>{message}</bold>",
     )
+    logger.add(
+        "logs/app.log",
+        rotation="10 MB",
+        retention="1 month",
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{line} - {message}",
+        level="INFO",
+    )
 
 
 if __name__ == "__main__":

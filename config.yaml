@@ -51,12 +51,12 @@ FLOW:
     # "swaps" - https://testnet.monad.xyz/ page token swaps
     # "bean" - swap tokens on Bean DEX
     # "ambient" - swap tokens on Ambient DEX
-    # "bima" - lending
     
     # STAKES
     # "apriori" - stake MON token
     # "magma" - stake MON token on Magma
     # "shmonad" - buy and stake shmon on shmonad.xyz | LOOK SETTINGS BELOW
+    # "kintsu" - stake MON token on https://kintsu.xyz/
 
     # MINT
     # "accountable" - mint accountable nft
@@ -69,6 +69,7 @@ FLOW:
     # OTHER
     # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
     # "nad_domains" - register random domain on nad.domains
+    # DOES NOT WORK, WAIT FOR UPDATE -"bima" - lending
     
     # EXAMPLE: tasks: ["gaszip", "swaps"]
     # RANDOM TASKS EXAMPLE:
@@ -79,9 +80,7 @@ FLOW:
     # 3. collect_all_to_monad
     TASKS:
         [
-            ["bean", "swaps"],
-            "collect_all_to_monad",
-            "accountable"
+            "faucet"
         ]
 
     # number of swaps on monad.xyz
@@ -109,6 +108,10 @@ APRIORI:
 MAGMA:
     AMOUNT_TO_STAKE: [0.0001, 0.0003]
 
+KINTSU:
+    # MINIMUM IS 0.01 $MON
+    AMOUNT_TO_STAKE: [0.01, 0.02]
+
 BIMA:
     LEND: true
     PERCENT_OF_BALANCE_TO_LEND: [20, 30]
@@ -135,4 +138,3 @@ ORBITER:
     BRIDGE_ALL: false
     WAIT_FOR_FUNDS_TO_ARRIVE: true
     MAX_WAIT_TIME: 999999999
-

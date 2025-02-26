@@ -31,188 +31,191 @@ class MonadXYZ:
         self.wallet = Account.from_key(private_key)
 
     async def swaps(self, type: str):
-        if type == "swaps":
-            number_of_swaps = random.randint(
-                self.config.FLOW.NUMBER_OF_SWAPS[0], self.config.FLOW.NUMBER_OF_SWAPS[1]
-            )
-            logger.info(f"[{self.account_index}] | Will perform {number_of_swaps} swaps")
+        try:
+            if type == "swaps":
+                number_of_swaps = random.randint(
+                    self.config.FLOW.NUMBER_OF_SWAPS[0], self.config.FLOW.NUMBER_OF_SWAPS[1]
+                )
+                logger.info(f"[{self.account_index}] | Will perform {number_of_swaps} swaps")
+                
+                for swap_num in range(number_of_swaps):
+                    success = False
+                    for retry in range(self.config.SETTINGS.ATTEMPTS):
+                        try:
+                            swapper = MonadSwap(self.private_key, self.proxy)
+                            amount = random.randint(
+                                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
+                                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
+                            )
+                            random_token = random.choice(["DAK", "YAKI", "CHOG"])
+                            logger.info(
+                                f"[{self.account_index}] | Swapping {amount}% of balance to {random_token}"
+                            )
+
+                            await swapper.swap(
+                                percentage_to_swap=amount, token_out=random_token,
+                            )
+                            random_pause = random.randint(
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                            )
+                            logger.success(
+                                f"[{self.account_index}] | Swapped {amount}% of balance to {random_token}. Swap {swap_num + 1}/{number_of_swaps}. Next swap in {random_pause} seconds"
+                            )
+                            await asyncio.sleep(random_pause)
+                            success = True
+                            break  # Break retry loop on success
+                            
+                        except Exception as e:
+                            logger.error(
+                                f"[{self.account_index}] | Error swap in monad.xyz ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}"
+                            )
+                            if retry == self.config.SETTINGS.ATTEMPTS - 1:
+                                raise  # Re-raise if all retries failed
+                            continue
+                    
+                    if not success:
+                        logger.error(f"[{self.account_index}] | Failed to complete swap {swap_num + 1}/{number_of_swaps} after all retries")
+                        break
+
+                return True
             
-            for swap_num in range(number_of_swaps):
+            elif type == "ambient":
+                number_of_swaps = random.randint(
+                    self.config.FLOW.NUMBER_OF_SWAPS[0], self.config.FLOW.NUMBER_OF_SWAPS[1]
+                )
+                logger.info(f"[{self.account_index}] | Will perform {number_of_swaps} Ambient swaps")
+                
+                for swap_num in range(number_of_swaps):
+                    success = False
+                    for retry in range(self.config.SETTINGS.ATTEMPTS):
+                        try:
+                            swapper = AmbientDex(self.private_key, self.proxy)
+                            amount = random.randint(
+                                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
+                                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
+                            )
+                            await swapper.swap(
+                                percentage_to_swap=amount,
+                                type="swap",
+                            )
+                            random_pause = random.randint(
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                            )
+                            logger.success(
+                                f"[{self.account_index}] | Completed Ambient swap {swap_num + 1}/{number_of_swaps}. Next swap in {random_pause} seconds"
+                            )
+                            await asyncio.sleep(random_pause)
+                            success = True
+                            break  # Break retry loop on success
+                            
+                        except Exception as e:
+                            logger.error(
+                                f"[{self.account_index}] | Error swap in ambient ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}"
+                            )
+                            if retry == self.config.SETTINGS.ATTEMPTS - 1:
+                                raise  # Re-raise if all retries failed
+                            continue
+                    
+                    if not success:
+                        logger.error(f"[{self.account_index}] | Failed to complete swap {swap_num + 1}/{number_of_swaps} after all retries")
+                        break
+
+                return True
+            
+            elif type == "bean":
+                number_of_swaps = random.randint(
+                    self.config.FLOW.NUMBER_OF_SWAPS[0], self.config.FLOW.NUMBER_OF_SWAPS[1]
+                )
+                logger.info(f"[{self.account_index}] | Will perform {number_of_swaps} Bean swaps")
+                
+                for swap_num in range(number_of_swaps):
+                    success = False
+                    for retry in range(self.config.SETTINGS.ATTEMPTS):
+                        try:
+                            swapper = BeanDex(self.private_key, self.proxy)
+                            amount = random.randint(
+                                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
+                                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
+                            )
+                            await swapper.swap(
+                                percentage_to_swap=amount,
+                                type="swap",
+                            )
+                            random_pause = random.randint(
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                            )
+                            logger.success(
+                                f"[{self.account_index}] | Completed Bean swap {swap_num + 1}/{number_of_swaps}. Next swap in {random_pause} seconds"
+                            )
+                            await asyncio.sleep(random_pause)
+                            success = True
+                            break  # Break retry loop on success
+                            
+                        except Exception as e:
+                            logger.error(
+                                f"[{self.account_index}] | Error swap in bean ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}"
+                            )
+                            if retry == self.config.SETTINGS.ATTEMPTS - 1:
+                                raise  # Re-raise if all retries failed
+                            continue
+                    
+                    if not success:
+                        logger.error(f"[{self.account_index}] | Failed to complete swap {swap_num + 1}/{number_of_swaps} after all retries")
+                        break
+
+                return True
+            
+            elif type == "collect_all_to_monad":
                 success = False
                 for retry in range(self.config.SETTINGS.ATTEMPTS):
                     try:
+                        # First try collecting via MonadSwap
                         swapper = MonadSwap(self.private_key, self.proxy)
-                        amount = random.randint(
-                            self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
-                            self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
-                        )
-                        random_token = random.choice(["DAK", "YAKI", "CHOG"])
-                        logger.info(
-                            f"[{self.account_index}] | Swapping {amount}% of balance to {random_token}"
-                        )
-
                         await swapper.swap(
-                            percentage_to_swap=amount, token_out=random_token,
-                        )
-                        random_pause = random.randint(
-                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
-                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                            percentage_to_swap=100, token_out="native",
                         )
                         logger.success(
-                            f"[{self.account_index}] | Swapped {amount}% of balance to {random_token}. Swap {swap_num + 1}/{number_of_swaps}. Next swap in {random_pause} seconds"
+                            f"[{self.account_index}] | Collected all to monad.xyz"
                         )
-                        await asyncio.sleep(random_pause)
-                        success = True
-                        break  # Break retry loop on success
                         
-                    except Exception as e:
-                        logger.error(
-                            f"[{self.account_index}] | Error swap in monad.xyz ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}"
-                        )
-                        if retry == self.config.SETTINGS.ATTEMPTS - 1:
-                            raise  # Re-raise if all retries failed
-                        continue
-                
-                if not success:
-                    logger.error(f"[{self.account_index}] | Failed to complete swap {swap_num + 1}/{number_of_swaps} after all retries")
-                    break
-
-            return True
-        
-        elif type == "ambient":
-            number_of_swaps = random.randint(
-                self.config.FLOW.NUMBER_OF_SWAPS[0], self.config.FLOW.NUMBER_OF_SWAPS[1]
-            )
-            logger.info(f"[{self.account_index}] | Will perform {number_of_swaps} Ambient swaps")
-            
-            for swap_num in range(number_of_swaps):
-                success = False
-                for retry in range(self.config.SETTINGS.ATTEMPTS):
-                    try:
-                        swapper = AmbientDex(self.private_key, self.proxy)
-                        amount = random.randint(
-                            self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
-                            self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
-                        )
-                        await swapper.swap(
-                            percentage_to_swap=amount,
-                            type="swap",
-                        )
-                        random_pause = random.randint(
-                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
-                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                        # Then try collecting via Ambient
+                        ambient_swapper = AmbientDex(self.private_key, self.proxy)
+                        await ambient_swapper.swap(
+                            percentage_to_swap=100, type="collect"
                         )
                         logger.success(
-                            f"[{self.account_index}] | Completed Ambient swap {swap_num + 1}/{number_of_swaps}. Next swap in {random_pause} seconds"
+                            f"[{self.account_index}] | Collected all tokens via Ambient"
                         )
-                        await asyncio.sleep(random_pause)
-                        success = True
-                        break  # Break retry loop on success
                         
-                    except Exception as e:
-                        logger.error(
-                            f"[{self.account_index}] | Error swap in ambient ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}"
-                        )
-                        if retry == self.config.SETTINGS.ATTEMPTS - 1:
-                            raise  # Re-raise if all retries failed
-                        continue
-                
-                if not success:
-                    logger.error(f"[{self.account_index}] | Failed to complete swap {swap_num + 1}/{number_of_swaps} after all retries")
-                    break
-
-            return True
-        
-        elif type == "bean":
-            number_of_swaps = random.randint(
-                self.config.FLOW.NUMBER_OF_SWAPS[0], self.config.FLOW.NUMBER_OF_SWAPS[1]
-            )
-            logger.info(f"[{self.account_index}] | Will perform {number_of_swaps} Bean swaps")
-            
-            for swap_num in range(number_of_swaps):
-                success = False
-                for retry in range(self.config.SETTINGS.ATTEMPTS):
-                    try:
-                        swapper = BeanDex(self.private_key, self.proxy)
-                        amount = random.randint(
-                            self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
-                            self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
-                        )
-                        await swapper.swap(
-                            percentage_to_swap=amount,
-                            type="swap",
-                        )
-                        random_pause = random.randint(
-                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
-                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                        # Then try collecting via Bean
+                        bean_swapper = BeanDex(self.private_key, self.proxy)
+                        await bean_swapper.swap(
+                            percentage_to_swap=100, type="collect"
                         )
                         logger.success(
-                            f"[{self.account_index}] | Completed Bean swap {swap_num + 1}/{number_of_swaps}. Next swap in {random_pause} seconds"
+                            f"[{self.account_index}] | Collected all tokens via Bean"
                         )
-                        await asyncio.sleep(random_pause)
                         success = True
-                        break  # Break retry loop on success
+                        break  # Break the retry loop on success
                         
                     except Exception as e:
-                        logger.error(
-                            f"[{self.account_index}] | Error swap in bean ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}"
+                        random_pause = random.randint(
+                            self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[0],
+                            self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[1],
                         )
-                        if retry == self.config.SETTINGS.ATTEMPTS - 1:
-                            raise  # Re-raise if all retries failed
+                        logger.error(
+                            f"[{self.account_index}] | Error collecting tokens ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}. Next collect in {random_pause} seconds"
+                        )
+                        await asyncio.sleep(random_pause)
                         continue
-                
-                if not success:
-                    logger.error(f"[{self.account_index}] | Failed to complete swap {swap_num + 1}/{number_of_swaps} after all retries")
-                    break
-
-            return True
-        
-        elif type == "collect_all_to_monad":
-            success = False
-            for retry in range(self.config.SETTINGS.ATTEMPTS):
-                try:
-                    # First try collecting via MonadSwap
-                    swapper = MonadSwap(self.private_key, self.proxy)
-                    await swapper.swap(
-                        percentage_to_swap=100, token_out="native",
-                    )
-                    logger.success(
-                        f"[{self.account_index}] | Collected all to monad.xyz"
-                    )
                     
-                    # Then try collecting via Ambient
-                    ambient_swapper = AmbientDex(self.private_key, self.proxy)
-                    await ambient_swapper.swap(
-                        percentage_to_swap=100, type="collect"
-                    )
-                    logger.success(
-                        f"[{self.account_index}] | Collected all tokens via Ambient"
-                    )
-                    
-                    # Then try collecting via Bean
-                    bean_swapper = BeanDex(self.private_key, self.proxy)
-                    await bean_swapper.swap(
-                        percentage_to_swap=100, type="collect"
-                    )
-                    logger.success(
-                        f"[{self.account_index}] | Collected all tokens via Bean"
-                    )
-                    success = True
-                    break  # Break the retry loop on success
-                    
-                except Exception as e:
-                    random_pause = random.randint(
-                        self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[0],
-                        self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[1],
-                    )
-                    logger.error(
-                        f"[{self.account_index}] | Error collecting tokens ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}. Next collect in {random_pause} seconds"
-                    )
-                    await asyncio.sleep(random_pause)
-                    continue
-                
-            return success  # Return True if succeeded, False if all retries failed
-        return False
+                return success  # Return True if succeeded, False if all retries failed
+        except Exception as e:
+            logger.error(f"[{self.account_index}] | Error swaps: {e}")
+            return False
 
     async def faucet(self):
         try:

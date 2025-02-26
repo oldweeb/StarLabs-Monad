@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.kintsu.instance import Kintsu
 from src.model.orbiter.instance import Orbiter
 from src.model.accountable.instance import Accountable
 from src.model.shmonad.instance import Shmonad
@@ -239,6 +240,18 @@ class Start:
                     )
                     await nad_domains.register_random_domain()
                     await self.sleep("nad_domains")
+
+                elif task == "kintsu":
+                    kintsu = Kintsu(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await kintsu.stake_mon()
+                    await self.sleep("kintsu")
+
 
             return True
         except Exception as e:

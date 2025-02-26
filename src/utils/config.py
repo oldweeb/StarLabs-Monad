@@ -16,7 +16,8 @@ class SettingsConfig:
     RANDOM_PAUSE_BETWEEN_ACCOUNTS: Tuple[int, int]
     RANDOM_PAUSE_BETWEEN_ACTIONS: Tuple[int, int]
     BROWSER_PAUSE_MULTIPLIER: float
-    RANDOM_INITIALIZATION_PAUSE: Tuple[int, int]    
+    RANDOM_INITIALIZATION_PAUSE: Tuple[int, int]
+
 
 @dataclass
 class FlowConfig:
@@ -32,6 +33,11 @@ class AprioriConfig:
 
 @dataclass
 class MagmaConfig:
+    AMOUNT_TO_STAKE: Tuple[float, float]
+
+
+@dataclass
+class KintsuConfig:
     AMOUNT_TO_STAKE: Tuple[float, float]
 
 
@@ -70,11 +76,13 @@ class GaszipConfig:
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
 
+
 @dataclass
 class ShmonadConfig:
     PERCENT_OF_BALANCE_TO_SWAP: Tuple[int, int]
     BUY_AND_STAKE_SHMON: bool
     UNSTAKE_AND_SELL_SHMON: bool
+
 
 @dataclass
 class AccountableConfig:
@@ -100,6 +108,7 @@ class Config:
     FLOW: FlowConfig
     APRIORI: AprioriConfig
     MAGMA: MagmaConfig
+    KINTSU: KintsuConfig
     BIMA: BimaConfig
     FAUCET: FaucetConfig
     GASZIP: GaszipConfig
@@ -150,6 +159,9 @@ class Config:
             MAGMA=MagmaConfig(
                 AMOUNT_TO_STAKE=tuple(data["MAGMA"]["AMOUNT_TO_STAKE"]),
             ),
+            KINTSU=KintsuConfig(
+                AMOUNT_TO_STAKE=tuple(data["KINTSU"]["AMOUNT_TO_STAKE"]),
+            ),
             BIMA=BimaConfig(
                 LEND=data["BIMA"]["LEND"],
                 PERCENT_OF_BALANCE_TO_LEND=tuple(
@@ -169,7 +181,9 @@ class Config:
                 MAX_WAIT_TIME=data["GASZIP"]["MAX_WAIT_TIME"],
             ),
             SHMONAD=ShmonadConfig(
-                PERCENT_OF_BALANCE_TO_SWAP=tuple(data["SHMONAD"]["PERCENT_OF_BALANCE_TO_SWAP"]),
+                PERCENT_OF_BALANCE_TO_SWAP=tuple(
+                    data["SHMONAD"]["PERCENT_OF_BALANCE_TO_SWAP"]
+                ),
                 BUY_AND_STAKE_SHMON=data["SHMONAD"]["BUY_AND_STAKE_SHMON"],
                 UNSTAKE_AND_SELL_SHMON=data["SHMONAD"]["UNSTAKE_AND_SELL_SHMON"],
             ),
@@ -183,7 +197,9 @@ class Config:
                 MAX_WAIT_TIME=data["ORBITER"]["MAX_WAIT_TIME"],
             ),
             DISPERSE=DisperseConfig(
-                MIN_BALANCE_FOR_DISPERSE=tuple(data["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"]),
+                MIN_BALANCE_FOR_DISPERSE=tuple(
+                    data["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"]
+                ),
             ),
         )
 
