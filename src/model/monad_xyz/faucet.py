@@ -23,7 +23,7 @@ async def faucet(
             )
             for _ in range(3):
                 result = await solver.solve_recaptcha(
-                    "6LdTQOEqAAAAAFj6UAU3Jd_0bInJYWnxYM_TZoSr",
+                    "6Lcwt-IqAAAAAFRPmCa63N5IEc5SKzSCjtZ1vjzn",
                     "https://testnet.monad.xyz/",
                     True,
                 )
