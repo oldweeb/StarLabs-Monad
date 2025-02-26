@@ -94,6 +94,11 @@ async def faucet(
                             f"[{account_index}] | MONAD IS SHIT, FAUCET DOES NOT WORK, TRY LATER"
                         )
                         return False
+                    elif "invalid-keys" in response.text:
+                        logger.error(
+                            f"[{account_index}] | PLEASE UPDATE THE BOT USING GITHUB"
+                        )
+                        return False
                     else:
                         logger.error(
                             f"[{account_index}] | Failed to get tokens from faucet: {response.text}"
