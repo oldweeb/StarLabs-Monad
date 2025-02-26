@@ -68,6 +68,12 @@ class AmbientDex:
                 if balance > 0:
                     decimals = AMBIENT_TOKENS[token]["decimals"]
                     amount = float(Decimal(str(balance)) / Decimal(str(10 ** decimals)))
+                    
+                    # Skip SETH and WETH with low balances
+                    if token.lower() in ["seth", "weth"] and amount < 0.001:
+                        # logger.info(f"Skipping {token} with low balance ({amount}) for potential swaps")
+                        continue
+                        
                     tokens_with_balance.append((token, amount))
                 
             except Exception as e:
@@ -232,14 +238,10 @@ class AmbientDex:
                         
                         # Special handling for SETH token
                         if token_in.lower() == "seth":
-                            # Skip if SETH balance is too low
-                            if balance < 0.001:
-                                logger.info(f"Skipping SETH collection due to low balance ({balance} SETH)")
-                                continue
                             # Leave a small random amount between 0.00001 and 0.0001
                             leave_amount = random.uniform(0.00001, 0.0001)
                             balance = balance - leave_amount
-                            
+                        
                         amount_wei = int(Decimal(str(balance)) * Decimal(str(10 ** decimals)))
                         
                         # Approve token spending
