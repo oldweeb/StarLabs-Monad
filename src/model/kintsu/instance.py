@@ -65,7 +65,7 @@ class Kintsu:
                     random.uniform(
                         max(
                             0.01, self.config.KINTSU.AMOUNT_TO_STAKE[0]
-                        ),  # Ensure minimum of 0.01
+                        ),  # Ensure minimum of 0   .01
                         max(
                             0.015, self.config.KINTSU.AMOUNT_TO_STAKE[1]
                         ),  # Ensure minimum of 0.015
