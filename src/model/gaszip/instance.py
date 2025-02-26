@@ -126,7 +126,7 @@ class Gaszip:
         latest_block = await web3.eth.get_block('latest')
         base_fee = latest_block['baseFeePerGas']
         max_priority_fee = await web3.eth.max_priority_fee
-        max_fee = base_fee + max_priority_fee
+        max_fee = int((base_fee + max_priority_fee) * 1.5)
         
         return {
             "maxFeePerGas": max_fee,
