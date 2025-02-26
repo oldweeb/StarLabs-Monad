@@ -394,7 +394,7 @@ class Bima:
             logger.warning(
                 f"[{self.account_index}] Error estimating gas: {e}. Using default gas limit"
             )
-            return 100000  # fallback значение
+            raise e
 
     def _get_signature(self, message: str):
         encoded_msg = encode_defunct(text=message)

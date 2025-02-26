@@ -611,4 +611,4 @@ class Shmonad:
             logger.warning(
                 f"[{self.account_index}] Error estimating gas: {e}. Using default gas limit"
             )
-            return 150000  # используем стандартный gas limit
+            raise e

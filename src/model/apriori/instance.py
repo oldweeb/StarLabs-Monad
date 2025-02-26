@@ -54,7 +54,7 @@ class Apriori:
             logger.warning(
                 f"[{self.account_index}] Error estimating gas: {e}. Using default gas limit"
             )
-            return 100000  # fallback значение
+            raise e
 
     async def stake_mon(self, amount: float = 0.0001):
         for retry in range(self.config.SETTINGS.ATTEMPTS):

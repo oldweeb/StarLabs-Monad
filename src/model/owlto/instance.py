@@ -53,7 +53,7 @@ class Owlto:
             logger.warning(
                 f"[{self.account_index}] Error estimating gas: {e}. Using default gas limit"
             )
-            return 150000  # используем gas limit из успешной транзакции
+            raise e
 
     async def deploy_contract(self):
         for retry in range(self.config.SETTINGS.ATTEMPTS):
