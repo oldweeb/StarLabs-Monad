@@ -49,9 +49,15 @@ class Gaszip:
             logger.error(f"[{self.account_index}] Failed to get balance for {network}: {str(e)}")
             return 0
 
-    async def wait_for_balance_increase(self, initial_balance: float, timeout: int = 99999) -> bool:
+    async def wait_for_balance_increase(self, initial_balance: float) -> bool:
         """Wait for MON balance to increase after refuel."""
+        # Use the timeout from config
+        timeout = self.config.GASZIP.MAX_WAIT_TIME
+        
+        logger.info(f"[{self.account_index}] Waiting for balance to increase (max wait time: {timeout} seconds)...")
         start_time = asyncio.get_event_loop().time()
+        
+        # Check balance every 5 seconds until timeout
         while asyncio.get_event_loop().time() - start_time < timeout:
             current_balance = await self.get_monad_balance()
             if current_balance > initial_balance:
@@ -59,8 +65,14 @@ class Gaszip:
                     f"[{self.account_index}] Balance increased from {initial_balance} to {current_balance} MON"
                 )
                 return True
-            await asyncio.sleep(5)
             
+            # Log progress every 15 seconds
+            elapsed = int(asyncio.get_event_loop().time() - start_time)
+            if elapsed % 15 == 0:
+                logger.info(f"[{self.account_index}] Still waiting for balance to increase... ({elapsed}/{timeout} seconds)")
+            
+            await asyncio.sleep(5)
+        
         logger.error(f"[{self.account_index}] Balance didn't increase after {timeout} seconds")
         return False
 
@@ -131,14 +143,16 @@ class Gaszip:
             network, amount = network_info
             web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(GASZIP_RPCS[network]))
             
-            # Get initial MON balance
-            initial_balance = await self.get_monad_balance()
-            logger.info(f"[{self.account_index}] Initial MON balance: {initial_balance}")
+            # Get initial MON balance if we're going to wait for it to increase
+            initial_balance = 0
+            if self.config.GASZIP.WAIT_FOR_FUNDS_TO_ARRIVE:
+                initial_balance = await self.get_monad_balance()
+                logger.info(f"[{self.account_index}] Initial MON balance: {initial_balance}")
             
             # Prepare transaction
             amount_wei = web3.to_wei(amount, 'ether')
             nonce = await web3.eth.get_transaction_count(self.account.address)
-            gas_params = await self.get_gas_params(web3)  # Pass web3 instance
+            gas_params = await self.get_gas_params(web3)
             
             # Estimate gas
             gas_estimate = await web3.eth.estimate_gas({
@@ -170,13 +184,18 @@ class Gaszip:
             
             if receipt['status'] == 1:
                 logger.success(f"[{self.account_index}] Refuel transaction successful! Explorer URL: {explorer_url}")
-                logger.success(f"[{self.account_index}] Waiting for balance increase...")
                 
-                # Wait for balance to increase
-                if await self.wait_for_balance_increase(initial_balance):
-                    logger.success(f"[{self.account_index}] Successfully refueled from {network}")
+                # Wait for balance to increase if configured to do so
+                if self.config.GASZIP.WAIT_FOR_FUNDS_TO_ARRIVE:
+                    logger.success(f"[{self.account_index}] Waiting for balance increase...")
+                    if await self.wait_for_balance_increase(initial_balance):
+                        logger.success(f"[{self.account_index}] Successfully refueled from {network}")
+                        return True
+                    logger.warning(f"[{self.account_index}] Balance didn't increase, but transaction was successful")
                     return True
-                return False
+                else:
+                    logger.success(f"[{self.account_index}] Successfully refueled from {network} (not waiting for balance)")
+                    return True
             else:
                 logger.error(f"[{self.account_index}] Refuel transaction failed! Explorer URL: {explorer_url}")
                 return False

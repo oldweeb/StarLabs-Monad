@@ -67,6 +67,8 @@ class GaszipConfig:
     NETWORKS_TO_REFUEL_FROM: List[str]
     AMOUNT_TO_REFUEL: Tuple[float, float]
     MINIMUM_BALANCE_TO_REFUEL: float
+    WAIT_FOR_FUNDS_TO_ARRIVE: bool
+    MAX_WAIT_TIME: int
 
 @dataclass
 class ShmonadConfig:
@@ -163,6 +165,8 @@ class Config:
                 NETWORKS_TO_REFUEL_FROM=data["GASZIP"]["NETWORKS_TO_REFUEL_FROM"],
                 AMOUNT_TO_REFUEL=tuple(data["GASZIP"]["AMOUNT_TO_REFUEL"]),
                 MINIMUM_BALANCE_TO_REFUEL=data["GASZIP"]["MINIMUM_BALANCE_TO_REFUEL"],
+                WAIT_FOR_FUNDS_TO_ARRIVE=data["GASZIP"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
+                MAX_WAIT_TIME=data["GASZIP"]["MAX_WAIT_TIME"],
             ),
             SHMONAD=ShmonadConfig(
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(data["SHMONAD"]["PERCENT_OF_BALANCE_TO_SWAP"]),
