@@ -84,7 +84,14 @@ FLOW:
     # 3. collect_all_to_monad
     TASKS:
         [
-            "monadking_unlocked",
+            ["lilchogstars", "demask", "monadking", "monadking_unlocked", "accountable", "owlto", "nad_domains"],
+            "swaps",
+            ["lilchogstars", "demask", "monadking", "monadking_unlocked", "accountable", "owlto", "nad_domains"],
+            ["apriori", "magma", "kintsu", "shmonad"],
+            "collect_all_to_monad",
+            ["lilchogstars", "demask", "monadking", "monadking_unlocked", "accountable", "owlto", "swaps"],
+            ["apriori", "magma", "kintsu", "shmonad"],
+            "logs",
         ]
 
     # number of swaps. bean ambient monad etc
