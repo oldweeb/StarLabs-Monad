@@ -51,7 +51,8 @@ FLOW:
     # "swaps" - testnet.monad.xyz/ page token swaps
     # "bean" - swap tokens on Bean DEX
     # "ambient" - swap tokens on Ambient DEX
-    
+    # "izumi" - swap tokens on Izumi DEX
+
     # STAKES
     # "apriori" - stake MON token
     # "magma" - stake MON token on Magma
@@ -94,7 +95,7 @@ FLOW:
     #         ["apriori", "magma", "kintsu", "shmonad"],
     #         "logs",
     #     ]
-    TASKS: ["magiceden"]
+    TASKS: ["izumi"]
 
     # number of swaps. bean ambient monad etc
     NUMBER_OF_SWAPS: [1, 3]

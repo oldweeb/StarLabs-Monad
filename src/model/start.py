@@ -100,6 +100,9 @@ class Start:
 
                 elif task == "bean":
                     await monad.swaps(type="bean")
+                
+                elif task == "izumi":
+                    await monad.swaps(type="izumi")
 
                 elif task == "collect_all_to_monad":
                     await monad.swaps(type="collect_all_to_monad")
