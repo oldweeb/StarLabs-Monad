@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.monadking_mint.instance import Monadking
 from src.model.demask_mint.instance import Demask
 from src.model.lilchogstars_mint.instance import Lilchogstars
 from src.model.kintsu.instance import Kintsu
@@ -241,10 +242,20 @@ class Start:
                     )
                     await demask.mint()
 
+                elif task == "monadking":
+                    monadking = Monadking(
+                        self.account_index,
+                        self.private_key,
+                        self.config,
+                    )
+                    await monadking.mint()
+
                 await self.sleep(task)
 
             return True
         except Exception as e:
+            # import traceback
+            # traceback.print_exc()
             logger.error(f"[{self.account_index}] | Error: {e}")
             return False
 

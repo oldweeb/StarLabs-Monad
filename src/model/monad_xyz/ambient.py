@@ -8,11 +8,11 @@ from src.utils.constants import RPC_URL, EXPLORER_URL, ERC20_ABI
 from src.model.monad_xyz.constants import AMBIENT_ABI, AMBIENT_TOKENS, AMBIENT_CONTRACT, ZERO_ADDRESS, POOL_IDX, RESERVE_FLAGS, TIP, MAX_SQRT_PRICE, MIN_SQRT_PRICE
 from loguru import logger
 import random
-
+from src.utils.config import Config
 
     
 class AmbientDex:
-    def __init__(self, private_key: str, proxy: Optional[str] = None):
+    def __init__(self, private_key: str, proxy: Optional[str] = None, config: Config = None):
         self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
         self.account = Account.from_key(private_key)
         self.proxy = proxy
@@ -20,6 +20,7 @@ class AmbientDex:
             address=self.web3.to_checksum_address(AMBIENT_CONTRACT),
             abi=AMBIENT_ABI
         )
+        self.config = config
 
     async def get_gas_params(self) -> Dict[str, int]:
         latest_block = await self.web3.eth.get_block('latest')

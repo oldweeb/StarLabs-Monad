@@ -5,25 +5,18 @@ This tool automates interactions with the Monad testnet, including various DeFi 
 TUTORIAL - https://star-labs.gitbook.io/star-labs/monad-ru
 
 ## Features
-- 🌊 Connect Discord account
+# All features are available in config.yaml
 - 💱 Perform token swaps
 - 🏦 Stake MON on Apriori
 - 🌋 Stake MON on Magma
 - 🦉 Deploy contract on Owlto
 - 💎 Interact with Bima (lending & faucet)
+- And much more...
 
 ## Features Description
 
 ### Faucet
-Gets tokens from ThirdWeb faucet
-```
-Paste mails into the data/emails.txt file in the email:pass format. 
-Buy mails at https://firstmail.ltd/.
-Then in src/extra/capsolver/assets/config.js in the field apiKey: “CAP-x”, insert your api key from capsolver.com.
-```
-
-### Connect Discord
-Connects your Discord account to Monad testnet for additional rewards.
+Using official Monad testnet faucet.
 
 ### Swaps
 Performs random swaps between available tokens with configurable amounts.
@@ -90,7 +83,6 @@ PERCENT_OF_BALANCE_TO_SWAP: [10, 15]
 4. Add your data to the following files:
 - `data/private_keys.txt` - One private key per line
 - `data/proxies.txt` - One proxy per line (format: `user:pass@ip:port`)
-- `data/discord_tokens.txt` - One Discord token per line
 
 
 5. Run the bot

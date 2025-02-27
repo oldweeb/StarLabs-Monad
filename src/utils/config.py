@@ -110,6 +110,12 @@ class LilchogstarsConfig:
 class DemaskConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
 
+
+@dataclass
+class MonadkingConfig:
+    MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
+
+
 @dataclass
 class Config:
     SETTINGS: SettingsConfig
@@ -126,6 +132,7 @@ class Config:
     DISPERSE: DisperseConfig
     LILCHOGSTARS: LilchogstarsConfig
     DEMASK: DemaskConfig
+    MONADKING: MonadkingConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -219,6 +226,11 @@ class Config:
             DEMASK=DemaskConfig(
                 MAX_AMOUNT_FOR_EACH_ACCOUNT=tuple(
                     data["DEMASK"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"]
+                ),
+            ),
+            MONADKING=MonadkingConfig(
+                MAX_AMOUNT_FOR_EACH_ACCOUNT=tuple(
+                    data["MONADKING"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"]
                 ),
             ),
         )

@@ -90,7 +90,7 @@ class MonadXYZ:
                     success = False
                     for retry in range(self.config.SETTINGS.ATTEMPTS):
                         try:
-                            swapper = AmbientDex(self.private_key, self.proxy)
+                            swapper = AmbientDex(self.private_key, self.proxy, self.config)
                             amount = random.randint(
                                 self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
                                 self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
@@ -134,7 +134,7 @@ class MonadXYZ:
                     success = False
                     for retry in range(self.config.SETTINGS.ATTEMPTS):
                         try:
-                            swapper = BeanDex(self.private_key, self.proxy)
+                            swapper = BeanDex(self.private_key, self.proxy, self.config)
                             amount = random.randint(
                                 self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
                                 self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
@@ -187,7 +187,7 @@ class MonadXYZ:
                         await asyncio.sleep(random_pause)
 
                         # Then try collecting via Ambient
-                        ambient_swapper = AmbientDex(self.private_key, self.proxy)
+                        ambient_swapper = AmbientDex(self.private_key, self.proxy, self.config)
                         await ambient_swapper.swap(
                             percentage_to_swap=100, type="collect"
                         )
@@ -201,7 +201,7 @@ class MonadXYZ:
                         await asyncio.sleep(random_pause)
                         
                         # Then try collecting via Bean
-                        bean_swapper = BeanDex(self.private_key, self.proxy)
+                        bean_swapper = BeanDex(self.private_key, self.proxy, self.config)
                         await bean_swapper.swap(
                             percentage_to_swap=100, type="collect"
                         )

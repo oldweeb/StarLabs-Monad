@@ -8,9 +8,10 @@ from loguru import logger
 from src.utils.constants import RPC_URL, EXPLORER_URL, ERC20_ABI
 from src.model.monad_xyz.constants import BEAN_CONTRACT, BEAN_ABI, BEAN_TOKENS
 import time
+from src.utils.config import Config
 
 class BeanDex:
-    def __init__(self, private_key: str, proxy: Optional[str] = None):
+    def __init__(self, private_key: str, proxy: Optional[str] = None, config: Config = None):
         self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
         self.account = Account.from_key(private_key)
         self.proxy = proxy
@@ -18,6 +19,7 @@ class BeanDex:
             address=self.web3.to_checksum_address(BEAN_CONTRACT),
             abi=BEAN_ABI
         )
+        self.config = config
 
     async def get_gas_params(self) -> Dict[str, int]:
         latest_block = await self.web3.eth.get_block('latest')
