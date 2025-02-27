@@ -49,7 +49,7 @@ class MonadverseMint:
         self.account: Account = Account.from_key(private_key=private_key)
         self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
 
-        self.nft_contract_address = "0xe25c57fF3EeA05d0F8bE9aaAE3F522DdC803cA4E"
+        self.nft_contract_address = "0x3A9acc3Be6E9678FA5D23810488c37a3192aaf75"
         self.nft_contract: Contract = self.web3.eth.contract(
             address=self.nft_contract_address, abi=ERC1155_ABI
         )
@@ -62,7 +62,7 @@ class MonadverseMint:
         """
         try:
             balance = await self.nft_contract.functions.balanceOf(
-                self.account.address, 1  # ID токена из транзакции
+                self.account.address, 2  # ID токена из транзакции
             ).call()
 
             return balance
@@ -88,8 +88,8 @@ class MonadverseMint:
                     {
                         "from": self.account.address,
                         "value": self.web3.to_wei(
-                            0.3, "ether"
-                        ),  # Добавляем оплату 0.3 MON
+                            0.5, "ether"
+                        ),  # Обновляем оплату до 0.5 MON
                         "nonce": await self.web3.eth.get_transaction_count(
                             self.account.address
                         ),
