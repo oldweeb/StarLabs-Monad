@@ -103,6 +103,14 @@ class DisperseConfig:
 
 
 @dataclass
+class LilchogstarsConfig:
+    MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
+
+@dataclass
+class DemaskConfig:
+    MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     FLOW: FlowConfig
@@ -116,6 +124,8 @@ class Config:
     ACCOUNTABLE: AccountableConfig
     ORBITER: OrbiterConfig
     DISPERSE: DisperseConfig
+    LILCHOGSTARS: LilchogstarsConfig
+    DEMASK: DemaskConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -199,6 +209,16 @@ class Config:
             DISPERSE=DisperseConfig(
                 MIN_BALANCE_FOR_DISPERSE=tuple(
                     data["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"]
+                ),
+            ),
+            LILCHOGSTARS=LilchogstarsConfig(
+                MAX_AMOUNT_FOR_EACH_ACCOUNT=tuple(
+                    data["LILCHOGSTARS"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"]
+                ),
+            ),
+            DEMASK=DemaskConfig(
+                MAX_AMOUNT_FOR_EACH_ACCOUNT=tuple(
+                    data["DEMASK"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"]
                 ),
             ),
         )

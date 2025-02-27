@@ -3,6 +3,8 @@ import primp
 import random
 import asyncio
 
+from src.model.demask_mint.instance import Demask
+from src.model.lilchogstars_mint.instance import Lilchogstars
 from src.model.kintsu.instance import Kintsu
 from src.model.orbiter.instance import Orbiter
 from src.model.accountable.instance import Accountable
@@ -119,7 +121,6 @@ class Start:
                     )
                     await apriori.stake_mon()
 
-
                 elif task == "magma":
                     magma = Magma(
                         self.account_index,
@@ -219,9 +220,28 @@ class Start:
                         self.session,
                     )
                     await kintsu.stake_mon()
-                
-                await self.sleep(task)
 
+                elif task == "lilchogstars":
+                    lilchogstars = Lilchogstars(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await lilchogstars.mint()
+
+                elif task == "demask":
+                    demask = Demask(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await demask.mint()
+
+                await self.sleep(task)
 
             return True
         except Exception as e:

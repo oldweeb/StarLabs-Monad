@@ -5,3 +5,4 @@
 __pycache__
 /data/success_data
 test.py
+app.log
