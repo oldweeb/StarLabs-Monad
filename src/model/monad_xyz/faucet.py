@@ -101,7 +101,7 @@ async def faucet(
                         return False
                     else:
                         logger.error(
-                            f"[{account_index}] | Failed to get tokens from faucet: {response.text}"
+                            f"[{account_index}] | Failed to get tokens from faucet"
                         )
                     await asyncio.sleep(3)
                     break
