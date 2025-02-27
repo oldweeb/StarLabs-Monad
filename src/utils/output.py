@@ -62,7 +62,7 @@ def show_dev_info():
     table.add_column("Content", style="bright_cyan", justify="center")
 
     # Добавляем строки с контактами
-    table.add_row("✨ StarLabs Monad Bot 1.7 ✨")
+    table.add_row("✨ StarLabs Monad Bot 1.8 ✨")
     table.add_row("─" * 43)
     table.add_row("")
     table.add_row("⚡ GitHub: [link]https://github.com/0xStarLabs[/link]")

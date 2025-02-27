@@ -115,6 +115,10 @@ class DemaskConfig:
 class MonadkingConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
 
+@dataclass
+class MagicEdenConfig:
+    NFT_CONTRACTS: List[str]
+
 
 @dataclass
 class Config:
@@ -133,6 +137,7 @@ class Config:
     LILCHOGSTARS: LilchogstarsConfig
     DEMASK: DemaskConfig
     MONADKING: MonadkingConfig
+    MAGICEDEN: MagicEdenConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -232,6 +237,9 @@ class Config:
                 MAX_AMOUNT_FOR_EACH_ACCOUNT=tuple(
                     data["MONADKING"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"]
                 ),
+            ),
+            MAGICEDEN=MagicEdenConfig(
+                NFT_CONTRACTS=data["MAGICEDEN"]["NFT_CONTRACTS"],
             ),
         )
 

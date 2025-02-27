@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.magiceden.instance import MagicEden
 from src.model.monadking_mint.instance import Monadking
 from src.model.demask_mint.instance import Demask
 from src.model.lilchogstars_mint.instance import Lilchogstars
@@ -12,7 +13,6 @@ from src.model.accountable.instance import Accountable
 from src.model.shmonad.instance import Shmonad
 from src.model.gaszip.instance import Gaszip
 from src.model.monadverse_mint.instance import MonadverseMint
-from src.model.thirdweb.instance import ThirdWeb
 from src.model.bima.instance import Bima
 from src.model.owlto.instance import Owlto
 from src.model.magma.instance import Magma
@@ -258,7 +258,16 @@ class Start:
                         self.config,
                     )
                     await monadking_unlocked.mint_unlocked()
-
+                
+                elif task == "magiceden":
+                    magiceden = MagicEden(
+                        self.account_index,
+                        self.config,
+                        self.private_key,
+                        self.session,
+                    )
+                    await magiceden.mint()
+                
                 await self.sleep(task)
 
             return True
