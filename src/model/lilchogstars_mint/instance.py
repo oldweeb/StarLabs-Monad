@@ -28,6 +28,20 @@ ERC1155_ABI = [
         "stateMutability": "payable",
         "type": "function",
     },
+    {
+        "inputs": [{"internalType": "address", "name": "", "type": "address"}],
+        "name": "mintedCount",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
+    {
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+        "stateMutability": "view",
+        "type": "function",
+    },
 ]
 
 
@@ -63,14 +77,20 @@ class Lilchogstars:
             int: количество NFT
         """
         try:
-            balance = await self.nft_contract.functions.balanceOf(
-                self.account.address, 2  # ID токена из транзакции
+            # Используем метод mintedCount для получения количества NFT
+            balance = await self.nft_contract.functions.mintedCount(
+                self.account.address
             ).call()
 
+            logger.info(
+                f"[{self.account_index}] NFT balance from mintedCount: {balance}"
+            )
             return balance
         except Exception as e:
-            logger.error(f"[{self.account_index}] Error checking NFT balance: {e}")
-            return 0
+            logger.error(
+                f"[{self.account_index}] Error checking NFT balance with mintedCount: {e}"
+            )
+            raise e
 
     async def mint(self):
         for retry in range(self.config.SETTINGS.ATTEMPTS):
@@ -80,6 +100,10 @@ class Lilchogstars:
                 random_amount = random.randint(
                     self.config.LILCHOGSTARS.MAX_AMOUNT_FOR_EACH_ACCOUNT[0],
                     self.config.LILCHOGSTARS.MAX_AMOUNT_FOR_EACH_ACCOUNT[1],
+                )
+
+                logger.info(
+                    f"[{self.account_index}] Current NFT balance: {balance}, Target: {random_amount}"
                 )
 
                 if balance >= random_amount:
