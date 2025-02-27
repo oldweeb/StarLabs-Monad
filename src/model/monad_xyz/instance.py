@@ -177,27 +177,42 @@ class MonadXYZ:
                         await swapper.swap(
                             percentage_to_swap=100, token_out="native",
                         )
-                        logger.success(
-                            f"[{self.account_index}] | Collected all to monad.xyz"
+                        random_pause = random.randint(
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
                         )
-                        
+                        logger.success(
+                            f"[{self.account_index}] | Collected all to monad.xyz. Next collect in {random_pause} seconds"
+                        )
+                        await asyncio.sleep(random_pause)
+
                         # Then try collecting via Ambient
                         ambient_swapper = AmbientDex(self.private_key, self.proxy)
                         await ambient_swapper.swap(
                             percentage_to_swap=100, type="collect"
                         )
-                        logger.success(
-                            f"[{self.account_index}] | Collected all tokens via Ambient"
+                        random_pause = random.randint(
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
                         )
+                        logger.success(
+                            f"[{self.account_index}] | Collected all tokens via Ambient. Next collect in {random_pause} seconds"
+                        )
+                        await asyncio.sleep(random_pause)
                         
                         # Then try collecting via Bean
                         bean_swapper = BeanDex(self.private_key, self.proxy)
                         await bean_swapper.swap(
                             percentage_to_swap=100, type="collect"
                         )
-                        logger.success(
-                            f"[{self.account_index}] | Collected all tokens via Bean"
+                        random_pause = random.randint(
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
                         )
+                        logger.success(
+                            f"[{self.account_index}] | Collected all tokens via Bean. Next collect in {random_pause} seconds"
+                        )
+                        await asyncio.sleep(random_pause)
                         success = True
                         break  # Break the retry loop on success
                         

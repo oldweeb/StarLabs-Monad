@@ -246,7 +246,12 @@ class AmbientDex:
                         
                         # Approve token spending
                         await self.approve_token(token_in, amount_wei)
-                        await asyncio.sleep(random.randint(5, 10))
+                        random_pause = random.randint(
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                        )
+                        logger.info(f"Swapping {balance} {token_in} to MON. Sleeping {random_pause} seconds after approve")
+                        await asyncio.sleep(random_pause)
                         
                         logger.info(f"Collecting {balance} {token_in} to native")
                         

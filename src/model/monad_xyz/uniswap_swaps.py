@@ -245,7 +245,13 @@ class MonadSwap:
                     swap_tx_data = await self.get_swap_quote(balance, "native", token_in=token)
                     approve_tx_data = await self.generate_approve_transaction(token, balance, swap_tx_data)
                     await self.execute_transaction(approve_tx_data)
-                    await asyncio.sleep(random.randint(5, 10))
+                    random_pause = random.randint(
+                        self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                        self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                    )
+                    logger.info(f"Swapping {balance} {token} to MON. Sleeping {random_pause} seconds after approve")
+                    await asyncio.sleep(random_pause)
+                    
                     await self.execute_transaction(swap_tx_data)
             else:
                 logger.info(f"Swapping MON to {token_out}...")

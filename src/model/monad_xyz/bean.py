@@ -242,7 +242,12 @@ class BeanDex:
                         if current_allowance < amount_wei:
                             logger.info(f"Approving {balance} {token_in} for Bean router")
                             await self.approve_token(token_in, amount_wei)
-                            await asyncio.sleep(random.randint(5, 10))
+                            random_pause = random.randint(
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                            )
+                            logger.info(f"Sleeping {random_pause} seconds after approve")
+                            await asyncio.sleep(random_pause)
                         else:
                             logger.info(f"Allowance sufficient for {token_in}")
                         

@@ -84,42 +84,21 @@ class Start:
             # Выполняем задачи по плану
             for _, task, _ in planned_tasks:
                 # Выполняем выбранную задачу
-                if task == "connect_discord":
-                    await monad.connect_discord()
-                    await self.sleep("connect_discord")
-
-                elif task == "faucet":
+                if task == "faucet":
                     if self.config.FAUCET.MONAD_XYZ:
                         await monad.faucet()
-                        await self.sleep("monad_faucet")
-
-                    # if self.config.FAUCET.THIRDWEB:
-                    #     thirdweb = ThirdWeb(
-                    #         self.account_index,
-                    #         self.proxy,
-                    #         self.private_key,
-                    #         self.email,
-                    #         self.config,
-                    #         self.session,
-                    #     )
-                    #     await thirdweb.faucet()
-                    #     await self.sleep("thirdweb_faucet")
 
                 elif task == "swaps":
                     await monad.swaps(type="swaps")
-                    await self.sleep("swaps")
 
                 elif task == "ambient":
                     await monad.swaps(type="ambient")
-                    await self.sleep("ambient")
 
                 elif task == "bean":
                     await monad.swaps(type="bean")
-                    await self.sleep("bean")
 
                 elif task == "collect_all_to_monad":
                     await monad.swaps(type="collect_all_to_monad")
-                    await self.sleep("collect_all_to_monad")
 
                 elif task == "gaszip":
                     gaszip = Gaszip(
@@ -129,7 +108,6 @@ class Start:
                         self.config,
                     )
                     await gaszip.refuel()
-                    await self.sleep("gaszip")
 
                 elif task == "apriori":
                     apriori = Apriori(
@@ -140,7 +118,7 @@ class Start:
                         self.session,
                     )
                     await apriori.stake_mon()
-                    await self.sleep("apriori")
+
 
                 elif task == "magma":
                     magma = Magma(
@@ -151,7 +129,6 @@ class Start:
                         self.session,
                     )
                     await magma.stake_mon()
-                    await self.sleep("magma")
 
                 elif task == "owlto":
                     owlto = Owlto(
@@ -162,7 +139,6 @@ class Start:
                         self.session,
                     )
                     await owlto.deploy_contract()
-                    await self.sleep("owlto")
 
                 elif task == "bima":
                     bima = Bima(
@@ -177,7 +153,6 @@ class Start:
 
                     if self.config.BIMA.LEND:
                         await bima.lend()
-                        await self.sleep("bima_lend")
 
                 elif task == "monadverse_mint":
                     monadverse_mint = MonadverseMint(
@@ -188,7 +163,6 @@ class Start:
                         self.session,
                     )
                     await monadverse_mint.mint()
-                    await self.sleep("monadverse_mint")
 
                 elif task == "shmonad":
                     shmonad = Shmonad(
@@ -199,7 +173,6 @@ class Start:
                         self.session,
                     )
                     await shmonad.swaps()
-                    await self.sleep("shmonad")
 
                 elif task == "accountable":
                     accountable = Accountable(
@@ -210,7 +183,6 @@ class Start:
                         self.session,
                     )
                     await accountable.mint()
-                    await self.sleep("accountable")
 
                 elif task == "orbiter":
                     orbiter = Orbiter(
@@ -221,14 +193,12 @@ class Start:
                         self.session,
                     )
                     await orbiter.bridge()
-                    await self.sleep("orbiter")
 
                 elif task == "logs":
                     wallet_stats = WalletStats(self.config)
                     await wallet_stats.get_wallet_stats(
                         self.private_key, self.account_index
                     )
-                    await self.sleep("logs")
 
                 elif task == "nad_domains":
                     nad_domains = NadDomains(
@@ -239,7 +209,6 @@ class Start:
                         self.session,
                     )
                     await nad_domains.register_random_domain()
-                    await self.sleep("nad_domains")
 
                 elif task == "kintsu":
                     kintsu = Kintsu(
@@ -250,7 +219,8 @@ class Start:
                         self.session,
                     )
                     await kintsu.stake_mon()
-                    await self.sleep("kintsu")
+                
+                await self.sleep(task)
 
 
             return True
