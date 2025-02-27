@@ -22,8 +22,8 @@ async def faucet(
                 session,
             )
             for _ in range(3):
-                result = await solver.solve_recaptcha(
-                    "6LdNnOQqAAAAAAdV-2vvDIFO8F8vbowk6lYn9cNi",
+                result = await solver.solve_turnstile(
+                    "0x4AAAAAAA-3X4Nd7hf3mNGx",
                     "https://testnet.monad.xyz/",
                     True,
                 )
@@ -59,7 +59,7 @@ async def faucet(
             json_data = {
                 "address": wallet.address,
                 "visitorId": visitor_id,
-                "recaptchaToken": result,
+                "cloudFlareResponseToken": result,
             }
 
             for _ in range(config.SETTINGS.ATTEMPTS):
