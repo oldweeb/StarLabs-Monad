@@ -250,6 +250,14 @@ class Start:
                     )
                     await monadking.mint()
 
+                elif task == "monadking_unlocked":
+                    monadking_unlocked = Monadking(
+                        self.account_index,
+                        self.private_key,
+                        self.config,
+                    )
+                    await monadking_unlocked.mint_unlocked()
+
                 await self.sleep(task)
 
             return True
