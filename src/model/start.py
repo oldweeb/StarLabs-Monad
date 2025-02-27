@@ -86,6 +86,7 @@ class Start:
 
             # Выполняем задачи по плану
             for _, task, _ in planned_tasks:
+                task = task.lower()
                 # Выполняем выбранную задачу
                 if task == "faucet":
                     if self.config.FAUCET.MONAD_XYZ:
