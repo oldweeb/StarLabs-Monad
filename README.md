@@ -6,11 +6,15 @@ TUTORIAL - https://star-labs.gitbook.io/star-labs/monad-ru
 
 ## Features
 # All features are available in config.yaml
+- 💎 MagicEden
 - 💱 Perform token swaps
-- 🏦 Stake MON on Apriori
-- 🌋 Stake MON on Magma
+- 🏦 Stake MON on Apriori, Magma, Kintsu, Shmonad, Bima
+- 📄 Mint NFT: accountable, lilchogstars, demask, monadking, monadking_unlocked
 - 🦉 Deploy contract on Owlto
-- 💎 Interact with Bima (lending & faucet)
+- 🌋 Gaszip
+- 🌐 Orbiter
+- 📄 Logs
+- 📄 Nad domains
 - And much more...
 
 ## Features Description
