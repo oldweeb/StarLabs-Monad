@@ -6,6 +6,7 @@ import primp
 
 from src.model.monad_xyz.bean import BeanDex
 from src.model.monad_xyz.ambient import AmbientDex
+from src.model.monad_xyz.izumi import IzumiDex
 from src.model.monad_xyz.uniswap_swaps import MonadSwap
 from src.model.monad_xyz.faucet import faucet
 from src.utils.config import Config
@@ -168,6 +169,50 @@ class MonadXYZ:
 
                 return True
             
+            elif type == "izumi":
+                number_of_swaps = random.randint(
+                    self.config.FLOW.NUMBER_OF_SWAPS[0], self.config.FLOW.NUMBER_OF_SWAPS[1]
+                )
+                logger.info(f"[{self.account_index}] | Will perform {number_of_swaps} Izumi swaps")
+                
+                for swap_num in range(number_of_swaps):
+                    success = False
+                    for retry in range(self.config.SETTINGS.ATTEMPTS):
+                        try:
+                            swapper = IzumiDex(self.private_key, self.proxy, self.config)
+                            amount = random.randint(
+                                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
+                                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
+                            )
+                            await swapper.swap(
+                                percentage_to_swap=amount,
+                                type="swap",
+                            )
+                            random_pause = random.randint(
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                                self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                            )
+                            logger.success(
+                                f"[{self.account_index}] | Completed Izumi swap {swap_num + 1}/{number_of_swaps}. Next swap in {random_pause} seconds"
+                            )
+                            await asyncio.sleep(random_pause)
+                            success = True
+                            break  # Break retry loop on success
+                            
+                        except Exception as e:
+                            logger.error(
+                                f"[{self.account_index}] | Error swap in izumi ({retry + 1}/{self.config.SETTINGS.ATTEMPTS}): {e}"
+                            )
+                            if retry == self.config.SETTINGS.ATTEMPTS - 1:
+                                raise  # Re-raise if all retries failed
+                            continue
+                    
+                    if not success:
+                        logger.error(f"[{self.account_index}] | Failed to complete swap {swap_num + 1}/{number_of_swaps} after all retries")
+                        break
+
+                return True
+            
             elif type == "collect_all_to_monad":
                 success = False
                 for retry in range(self.config.SETTINGS.ATTEMPTS):
@@ -213,6 +258,21 @@ class MonadXYZ:
                             f"[{self.account_index}] | Collected all tokens via Bean. Next collect in {random_pause} seconds"
                         )
                         await asyncio.sleep(random_pause)
+
+                        # Then try collecting via Izumi
+                        izumi_swapper = IzumiDex(self.private_key, self.proxy, self.config)
+                        await izumi_swapper.swap(
+                            percentage_to_swap=100, type="collect"
+                        )
+                        random_pause = random.randint(
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[0],
+                            self.config.SETTINGS.PAUSE_BETWEEN_SWAPS[1],
+                        )   
+                        logger.success(
+                            f"[{self.account_index}] | Collected all tokens via Izumi. Next collect in {random_pause} seconds"
+                        )
+                        await asyncio.sleep(random_pause)
+
                         success = True
                         break  # Break the retry loop on success
                         
