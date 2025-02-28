@@ -294,7 +294,7 @@ class Aircraft:
                 'refCode': user_data['data']['refCode'],
                 'walletId': user_data['data']['wallets'][0]['_id']
             }
-            logger.info(f"[{self.account_index}] Got user info from random wallet: {json.dumps(user_info, indent=2)}")
+            # logger.info(f"[{self.account_index}] Got user info from random wallet: {json.dumps(user_info, indent=2)}")
             return user_info
             
         except Exception as e:
