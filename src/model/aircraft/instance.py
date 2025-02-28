@@ -683,7 +683,7 @@ class Aircraft:
                 logger.info(f"[{self.account_index}] No user info found, generating random wallet")
                 success = await self.process_new_wallet()
             else:
-                logger.info(f"[{self.account_index}] Found existing user info: {json.dumps(user_info, indent=2)}")
+                # logger.info(f"[{self.account_index}] Found existing user info: {json.dumps(user_info, indent=2)}")
                 success = await self.process_existing_wallet(user_info)
             
             if success:
