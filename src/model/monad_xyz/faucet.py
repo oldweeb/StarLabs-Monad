@@ -117,7 +117,8 @@ async def faucet(
     for retry in range(config.SETTINGS.ATTEMPTS):
         try:
             capsolver_path = os.path.join(os.path.dirname(__file__), "capsolver")
-
+            logger.info(f"[{account_index}] Using capsolver path: {capsolver_path}")
+            
             proxy_parts = proxy.split("@")
             auth = proxy_parts[0].split(":")
             proxy_options = {
