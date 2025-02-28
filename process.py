@@ -1,6 +1,6 @@
 import asyncio
 import random
-
+import platform
 from loguru import logger
 
 from src.model.disperse_from_one.instance import DisperseFromOneWallet
@@ -28,6 +28,10 @@ async def start():
     show_logo()
     show_dev_info()
     config = src.utils.get_config()
+
+    if "faucet" not in config.FLOW.TASKS:
+        if platform.system() == "Windows":
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
     # Читаем все файлы
     proxies = src.utils.read_txt_file("proxies", "data/proxies.txt")
