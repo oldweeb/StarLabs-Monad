@@ -89,8 +89,7 @@ class Start:
                 task = task.lower()
                 # Выполняем выбранную задачу
                 if task == "faucet":
-                    if self.config.FAUCET.MONAD_XYZ:
-                        await monad.faucet()
+                    await monad.faucet()
 
                 elif task == "swaps":
                     await monad.swaps(type="swaps")

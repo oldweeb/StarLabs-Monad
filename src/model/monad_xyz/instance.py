@@ -295,7 +295,7 @@ class MonadXYZ:
     async def faucet(self):
         try:
             return await faucet(
-                self.session, self.account_index, self.config, self.wallet
+                self.session, self.account_index, self.config, self.wallet, self.proxy
             )
         except Exception as e:
             logger.error(f"[{self.account_index}] | Error faucet to monad.xyz: {e}")

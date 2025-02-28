@@ -48,13 +48,6 @@ class BimaConfig:
 
 
 @dataclass
-class FaucetConfig:
-    MONAD_XYZ: bool
-    CAPSOLVER_API_KEY: str
-    PROXY_FOR_CAPTCHA: str
-
-
-@dataclass
 class WalletInfo:
     account_index: int
     private_key: str
@@ -128,7 +121,6 @@ class Config:
     MAGMA: MagmaConfig
     KINTSU: KintsuConfig
     BIMA: BimaConfig
-    FAUCET: FaucetConfig
     GASZIP: GaszipConfig
     SHMONAD: ShmonadConfig
     ACCOUNTABLE: AccountableConfig
@@ -189,11 +181,6 @@ class Config:
                 PERCENT_OF_BALANCE_TO_LEND=tuple(
                     data["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"]
                 ),
-            ),
-            FAUCET=FaucetConfig(
-                MONAD_XYZ=data["FAUCET"]["MONAD_XYZ"],
-                CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],
-                PROXY_FOR_CAPTCHA=data["FAUCET"]["PROXY_FOR_CAPTCHA"],
             ),
             GASZIP=GaszipConfig(
                 NETWORKS_TO_REFUEL_FROM=data["GASZIP"]["NETWORKS_TO_REFUEL_FROM"],
