@@ -140,7 +140,7 @@ class Aircraft:
             if referral_code:
                 params['referralCode'] = referral_code
                 
-            logger.debug(f"[{self.account_index}] Login request params: {params}")
+            # logger.debug(f"[{self.account_index}] Login request params: {params}")
                 
             # Get the sign-in message
             logger.info(f"[{self.account_index}] Requesting sign-in message")
@@ -150,7 +150,7 @@ class Aircraft:
             )
             
             response_data = response.json()
-            logger.debug(f"[{self.account_index}] Sign-in message response: {json.dumps(response_data, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Sign-in message response: {json.dumps(response_data, indent=2)}")
             
             if response_data.get('statusCode') != 200:
                 raise Exception(f"Failed to get sign-in message: {response_data}")
@@ -158,13 +158,13 @@ class Aircraft:
             # Extract the encrypted message that needs to be signed
             encrypted_message = response_data['data']['message']
             logger.info(f"[{self.account_index}] Successfully received message to sign")
-            logger.debug(f"[{self.account_index}] Message to sign: {encrypted_message}")
+            # logger.debug(f"[{self.account_index}] Message to sign: {encrypted_message}")
             
             # Sign the message with the wallet
             message_hash = encode_defunct(text=encrypted_message)
             signature = self.account.sign_message(message_hash)
             signature_hex = "0x" + signature.signature.hex()
-            logger.debug(f"[{self.account_index}] Generated signature: {signature_hex}")
+            # logger.debug(f"[{self.account_index}] Generated signature: {signature_hex}")
             
             # Prepare the sign-in payload
             sign_in_payload = {
@@ -178,7 +178,7 @@ class Aircraft:
             if referral_code:
                 sign_in_payload['referralCode'] = referral_code
                 
-            logger.debug(f"[{self.account_index}] Sign-in payload: {json.dumps(sign_in_payload, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Sign-in payload: {json.dumps(sign_in_payload, indent=2)}")
                 
             # Send the signed message for verification
             logger.info(f"[{self.account_index}] Sending sign-in request")
@@ -188,7 +188,7 @@ class Aircraft:
             )
             
             sign_in_data = sign_in_response.json()
-            logger.debug(f"[{self.account_index}] Sign-in response: {json.dumps(sign_in_data, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Sign-in response: {json.dumps(sign_in_data, indent=2)}")
             
             if sign_in_data.get('statusCode') not in [200, 201]:
                 raise Exception(f"Failed to sign in: {sign_in_data}")
@@ -206,7 +206,7 @@ class Aircraft:
         """Thread-safe check if address has user info in database."""
         try:
             data = await read_database()
-            logger.debug(f"[{self.account_index}] Database content: {json.dumps(data, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Database content: {json.dumps(data, indent=2)}")
             return data.get(address)
         except Exception as e:
             logger.error(f"[{self.account_index}] Error checking database: {e}")
@@ -313,7 +313,7 @@ class Aircraft:
                 headers=self.get_auth_headers()
             )
             options_data = options_response.json()
-            logger.debug(f"[{self.account_index}] Voting options response: {json.dumps(options_data, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Voting options response: {json.dumps(options_data, indent=2)}")
             
             if options_data.get('statusCode') != 200:
                 raise Exception(f"Failed to get voting options: {options_data}")
@@ -326,13 +326,13 @@ class Aircraft:
             # Select a random option
             selected_option = random.choice(voting_options)
             option_id = selected_option['id']
-            logger.debug(f"[{self.account_index}] Selected voting option: {json.dumps(selected_option, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Selected voting option: {json.dumps(selected_option, indent=2)}")
             
             # Cast vote
             vote_payload = {
                 'optionId': option_id
             }
-            logger.debug(f"[{self.account_index}] Vote payload: {json.dumps(vote_payload, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Vote payload: {json.dumps(vote_payload, indent=2)}")
             
             vote_response = await self.session.post(
                 'https://api.aicraft.fun/voting/cast',
@@ -341,7 +341,7 @@ class Aircraft:
             )
             
             vote_data = vote_response.json()
-            logger.debug(f"[{self.account_index}] Vote response: {json.dumps(vote_data, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Vote response: {json.dumps(vote_data, indent=2)}")
             
             if vote_data.get('statusCode') != 200:
                 raise Exception(f"Failed to cast vote: {vote_data}")
@@ -369,7 +369,7 @@ class Aircraft:
             )
             
             response_data = response.json()
-            logger.debug(f"[{self.account_index}] Candidates response: {json.dumps(response_data, indent=2)}")
+            # logger.debug(f"[{self.account_index}] Candidates response: {json.dumps(response_data, indent=2)}")
             
             if response_data.get('statusCode') != 200:
                 raise Exception(f"Failed to get candidates: {response_data}")
@@ -400,7 +400,7 @@ class Aircraft:
             'refCode': user_info['inviteRefCode'],
         }
         
-        logger.debug(f"[{self.account_index}] Feed order payload: {json.dumps(json_data, indent=2)}")
+        # logger.debug(f"[{self.account_index}] Feed order payload: {json.dumps(json_data, indent=2)}")
         
         response = await self.session.post(
             'https://api.aicraft.fun/feeds/orders',
@@ -422,7 +422,7 @@ class Aircraft:
         signature = self.account.sign_message(message)
         user_signature = signature.signature.hex()
         
-        logger.debug(f"[{self.account_index}] Signed user message: 0x{user_signature}")
+        # logger.debug(f"[{self.account_index}] Signed user message: 0x{user_signature}")
         
         # Prepare transaction data
         contract_address = Web3.to_checksum_address(payment_data['contractAddress'])
@@ -562,7 +562,7 @@ class Aircraft:
             'refCode': ref_code,
         }
         
-        logger.debug(f"[{self.account_index}] Feed order confirmation payload: {json.dumps(confirm_json_data, indent=2)}")
+        # logger.debug(f"[{self.account_index}] Feed order confirmation payload: {json.dumps(confirm_json_data, indent=2)}")
         
         confirm_response = await self.session.post(
             f'https://api.aicraft.fun/feeds/orders/{order_id}/confirm',
