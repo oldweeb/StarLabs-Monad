@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.aircraft.instance import Aircraft
 from src.model.magiceden.instance import MagicEden
 from src.model.monadking_mint.instance import Monadking
 from src.model.demask_mint.instance import Demask
@@ -269,7 +270,17 @@ class Start:
                         self.session,
                     )
                     await magiceden.mint()
-                
+
+                elif task == "aircraft":
+                    aircraft = Aircraft(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await aircraft.execute()
+
                 await self.sleep(task)
 
             return True

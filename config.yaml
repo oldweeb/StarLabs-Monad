@@ -75,6 +75,7 @@ FLOW:
     # OTHER
     # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
     # "nad_domains" - register random domain on nad.domains
+    # "aircraft" - mint NFT on aircraft.fun
     # DOES NOT WORK, WAIT FOR UPDATE -"bima" - lending
     
     # EXAMPLE: tasks: ["gaszip", "swaps"]
@@ -95,7 +96,7 @@ FLOW:
     #         ["apriori", "magma", "kintsu", "shmonad"],
     #         "logs",
     #     ]
-    TASKS: ["faucet"]
+    TASKS: ["aircraft"]
 
     # number of swaps. bean ambient monad etc
     NUMBER_OF_SWAPS: [1, 3]
