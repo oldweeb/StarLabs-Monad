@@ -3,6 +3,8 @@ import primp
 import random
 import asyncio
 
+from src.model.memebridge.instance import Memebridge
+from src.model.dusted.instance import Dusted
 from src.model.aircraft.instance import Aircraft
 from src.model.magiceden.instance import MagicEden
 from src.model.monadking_mint.instance import Monadking
@@ -115,6 +117,15 @@ class Start:
                         self.config,
                     )
                     await gaszip.refuel()
+
+                elif task == "memebridge":
+                    memebridge = Memebridge(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                    )
+                    await memebridge.refuel()
 
                 elif task == "apriori":
                     apriori = Apriori(
@@ -280,7 +291,16 @@ class Start:
                         self.session,
                     )
                     await aircraft.execute()
-
+                
+                elif task == "dusted":
+                    dusty = Dusted(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await dusty.execute()
                 await self.sleep(task)
 
             return True

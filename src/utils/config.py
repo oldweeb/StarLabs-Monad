@@ -71,6 +71,15 @@ class GaszipConfig:
 
 
 @dataclass
+class MemebridgeConfig:
+    NETWORKS_TO_REFUEL_FROM: List[str]
+    AMOUNT_TO_REFUEL: Tuple[float, float]
+    MINIMUM_BALANCE_TO_REFUEL: float
+    WAIT_FOR_FUNDS_TO_ARRIVE: bool
+    MAX_WAIT_TIME: int
+
+
+@dataclass
 class ShmonadConfig:
     PERCENT_OF_BALANCE_TO_SWAP: Tuple[int, int]
     BUY_AND_STAKE_SHMON: bool
@@ -130,6 +139,7 @@ class Config:
     DEMASK: DemaskConfig
     MONADKING: MonadkingConfig
     MAGICEDEN: MagicEdenConfig
+    MEMEBRIDGE: MemebridgeConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -188,6 +198,13 @@ class Config:
                 MINIMUM_BALANCE_TO_REFUEL=data["GASZIP"]["MINIMUM_BALANCE_TO_REFUEL"],
                 WAIT_FOR_FUNDS_TO_ARRIVE=data["GASZIP"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
                 MAX_WAIT_TIME=data["GASZIP"]["MAX_WAIT_TIME"],
+            ),
+            MEMEBRIDGE=MemebridgeConfig(
+                NETWORKS_TO_REFUEL_FROM=data["MEMEBRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
+                AMOUNT_TO_REFUEL=tuple(data["MEMEBRIDGE"]["AMOUNT_TO_REFUEL"]),
+                MINIMUM_BALANCE_TO_REFUEL=data["MEMEBRIDGE"]["MINIMUM_BALANCE_TO_REFUEL"],
+                WAIT_FOR_FUNDS_TO_ARRIVE=data["MEMEBRIDGE"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
+                MAX_WAIT_TIME=data["MEMEBRIDGE"]["MAX_WAIT_TIME"],
             ),
             SHMONAD=ShmonadConfig(
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(
