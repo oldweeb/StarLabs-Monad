@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.testnet_bridge.instance import TestnetBridge
 from src.model.memebridge.instance import Memebridge
 from src.model.dusted.instance import Dusted
 from src.model.aircraft.instance import Aircraft
@@ -210,6 +211,16 @@ class Start:
                         self.session,
                     )
                     await orbiter.bridge()
+
+                elif task == "testnet_bridge":
+                    testnet_bridge = TestnetBridge(
+                        self.account_index,
+                        self.proxy,
+                        self.private_key,
+                        self.config,
+                        self.session,
+                    )
+                    await testnet_bridge.execute()
 
                 elif task == "logs":
                     wallet_stats = WalletStats(self.config)

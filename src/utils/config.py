@@ -78,6 +78,13 @@ class MemebridgeConfig:
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
 
+@dataclass
+class TestnetBridgeConfig:
+    NETWORKS_TO_REFUEL_FROM: List[str]
+    AMOUNT_TO_REFUEL: Tuple[float, float]
+    MINIMUM_BALANCE_TO_REFUEL: float
+    WAIT_FOR_FUNDS_TO_ARRIVE: bool
+    MAX_WAIT_TIME: int
 
 @dataclass
 class ShmonadConfig:
@@ -140,6 +147,7 @@ class Config:
     MONADKING: MonadkingConfig
     MAGICEDEN: MagicEdenConfig
     MEMEBRIDGE: MemebridgeConfig
+    TESTNET_BRIDGE: TestnetBridgeConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -205,6 +213,13 @@ class Config:
                 MINIMUM_BALANCE_TO_REFUEL=data["MEMEBRIDGE"]["MINIMUM_BALANCE_TO_REFUEL"],
                 WAIT_FOR_FUNDS_TO_ARRIVE=data["MEMEBRIDGE"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
                 MAX_WAIT_TIME=data["MEMEBRIDGE"]["MAX_WAIT_TIME"],
+            ),
+            TESTNET_BRIDGE=TestnetBridgeConfig(
+                NETWORKS_TO_REFUEL_FROM=data["TESTNET_BRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
+                AMOUNT_TO_REFUEL=tuple(data["TESTNET_BRIDGE"]["AMOUNT_TO_REFUEL"]),
+                MINIMUM_BALANCE_TO_REFUEL=data["TESTNET_BRIDGE"]["MINIMUM_BALANCE_TO_REFUEL"],
+                WAIT_FOR_FUNDS_TO_ARRIVE=data["TESTNET_BRIDGE"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
+                MAX_WAIT_TIME=data["TESTNET_BRIDGE"]["MAX_WAIT_TIME"],
             ),
             SHMONAD=ShmonadConfig(
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(
