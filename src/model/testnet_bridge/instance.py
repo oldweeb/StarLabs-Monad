@@ -268,7 +268,7 @@ class TestnetBridge:
             # Estimate bridge fee based on the example
             bridge_fee = web3.to_wei(0.000005627, 'ether')  # 5627000000000 wei as in the example
             
-            # Build the transaction
+            # Build the transaction without gas limit first
             built_transaction = await transaction.build_transaction({
                 "from": self.account.address,
                 "value": amount_in + bridge_fee,  # The amount plus a fee for bridging
@@ -277,6 +277,28 @@ class TestnetBridge:
                 "type": "0x2",  # EIP-1559 transaction
                 **gas_params
             })
+            
+            # Manually estimate gas for the transaction
+            try:
+                logger.info(f"[{self.account_index}] Estimating gas for bridge transaction...")
+                estimated_gas = await web3.eth.estimate_gas({
+                    "from": self.account.address,
+                    "to": contract.address,
+                    "value": amount_in + bridge_fee,
+                    "data": built_transaction["data"],
+                    "nonce": nonce,
+                    "maxFeePerGas": gas_params["maxFeePerGas"],
+                    "maxPriorityFeePerGas": gas_params["maxPriorityFeePerGas"],
+                })
+                
+                # Multiply by 1.2 for safety buffer
+                gas_limit = int(estimated_gas * 1.2)
+                logger.info(f"[{self.account_index}] Estimated gas: {estimated_gas}, with buffer: {gas_limit}")
+                
+                # Add gas limit to the transaction
+                built_transaction["gas"] = gas_limit
+            except Exception as e:
+                logger.error(f"[{self.account_index}] Gas estimation failed: {str(e)}.")
             
             return built_transaction
             
