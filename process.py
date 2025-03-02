@@ -37,13 +37,18 @@ async def start():
     choice = await src.utils.show_menu("Choose an option:", options)
     
 
-    if choice == "Edit config":
+    if choice == "👋 Exit" or choice is None:
+        return
+    elif choice == "🔧 Edit config":
         config_ui = src.utils.ConfigUI()
         config_ui.run()
         return
-    if choice == "Exit" or choice is None:
+    elif choice == "😈 Start farm":
+        pass
+    else:
+        logger.error(f"Invalid choice: {choice}")
         return
-    
+
     config = src.utils.get_config()
     
     # Читаем все файлы

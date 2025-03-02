@@ -84,17 +84,10 @@ def show_dev_info():
 async def show_menu(title: str, options: List[str]) -> str:
     """
     Displays an interactive menu with the given options and returns the selected option.
-
-    Args:
-        title (str): Title of the menu
-        options (List[str]): List of options to display
-
-    Returns:
-        str: Selected option
     """
     try:
-        # Clear screen
-        # os.system("cls" if os.name == "nt" else "clear")
+        # Add empty lines for spacing
+        print("\n" * 3)
 
         # Create custom style with larger text
         custom_style = QuestionaryStyle(
@@ -110,25 +103,17 @@ async def show_menu(title: str, options: List[str]) -> str:
             ]
         )
 
-        # Add emojis to options if they don't already have them
-        formatted_options = []
-        for i, option in enumerate(options):
-            formatted_options.append(option)
+        print()
 
         # Show the menu with custom style
         result = await questionary.select(
             title,
-            choices=formatted_options,
+            choices=options,  # Используем options напрямую, так как эмодзи уже есть
             style=custom_style,
             qmark="🎯",  # Custom pointer
             instruction="(Use arrow keys and Enter to select)",
         ).ask_async()
 
-        # Return the selected option without the emoji if it was added
-        if result:
-            for emoji in emojis:
-                if result.startswith(emoji):
-                    return result[len(emoji) :].strip()
         return result
 
     except KeyboardInterrupt:
