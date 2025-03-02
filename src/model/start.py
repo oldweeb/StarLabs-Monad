@@ -106,8 +106,8 @@ class Start:
             # Выполняем задачи по плану
             for i, task, task_type in planned_tasks:
                 logger.info(f"[{self.account_index}] Executing task {i}: {task}")
-                # await self.execute_task(task, monad)
-                # await self.sleep(task)
+                await self.execute_task(task, monad)
+                await self.sleep(task)
 
             return True
         except Exception as e:

@@ -162,20 +162,37 @@ class Config:
             data = yaml.safe_load(file)
 
         # Load tasks from tasks.py
-        tasks = []
         try:
             # Try to import tasks from tasks.py using a regular import
             import tasks
 
             if hasattr(tasks, "TASKS"):
-                tasks = tasks.TASKS
+                # TASKS now contains preset names
+                preset_names = [preset_name.upper() for preset_name in tasks.TASKS]
+
+                # Combine tasks from all specified presets
+                combined_tasks = []
+                for preset_name in preset_names:
+                    if hasattr(tasks, preset_name):
+                        preset_tasks = getattr(tasks, preset_name)
+                        combined_tasks.extend(preset_tasks)
+                    else:
+                        print(f"Warning: Preset {preset_name} not found in tasks.py")
+
+                if combined_tasks:
+                    tasks_list = combined_tasks
+                else:
+                    error_msg = "No valid presets found in tasks.py"
+                    print(f"Error: {error_msg}")
+                    raise ValueError(error_msg)
             else:
-                print("Warning: No TASKS list found in tasks.py")
-                tasks = data["FLOW"]["TASKS"]
+                error_msg = "No TASKS list found in tasks.py"
+                print(f"Error: {error_msg}")
+                raise ValueError(error_msg)
         except ImportError as e:
-            print(f"Warning: Could not import tasks.py: {e}")
-            # If tasks.py is not found or invalid, use tasks from config.yaml
-            tasks = data["FLOW"]["TASKS"]
+            error_msg = f"Could not import tasks.py: {e}"
+            print(f"Error: {error_msg}")
+            raise ImportError(error_msg) from e
 
         return cls(
             SETTINGS=SettingsConfig(
@@ -199,8 +216,7 @@ class Config:
                 BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
             ),
             FLOW=FlowConfig(
-                # Use tasks from tasks.py if available, otherwise use from config.yaml
-                TASKS=tasks,
+                TASKS=tasks_list,
                 NUMBER_OF_SWAPS=tuple(data["FLOW"]["NUMBER_OF_SWAPS"]),
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(
                     data["FLOW"]["PERCENT_OF_BALANCE_TO_SWAP"]

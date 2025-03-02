@@ -1,13 +1,13 @@
 TASKS = [
-    "testnet_bridge",
-    ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
-    ["collect", "sepolia", "testnet", "withdraw"],
-    "logs",
+    "PRESET_1",
+    "PRESET_3"
 ]
+
 
 PRESET_1 = [
     "testnet_bridge",
     ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
+    ["collect", "sepolia", "testnet", "withdraw"],
     "logs",
 ]
 
@@ -17,6 +17,12 @@ PRESET_2 = [
     "logs",
 ]
 
+
+PRESET_3 = [
+    "testnet_bridge",
+    ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
+    "logs",
+]
 
 # FAUCETS
 # "faucet" - get tokens from faucet
