@@ -4,6 +4,7 @@ from patchright.async_api import async_playwright
 from loguru import logger
 import random
 import primp
+from web3 import AsyncWeb3
 from src.utils.config import Config
 from eth_account import Account
 import os
@@ -15,6 +16,8 @@ import aiofiles.os
 import re
 from asyncio import Lock
 import shutil
+
+from src.utils.constants import RPC_URL
 
 # Create file locks for thread safety
 capsolver_file_lock = Lock()
@@ -189,6 +192,7 @@ async def faucet(
     profile_dir = None
     for retry in range(config.SETTINGS.ATTEMPTS):
         try:
+            my_web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
             capsolver_path = os.path.join(os.path.dirname(__file__), "capsolver")
 
             # Update the capsolver API key in both files before launching the browser
@@ -285,7 +289,7 @@ async def faucet(
                             f"[{account_index}] [{wallet.address}] | Captcha is solving... Wait 10 sec..."
                         )
                         continue
-                    if text == "Captcha solved!":
+                    if text == "Captcha solved!" or text == "Капча решена!":
                         logger.success(
                             f"[{account_index}] [{wallet.address}] | Captcha solved."
                         )
@@ -311,6 +315,12 @@ async def faucet(
                 # 5. Wait before clicking Get Testnet MON
                 await asyncio.sleep(2 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
 
+                # Get initial balance
+                initial_balance = await my_web3.eth.get_balance(wallet.address)
+                logger.info(
+                    f"[{account_index}] [{wallet.address}] | Initial balance: {initial_balance}"
+                )
+
                 await page.click(
                     'button:has-text("Get Testnet MON")',
                     timeout=int(30000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
@@ -319,42 +329,57 @@ async def faucet(
                 await asyncio.sleep(5 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
 
                 text = ""
-                for _ in range(10):
-                    stack_element = await page.wait_for_selector(
-                        "//ol/li/div[2]/div[@data-title]", state="visible"
+                try:
+                    for _ in range(10):
+                        stack_element = await page.wait_for_selector(
+                            "//ol/li/div[2]/div[@data-title]", state="visible", timeout=int(3000)
+                        )
+                        text = await stack_element.inner_text()
+                        if text == "Success":
+                            pass
+                        if text == "Sending tokens...":
+                            logger.info(
+                                f"[{account_index}] [{wallet.address}] | Faucet is sending tokens... Wait 2 sec..."
+                            )
+                            await asyncio.sleep(
+                                2 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
+                            )
+                            continue
+                        if "Unexpected token 'A'" in text or "QuickNode" in text:
+                            logger.error(
+                                f"[{account_index}] [{wallet.address}] | Faucet does not work now, try again later..."
+                            )
+                            return False
+                        if "Claimed already" in text:
+                            logger.success(
+                                f"[{account_index}] [{wallet.address}] | Faucet already claimed..."
+                            )
+                            return True
+                        if "CloudFlare process failed" in text:
+                            raise Exception("Captcha is not solved, try again later...")
+
+                        if "successful" in text:
+                            logger.success(
+                                f"[{account_index}] [{wallet.address}] | Got tokens from faucet monad.xyz."
+                            )
+                            return True
+                except Exception as e:
+                    pass
+
+                # Get final balance and compare
+                final_balance = await my_web3.eth.get_balance(wallet.address)
+                logger.info(
+                    f"[{account_index}] [{wallet.address}] | Final balance: {final_balance}"
+                )
+
+                if final_balance == initial_balance:
+                    logger.warning(
+                        f"[{account_index}] [{wallet.address}] | Balance hasn't changed after faucet attempt!"
                     )
-                    text = await stack_element.inner_text()
-                    if text == "Success":
-                        pass
-                    if text == "Sending tokens...":
-                        logger.info(
-                            f"[{account_index}] [{wallet.address}] | Faucet is sending tokens... Wait 2 sec..."
-                        )
-                        await asyncio.sleep(
-                            2 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
-                        )
-                        continue
-                    if "Unexpected token 'A'" in text or "QuickNode" in text:
-                        logger.error(
-                            f"[{account_index}] [{wallet.address}] | Faucet does not work now, try again later..."
-                        )
-                        return False
-                    if "Claimed already" in text:
-                        logger.success(
-                            f"[{account_index}] [{wallet.address}] | Faucet already claimed..."
-                        )
-                        return True
-                    if "CloudFlare process failed" in text:
-                        raise Exception("Captcha is not solved, try again later...")
+                    return False
 
-                    if "successful" in text:
-                        logger.success(
-                            f"[{account_index}] [{wallet.address}] | Got tokens from faucet monad.xyz."
-                        )
-                        return True
-
-                logger.warning(
-                    f"[{account_index}] [{wallet.address}] | Faucet result: {text}"
+                logger.success(
+                    f"[{account_index}] [{wallet.address}] | Faucet success!"
                 )
                 await asyncio.sleep(5 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
 
