@@ -30,6 +30,7 @@ class ConfigUI:
         self.root = ctk.CTk()
         self.root.title("StarLabs Monad Configuration")
         self.root.geometry("1250x800")
+        self.root.minsize(1250, 800)  # Set minimum window size
         self.root.configure(fg_color=self.colors["bg"])
 
         # Header
@@ -64,21 +65,31 @@ class ConfigUI:
             lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")),
         )
 
-        # Set fixed width for the window content
-        window_width = 1190
-        column_width = window_width // 2 - 20  # 20px for padding between columns
+        # Pack scrollbar components
+        self.canvas.pack(side="left", fill="both", expand=True)
+        self.scrollbar.pack(side="right", fill="y")
 
+        # Create window in canvas with proper width
         self.canvas.create_window(
-            (0, 0), window=self.scrollable_frame, anchor="nw", width=window_width
+            (0, 0),
+            window=self.scrollable_frame,
+            anchor="nw",
+            width=self.canvas.winfo_width(),  # Use canvas width
         )
+
+        # Update canvas width when window is resized
+        def update_canvas_width(event):
+            self.canvas.itemconfig(
+                self.canvas.find_withtag("all")[0], width=event.width
+            )
+
+        self.canvas.bind("<Configure>", update_canvas_width)
+
+        # Configure scrollbar
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
 
         # Mouse wheel scrolling
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
-
-        # Pack scrollbar components
-        self.scrollbar.pack(side="right", fill="y")
-        self.canvas.pack(side="left", fill="both", expand=True)
 
         self.load_config()
         self.create_widgets()
@@ -351,11 +362,14 @@ class ConfigUI:
         return contracts_list
 
     def create_widgets(self):
-        # Create two columns
-        left_column = ctk.CTkFrame(self.scrollable_frame, fg_color=self.colors["bg"])
+        # Create two columns using pack
+        columns_frame = ctk.CTkFrame(self.scrollable_frame, fg_color=self.colors["bg"])
+        columns_frame.pack(fill="both", expand=True)
+
+        left_column = ctk.CTkFrame(columns_frame, fg_color=self.colors["bg"])
         left_column.pack(side="left", fill="both", expand=True, padx=5)
 
-        right_column = ctk.CTkFrame(self.scrollable_frame, fg_color=self.colors["bg"])
+        right_column = ctk.CTkFrame(columns_frame, fg_color=self.colors["bg"])
         right_column.pack(side="left", fill="both", expand=True, padx=5)
 
         # LEFT COLUMN

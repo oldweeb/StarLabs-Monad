@@ -87,7 +87,7 @@ async def show_menu(title: str, options: List[str]) -> str:
     """
     try:
         # Add empty lines for spacing
-        print("\n" * 3)
+        print("\n")
 
         # Create custom style with larger text
         custom_style = QuestionaryStyle(

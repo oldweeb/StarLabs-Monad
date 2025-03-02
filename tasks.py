@@ -4,7 +4,7 @@ TASKS = [
 
 
 PRESET_1 = [
-    "faucet",
+    "magiceden",
 ]
 
 PRESET_2 = [

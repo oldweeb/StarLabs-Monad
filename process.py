@@ -33,10 +33,9 @@ async def start():
         "🔧 Edit config",
         "👋 Exit",
     ]
-    print("\n\n")
+
     choice = await src.utils.show_menu("Choose an option:", options)
     
-
     if choice == "👋 Exit" or choice is None:
         return
     elif choice == "🔧 Edit config":
