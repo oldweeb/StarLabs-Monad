@@ -3,7 +3,6 @@ aiogram==3.18.0
 customtkinter==5.2.2
 eth_abi==5.2.0
 eth_account==0.13.5
-imap_tools==1.10.0
 loguru==0.7.3
 patchright==1.50.0
 primp==0.14.0
