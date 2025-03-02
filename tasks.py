@@ -4,7 +4,7 @@ TASKS = [
 
 
 FAUCET = [
-    "farm_faucet",
+    "faucet",
 ]
 
 BRIDGE_AND_SWAPS = [

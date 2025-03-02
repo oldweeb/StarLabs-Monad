@@ -252,40 +252,49 @@ async def faucet(
                 await page.goto("https://testnet.monad.xyz/")
 
                 await asyncio.sleep(5 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
-                
+
                 # 1. Click terms checkbox
                 await page.click(
                     'button[role="checkbox"][aria-label="Accept terms and conditions"]',
-                    timeout=int(30000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                    timeout=int(30000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
                 )
                 await asyncio.sleep(2 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
 
                 # 2. Click Continue button
                 await page.click(
                     'button:has-text("Continue")',
-                    timeout=int(5000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                    timeout=int(5000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
                 )
                 await asyncio.sleep(5 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
 
                 solved = False
                 # # 3. Wait for captcha solving
-                logger.success(f"[{account_index}] [{wallet.address}] | Wait 30 sec for captcha solving...")
+                logger.success(
+                    f"[{account_index}] [{wallet.address}] | Wait 30 sec for captcha solving..."
+                )
                 for _ in range(6):
                     await asyncio.sleep(10)
-                    stack_element = await page.wait_for_selector("//*[@id='capsolver-solver-tip-button']/div[2]", state="visible", timeout=int(20000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER))
+                    stack_element = await page.wait_for_selector(
+                        "//*[@id='capsolver-solver-tip-button']/div[2]",
+                        state="visible",
+                        timeout=int(20000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
+                    )
                     text = await stack_element.inner_text()
                     if text == "Solving...":
-                        logger.info(f"[{account_index}] [{wallet.address}] | Captcha is solving... Wait 10 sec...")
+                        logger.info(
+                            f"[{account_index}] [{wallet.address}] | Captcha is solving... Wait 10 sec..."
+                        )
                         continue
                     if text == "Captcha solved!":
-                        logger.success(f"[{account_index}] [{wallet.address}] | Captcha solved.")
+                        logger.success(
+                            f"[{account_index}] [{wallet.address}] | Captcha solved."
+                        )
                         solved = True
                         break
 
                 if not solved:
                     raise Exception("Captcha not solved")
 
-                    
                 # # 3. Click Get Started button
                 # await page.click(
                 #     'button:has-text("Get Started")',
@@ -296,40 +305,57 @@ async def faucet(
                 await page.fill(
                     'input[placeholder*="0x8ce78"]',
                     wallet.address,
-                    timeout=int(15000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                    timeout=int(15000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
                 )
-                
+
                 # 5. Wait before clicking Get Testnet MON
                 await asyncio.sleep(2 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
 
                 await page.click(
                     'button:has-text("Get Testnet MON")',
-                    timeout=int(30000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                    timeout=int(30000 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER),
                 )
-    
+
                 await asyncio.sleep(5 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
-                
+
                 text = ""
                 for _ in range(10):
-                    stack_element = await page.wait_for_selector("//ol/li/div[2]/div[@data-title]", state="visible")
+                    stack_element = await page.wait_for_selector(
+                        "//ol/li/div[2]/div[@data-title]", state="visible"
+                    )
                     text = await stack_element.inner_text()
                     if text == "Success":
                         pass
                     if text == "Sending tokens...":
-                        logger.info(f"[{account_index}] [{wallet.address}] | Faucet is sending tokens... Wait 2 sec...")
-                        await asyncio.sleep(2 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
+                        logger.info(
+                            f"[{account_index}] [{wallet.address}] | Faucet is sending tokens... Wait 2 sec..."
+                        )
+                        await asyncio.sleep(
+                            2 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER
+                        )
                         continue
                     if "Unexpected token 'A'" in text or "QuickNode" in text:
-                        logger.error(f"[{account_index}] [{wallet.address}] | Faucet does not work now, try again later...")
+                        logger.error(
+                            f"[{account_index}] [{wallet.address}] | Faucet does not work now, try again later..."
+                        )
                         return False
                     if "Claimed already" in text:
-                        logger.success(f"[{account_index}] [{wallet.address}] | Faucet already claimed...")
+                        logger.success(
+                            f"[{account_index}] [{wallet.address}] | Faucet already claimed..."
+                        )
                         return True
+                    if "CloudFlare process failed" in text:
+                        raise Exception("Captcha is not solved, try again later...")
+
                     if "successful" in text:
-                        logger.success(f"[{account_index}] [{wallet.address}] | Got tokens from faucet monad.xyz.")
+                        logger.success(
+                            f"[{account_index}] [{wallet.address}] | Got tokens from faucet monad.xyz."
+                        )
                         return True
-                    
-                logger.warning(f"[{account_index}] [{wallet.address}] | Faucet result: {text}")
+
+                logger.warning(
+                    f"[{account_index}] [{wallet.address}] | Faucet result: {text}"
+                )
                 await asyncio.sleep(5 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
 
                 await browser.close()
