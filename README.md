@@ -54,33 +54,9 @@ cd StarLabs-Monad
 pip install -r requirements.txt
 ```
 
-3. Configure the bot in `config.yaml`
+3. Configure the bot by starting it (py main.py) and choosing the edit config option`
+![image](https://github.com/user-attachments/assets/c5ca3696-92db-4e48-89a8-e0cd46a57865)
 
-```yaml
-SETTINGS:
-# number of concurrent threads
-THREADS: 1
-# number of retries for ANY action
-ATTEMPTS: 5
-# pause between attempts
-PAUSE_BETWEEN_ATTEMPTS: [5, 15]
-# pause in seconds between accounts
-RANDOM_PAUSE_BETWEEN_ACCOUNTS: [3, 10]
-# pause in seconds between actions
-RANDOM_PAUSE_BETWEEN_ACTIONS: [2, 5]
-FLOW:
-# Available tasks:
-# "connect_discord" - connect discord account
-# "swaps" - swaps tokens
-# "apriori" - stake MON token
-# "magma" - stake MON token on Magma
-# "owlto" - deploy contract on Owlto
-# "bima" - lending and faucet
-TASKS: ["connect_discord", "swaps", "apriori", "magma", "owlto", "bima"]
-# number of swaps
-NUMBER_OF_SWAPS: [1, 3]
-# percent of balance to swap
-PERCENT_OF_BALANCE_TO_SWAP: [10, 15]
 
 ```
 
