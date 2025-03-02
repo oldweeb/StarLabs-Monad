@@ -10,32 +10,32 @@ class ConfigUI:
 
         # Define color scheme
         self.colors = {
-            "bg": "#1a1a1a",  # Dark background
-            "frame_bg": "#2b2b2b",  # Slightly lighter for frames
-            "accent": "#a0a0a0",  # Light gray accent color
+            "bg": "#121212",  # Slightly lighter black background
+            "frame_bg": "#1e1e1e",  # Slightly lighter frame background
+            "accent": "#B8860B",  # More muted gold/yellow (DarkGoldenrod)
             "text": "#ffffff",  # White text
-            "entry_bg": "#333333",  # Dark input background
-            "hover": "#808080",  # Hover color for buttons
+            "entry_bg": "#1e1e1e",  # Dark input background
+            "hover": "#8B6914",  # Darker muted yellow for hover
         }
 
         # Standardize input widths
         self.input_sizes = {
-            "tiny": 60,  # For small numbers (1-2 digits)
-            "small": 100,  # For short text/numbers
-            "medium": 160,  # For medium length text
-            "large": 220,  # For long text
-            "extra_large": 300,  # For very long text/lists
+            "tiny": 70,  # For small numbers (1-2 digits)
+            "small": 115,  # For short text/numbers
+            "medium": 180,  # For medium length text
+            "large": 250,  # For long text
+            "extra_large": 350,  # For very long text/lists
         }
 
         self.root = ctk.CTk()
         self.root.title("StarLabs Monad Configuration")
-        self.root.geometry("1200x800")
+        self.root.geometry("1250x800")
         self.root.configure(fg_color=self.colors["bg"])
 
         # Header
         header = ctk.CTkLabel(
             self.root,
-            text="StarLabs Monad Configuration",
+            text="🌟 StarLabs Monad Configuration 🌟",
             font=("Helvetica", 24, "bold"),
             text_color=self.colors["accent"],
         )
@@ -65,7 +65,7 @@ class ConfigUI:
         )
 
         # Set fixed width for the window content
-        window_width = 1160
+        window_width = 1190
         column_width = window_width // 2 - 20  # 20px for padding between columns
 
         self.canvas.create_window(
@@ -844,11 +844,16 @@ class ConfigUI:
         with open(config_path, "w") as file:
             yaml.dump(self.config, file, default_flow_style=False)
 
+    def run(self):
+        """Run the configuration UI"""
+        self.root.mainloop()
 
-def main():
-    app = ConfigUI()
-    app.root.mainloop()
+
+# Удалить или закомментировать эту часть, так как теперь запуск будет через метод run()
+# def main():
+#     app = ConfigUI()
+#     app.root.mainloop()
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

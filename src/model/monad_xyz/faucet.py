@@ -153,7 +153,7 @@ def get_random_launch_args(capsolver_path: str) -> List[str]:
 
     optional_args = [
         "--disable-web-security",
-        "--disable-features=IsolateOrigins,site-per-process",
+        "--disable-features=IsolateOrigins,site-per-process,OptimizationGuideModelDownloading,OptimizationHintsFetching,OptimizationTargetPrediction,OptimizationHints",
         "--disable-site-isolation-trials",
         "--disable-setuid-sandbox",
         "--ignore-certificate-errors",
