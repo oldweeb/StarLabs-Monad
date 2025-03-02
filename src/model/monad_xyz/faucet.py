@@ -147,11 +147,11 @@ def get_random_launch_args(capsolver_path: str) -> List[str]:
         "--no-sandbox",
         "--disable-dev-shm-usage",
         "--password-store=basic",
-        "--use-mock-keychain",
-        "--disable-software-rasterizer",
-        "--disable-gpu-sandbox",
+        # "--use-mock-keychain",
+        # "--disable-software-rasterizer",
+        # "--disable-gpu-sandbox",
         "--no-default-browser-check",
-        "--allow-running-insecure-content",
+        # "--allow-running-insecure-content",
     ]
 
     optional_args = [
@@ -160,12 +160,13 @@ def get_random_launch_args(capsolver_path: str) -> List[str]:
         "--disable-site-isolation-trials",
         "--disable-setuid-sandbox",
         "--ignore-certificate-errors",
-        "--disable-accelerated-2d-canvas",
-        "--disable-bundled-ppapi-flash",
+        # "--disable-accelerated-2d-canvas",
+        # "--disable-bundled-ppapi-flash",
         "--disable-logging",
         "--disable-notifications",
     ]
 
+        
     # Randomly select 2-4 optional arguments
     selected_optional = random.sample(optional_args, random.randint(2, 4))
 
@@ -329,8 +330,9 @@ async def faucet(
                 await asyncio.sleep(5 * config.SETTINGS.BROWSER_PAUSE_MULTIPLIER)
 
                 text = ""
-                try:
-                    for _ in range(10):
+
+                for _ in range(10):
+                    try:
                         stack_element = await page.wait_for_selector(
                             "//ol/li/div[2]/div[@data-title]",
                             state="visible",
@@ -365,8 +367,8 @@ async def faucet(
                                 f"[{account_index}] [{wallet.address}] | Got tokens from faucet monad.xyz."
                             )
                             return True
-                except Exception as e:
-                    pass
+                    except Exception as e:
+                        pass
 
                 logger.info(
                     f"[{account_index}] [{wallet.address}] | Faucet is sending tokens... Wait 60 sec..."
