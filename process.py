@@ -28,34 +28,38 @@ async def start():
     show_logo()
     show_dev_info()
 
-    options = [
-        "😈 Start farm",
-        "🔧 Edit config",
-        "👋 Exit",
-    ]
+    print("\nAvailable options:\n")
+    print("[1] 😈 Start farm")
+    print("[2] 🔧 Edit config")
+    print("[3] 👋 Exit")
+    print()
 
-    choice = await src.utils.show_menu("Choose an option:", options)
-    
-    if choice == "👋 Exit" or choice is None:
+    try:
+        choice = input("Enter option (1-3): ").strip()
+    except Exception as e:
+        logger.error(f"Input error: {e}")
         return
-    elif choice == "🔧 Edit config":
+
+    if choice == "3" or not choice:
+        return
+    elif choice == "2":
         config_ui = src.utils.ConfigUI()
         config_ui.run()
         return
-    elif choice == "😈 Start farm":
+    elif choice == "1":
         pass
     else:
         logger.error(f"Invalid choice: {choice}")
         return
 
     config = src.utils.get_config()
-    
+
     # Читаем все файлы
     proxies = src.utils.read_txt_file("proxies", "data/proxies.txt")
     if len(proxies) == 0:
         logger.error("No proxies found in data/proxies.txt")
         return
-    
+
     if "disperse_farm_accounts" in config.FLOW.TASKS:
         main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
         farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
@@ -65,13 +69,16 @@ async def start():
     elif "disperse_from_one_wallet" in config.FLOW.TASKS:
         main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
         farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
-        disperse_one_wallet = DisperseFromOneWallet(farm_keys[0], main_keys, proxies, config)
+        disperse_one_wallet = DisperseFromOneWallet(
+            farm_keys[0], main_keys, proxies, config
+        )
         await disperse_one_wallet.disperse()
         return
 
-
     if "farm_faucet" in config.FLOW.TASKS:
-        private_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
+        private_keys = src.utils.read_txt_file(
+            "private keys", "data/keys_for_faucet.txt"
+        )
     else:
         private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
 
@@ -101,7 +108,6 @@ async def start():
         # Python slice не включает последний элемент, поэтому +1
         accounts_to_process = private_keys[start_index - 1 : end_index]
 
-    
     discord_tokens = [""] * len(accounts_to_process)
     emails = [""] * len(accounts_to_process)
 
@@ -144,7 +150,7 @@ async def start():
     await asyncio.gather(*tasks)
 
     logger.success("Saved accounts and private keys to a file.")
-    
+
     print_wallets_stats(config)
 
 
