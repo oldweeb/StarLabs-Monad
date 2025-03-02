@@ -21,7 +21,7 @@ class SettingsConfig:
 
 @dataclass
 class FlowConfig:
-    TASKS: List[str]
+    TASKS: List
     NUMBER_OF_SWAPS: Tuple[int, int]
     PERCENT_OF_BALANCE_TO_SWAP: Tuple[int, int]
 
@@ -161,16 +161,20 @@ class Config:
         with open(path, "r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
-        # Load tasks from tasks.yaml
+        # Load tasks from tasks.py
         tasks = []
         try:
-            with open("tasks.yaml", "r", encoding="utf-8") as tasks_file:
-                tasks_data = yaml.safe_load(tasks_file)
-                if tasks_data and "TASKS" in tasks_data:
-                    tasks = tasks_data["TASKS"]
-        except (FileNotFoundError, yaml.YAMLError) as e:
-            print(f"Warning: Could not load tasks from tasks.yaml: {e}")
-            # If tasks.yaml is not found or invalid, use tasks from config.yaml
+            # Try to import tasks from tasks.py using a regular import
+            import tasks
+
+            if hasattr(tasks, "TASKS"):
+                tasks = tasks.TASKS
+            else:
+                print("Warning: No TASKS list found in tasks.py")
+                tasks = data["FLOW"]["TASKS"]
+        except ImportError as e:
+            print(f"Warning: Could not import tasks.py: {e}")
+            # If tasks.py is not found or invalid, use tasks from config.yaml
             tasks = data["FLOW"]["TASKS"]
 
         return cls(
@@ -195,7 +199,7 @@ class Config:
                 BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
             ),
             FLOW=FlowConfig(
-                # Use tasks from tasks.yaml if available, otherwise use from config.yaml
+                # Use tasks from tasks.py if available, otherwise use from config.yaml
                 TASKS=tasks,
                 NUMBER_OF_SWAPS=tuple(data["FLOW"]["NUMBER_OF_SWAPS"]),
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(

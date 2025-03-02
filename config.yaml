@@ -31,7 +31,7 @@ SETTINGS:
 
     # random pause before start of every account
     # to make sure that all accounts will be started at different times
-    RANDOM_INITIALIZATION_PAUSE: [5, 20]
+    RANDOM_INITIALIZATION_PAUSE: [1, 2]
 
     # pause multiplier for browser actions
     BROWSER_PAUSE_MULTIPLIER: 1.5

@@ -1,21 +1,21 @@
-
-TASKS: [
-  "testnet_bridge"
+TASKS = [
+    "testnet_bridge",
+    ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
+    ["collect", "sepolia", "testnet", "withdraw"],
+    "logs",
 ]
 
+PRESET_1 = [
+    "testnet_bridge",
+    ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
+    "logs",
+]
 
-PRESET_1:
-  TASKS: ["testnet_bridge", "gaszip", "memebridge", "swaps", "collect_all_to_monad", "logs"]
-
-PRESET_2:
-  TASKS: ["testnet_bridge", "gaszip", "memebridge", "swaps", "collect_all_to_monad", "logs"]
-
-PRESET_3:
-  TASKS: ["testnet_bridge", "gaszip", "memebridge", "swaps", "collect_all_to_monad", "logs"]
-
-PRESET_4:
-  TASKS: ["testnet_bridge", "gaszip", "memebridge", "swaps", "collect_all_to_monad", "logs"]
-
+PRESET_2 = [
+    "testnet_bridge",
+    ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
+    "logs",
+]
 
 
 # FAUCETS
