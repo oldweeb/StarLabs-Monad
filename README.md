@@ -4,8 +4,7 @@ This tool automates interactions with the Monad testnet, including various DeFi 
 
 TUTORIAL - https://star-labs.gitbook.io/star-labs/monad-ru
 
-# Features
-# All features are available in config.yaml
+# All features are available in config:
 # FAUCETS
 "faucet" - get tokens from faucet
 
