@@ -1,23 +1,36 @@
 TASKS = [
-    "PRESET_1",
+    "FULL_TASK",
 ]
 
 
-PRESET_1 = [
-    "magiceden",
+FAUCET = [
+    "farm_faucet",
 ]
 
-PRESET_2 = [
-    "testnet_bridge",
-    ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
+BRIDGE_AND_SWAPS = [
+    "memebridge",
+    ("izumi", "ambient", "bean", "swaps"),
+    "collect_all_to_monad",
+]
+
+
+FULL_TASK = [
+    ("izumi", "aircraft", "lilchogstars", "bean", "swaps"),
+    ["ambient", "izumi", "bean"],
+    ["apriori", "magma", "shmonad"],
+    ["magiceden", "monadking"],
+    "collect_all_to_monad",
     "logs",
 ]
 
-
-PRESET_3 = [
+BRIDGE_SEPOLIA_AND_CONVERT_TO_MON = [
     "testnet_bridge",
-    ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
-    "logs",
+    "orbiter",
+    "collect_all_to_monad",
+]
+
+CUSTOM_TASK = [
+    "",
 ]
 
 # FAUCETS
