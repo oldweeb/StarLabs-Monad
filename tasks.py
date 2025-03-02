@@ -1,14 +1,10 @@
 TASKS = [
     "PRESET_1",
-    "PRESET_3"
 ]
 
 
 PRESET_1 = [
-    "testnet_bridge",
-    ("gaszip", "memebridge", "swaps", "collect_all_to_monad"),
-    ["collect", "sepolia", "testnet", "withdraw"],
-    "logs",
+    "faucet",
 ]
 
 PRESET_2 = [

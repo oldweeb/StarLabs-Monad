@@ -36,6 +36,10 @@ SETTINGS:
     # pause multiplier for browser actions
     BROWSER_PAUSE_MULTIPLIER: 1.5
 
+    # DOES NOT WORK YET
+    TELEGRAM_USERS_IDS: []
+    TELEGRAM_BOT_TOKEN: ""
+    
 # --------------------------- #
 FLOW:
     # number of swaps. bean ambient monad etc
@@ -44,6 +48,10 @@ FLOW:
     # percent of balance to swap
     PERCENT_OF_BALANCE_TO_SWAP: [10, 15]
 
+
+FAUCET:
+    CAPSOLVER_API_KEY: "CAP-"
+    
 
 DISPERSE:
     # if balance of main account is LESS than this value

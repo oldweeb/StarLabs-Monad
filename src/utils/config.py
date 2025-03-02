@@ -17,6 +17,12 @@ class SettingsConfig:
     RANDOM_PAUSE_BETWEEN_ACTIONS: Tuple[int, int]
     BROWSER_PAUSE_MULTIPLIER: float
     RANDOM_INITIALIZATION_PAUSE: Tuple[int, int]
+    TELEGRAM_USERS_IDS: List[int]
+    TELEGRAM_BOT_TOKEN: str
+
+@dataclass
+class FaucetConfig:
+    CAPSOLVER_API_KEY: str
 
 
 @dataclass
@@ -136,6 +142,7 @@ class MagicEdenConfig:
 @dataclass
 class Config:
     SETTINGS: SettingsConfig
+    FAUCET: FaucetConfig
     FLOW: FlowConfig
     APRIORI: AprioriConfig
     MAGMA: MagmaConfig
@@ -214,6 +221,11 @@ class Config:
                     data["SETTINGS"]["RANDOM_INITIALIZATION_PAUSE"]
                 ),
                 BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
+                TELEGRAM_USERS_IDS=data["SETTINGS"]["TELEGRAM_USERS_IDS"],
+                TELEGRAM_BOT_TOKEN=data["SETTINGS"]["TELEGRAM_BOT_TOKEN"],
+            ),
+            FAUCET=FaucetConfig(
+                CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],
             ),
             FLOW=FlowConfig(
                 TASKS=tasks_list,
