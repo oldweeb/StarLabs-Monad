@@ -33,18 +33,40 @@ class ConfigUI:
         self.root.minsize(1250, 800)  # Set minimum window size
         self.root.configure(fg_color=self.colors["bg"])
 
-        # Header
+        # Create header frame
+        header_frame = ctk.CTkFrame(self.root, fg_color=self.colors["bg"])
+        header_frame.pack(
+            fill="x", padx=50, pady=(20, 0)
+        )  # Increased left/right padding
+
+        # Header on the left
         header = ctk.CTkLabel(
-            self.root,
-            text="🌟 StarLabs Monad Configuration 🌟",
+            header_frame,
+            text="🌟 StarLabs Monad Configuration",
             font=("Helvetica", 24, "bold"),
             text_color=self.colors["accent"],
+            anchor="w",
         )
-        header.pack(pady=20)
+        header.pack(side="left", padx=5)  # Added left padding
+
+        # Save button in the top right
+        self.save_button = ctk.CTkButton(
+            header_frame,
+            text="⚡ SAVE",  # Changed icon and made text uppercase
+            command=self._save_and_close,
+            font=("Helvetica", 18, "bold"),  # Increased font size
+            height=45,
+            width=160,  # Slightly wider
+            fg_color=self.colors["accent"],
+            hover_color=self.colors["hover"],
+            text_color=self.colors["text"],
+            corner_radius=10,
+        )
+        self.save_button.pack(side="right", padx=5)  # Added right padding
 
         # Create main frame with scrollbar
         self.main_frame = ctk.CTkFrame(self.root, fg_color=self.colors["bg"])
-        self.main_frame.pack(fill="both", expand=True, padx=20)
+        self.main_frame.pack(fill="both", expand=True, padx=5)
 
         # Add canvas and scrollbar
         self.canvas = ctk.CTkCanvas(
@@ -94,19 +116,6 @@ class ConfigUI:
         self.load_config()
         self.create_widgets()
 
-        # Save button at the bottom
-        self.save_button = ctk.CTkButton(
-            self.root,
-            text="Save Configuration",
-            command=self.save_config,
-            font=("Helvetica", 14, "bold"),
-            height=40,
-            fg_color=self.colors["accent"],
-            hover_color=self.colors["hover"],
-            text_color=self.colors["text"],
-        )
-        self.save_button.pack(pady=20)
-
     def _on_mousewheel(self, event):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
@@ -118,62 +127,64 @@ class ConfigUI:
     def create_range_inputs(self, parent, label, config_value, width=120):
         frame = ctk.CTkFrame(parent, fg_color=self.colors["frame_bg"])
         frame.pack(fill="x", pady=5)
+        frame.grid_columnconfigure(1, weight=1)  # Column for inputs will expand
 
         ctk.CTkLabel(
             frame,
             text=f"{label}:",
-            width=200,  # Reduced label width
+            width=200,
             anchor="w",
             font=("Helvetica", 12, "bold"),
             text_color=self.colors["text"],
-        ).pack(side="left", padx=(10, 10))
+        ).grid(row=0, column=0, padx=(10, 10), sticky="w")
 
-        range_frame = ctk.CTkFrame(frame, fg_color=self.colors["frame_bg"])
-        range_frame.pack(side="left")
+        input_frame = ctk.CTkFrame(frame, fg_color=self.colors["frame_bg"])
+        input_frame.grid(row=0, column=1, sticky="e", padx=(0, 10))
 
         min_entry = ctk.CTkEntry(
-            range_frame,
+            input_frame,
             width=width,
             font=("Helvetica", 12, "bold"),
             fg_color=self.colors["entry_bg"],
             text_color=self.colors["text"],
             border_color=self.colors["accent"],
         )
-        min_entry.insert(0, str(config_value[0]))
         min_entry.pack(side="left", padx=(0, 5))
+        min_entry.insert(0, str(config_value[0]))
 
         ctk.CTkLabel(
-            range_frame,
+            input_frame,
             text=" - ",
             font=("Helvetica", 12, "bold"),
             text_color=self.colors["text"],
         ).pack(side="left", padx=5)
 
         max_entry = ctk.CTkEntry(
-            range_frame,
+            input_frame,
             width=width,
             font=("Helvetica", 12, "bold"),
             fg_color=self.colors["entry_bg"],
             text_color=self.colors["text"],
             border_color=self.colors["accent"],
         )
-        max_entry.insert(0, str(config_value[1]))
         max_entry.pack(side="left", padx=(5, 0))
+        max_entry.insert(0, str(config_value[1]))
 
         return min_entry, max_entry
 
     def create_single_input(self, parent, label, config_value, width=300):
         frame = ctk.CTkFrame(parent, fg_color=self.colors["frame_bg"])
         frame.pack(fill="x", pady=5)
+        frame.grid_columnconfigure(1, weight=1)  # Column for input will expand
 
         ctk.CTkLabel(
             frame,
             text=f"{label}:",
-            width=200,  # Reduced label width
+            width=200,
             anchor="w",
             font=("Helvetica", 12, "bold"),
             text_color=self.colors["text"],
-        ).pack(side="left", padx=(10, 10))
+        ).grid(row=0, column=0, padx=(10, 10), sticky="w")
 
         entry = ctk.CTkEntry(
             frame,
@@ -183,14 +194,15 @@ class ConfigUI:
             text_color=self.colors["text"],
             border_color=self.colors["accent"],
         )
+        entry.grid(row=0, column=1, padx=(0, 10), sticky="e")
         entry.insert(0, str(config_value))
-        entry.pack(side="left", padx=(0, 10))
 
         return entry
 
     def create_checkbox(self, parent, label, config_value):
         frame = ctk.CTkFrame(parent, fg_color=self.colors["frame_bg"])
         frame.pack(fill="x", pady=5)
+        frame.grid_columnconfigure(0, weight=1)
 
         var = ctk.BooleanVar(value=config_value)
         checkbox = ctk.CTkCheckBox(
@@ -200,10 +212,10 @@ class ConfigUI:
             font=("Helvetica", 12, "bold"),
             text_color=self.colors["text"],
             fg_color=self.colors["accent"],
-            hover_color="#2d7ee6",
+            hover_color=self.colors["hover"],
             border_color=self.colors["accent"],
         )
-        checkbox.pack(anchor="w", padx=10, pady=5)
+        checkbox.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
         return var
 
@@ -672,6 +684,11 @@ class ConfigUI:
         self.orbiter_wait_time = self.create_single_input(
             orbiter, "MAX_WAIT_TIME", self.config["ORBITER"]["MAX_WAIT_TIME"]
         )
+
+    def _save_and_close(self):
+        """Save config and close the window"""
+        self.save_config()
+        self.root.destroy()
 
     def save_config(self):
         # Update config dictionary with new values
