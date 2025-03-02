@@ -78,6 +78,7 @@ class MemebridgeConfig:
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
 
+
 @dataclass
 class TestnetBridgeConfig:
     NETWORKS_TO_REFUEL_FROM: List[str]
@@ -85,6 +86,7 @@ class TestnetBridgeConfig:
     MINIMUM_BALANCE_TO_REFUEL: float
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
+
 
 @dataclass
 class ShmonadConfig:
@@ -115,6 +117,7 @@ class DisperseConfig:
 class LilchogstarsConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
 
+
 @dataclass
 class DemaskConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
@@ -123,6 +126,7 @@ class DemaskConfig:
 @dataclass
 class MonadkingConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
+
 
 @dataclass
 class MagicEdenConfig:
@@ -157,6 +161,18 @@ class Config:
         with open(path, "r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
+        # Load tasks from tasks.yaml
+        tasks = []
+        try:
+            with open("tasks.yaml", "r", encoding="utf-8") as tasks_file:
+                tasks_data = yaml.safe_load(tasks_file)
+                if tasks_data and "TASKS" in tasks_data:
+                    tasks = tasks_data["TASKS"]
+        except (FileNotFoundError, yaml.YAMLError) as e:
+            print(f"Warning: Could not load tasks from tasks.yaml: {e}")
+            # If tasks.yaml is not found or invalid, use tasks from config.yaml
+            tasks = data["FLOW"]["TASKS"]
+
         return cls(
             SETTINGS=SettingsConfig(
                 THREADS=data["SETTINGS"]["THREADS"],
@@ -179,7 +195,8 @@ class Config:
                 BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
             ),
             FLOW=FlowConfig(
-                TASKS=data["FLOW"]["TASKS"],
+                # Use tasks from tasks.yaml if available, otherwise use from config.yaml
+                TASKS=tasks,
                 NUMBER_OF_SWAPS=tuple(data["FLOW"]["NUMBER_OF_SWAPS"]),
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(
                     data["FLOW"]["PERCENT_OF_BALANCE_TO_SWAP"]
@@ -210,15 +227,23 @@ class Config:
             MEMEBRIDGE=MemebridgeConfig(
                 NETWORKS_TO_REFUEL_FROM=data["MEMEBRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
                 AMOUNT_TO_REFUEL=tuple(data["MEMEBRIDGE"]["AMOUNT_TO_REFUEL"]),
-                MINIMUM_BALANCE_TO_REFUEL=data["MEMEBRIDGE"]["MINIMUM_BALANCE_TO_REFUEL"],
+                MINIMUM_BALANCE_TO_REFUEL=data["MEMEBRIDGE"][
+                    "MINIMUM_BALANCE_TO_REFUEL"
+                ],
                 WAIT_FOR_FUNDS_TO_ARRIVE=data["MEMEBRIDGE"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
                 MAX_WAIT_TIME=data["MEMEBRIDGE"]["MAX_WAIT_TIME"],
             ),
             TESTNET_BRIDGE=TestnetBridgeConfig(
-                NETWORKS_TO_REFUEL_FROM=data["TESTNET_BRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
+                NETWORKS_TO_REFUEL_FROM=data["TESTNET_BRIDGE"][
+                    "NETWORKS_TO_REFUEL_FROM"
+                ],
                 AMOUNT_TO_REFUEL=tuple(data["TESTNET_BRIDGE"]["AMOUNT_TO_REFUEL"]),
-                MINIMUM_BALANCE_TO_REFUEL=data["TESTNET_BRIDGE"]["MINIMUM_BALANCE_TO_REFUEL"],
-                WAIT_FOR_FUNDS_TO_ARRIVE=data["TESTNET_BRIDGE"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
+                MINIMUM_BALANCE_TO_REFUEL=data["TESTNET_BRIDGE"][
+                    "MINIMUM_BALANCE_TO_REFUEL"
+                ],
+                WAIT_FOR_FUNDS_TO_ARRIVE=data["TESTNET_BRIDGE"][
+                    "WAIT_FOR_FUNDS_TO_ARRIVE"
+                ],
                 MAX_WAIT_TIME=data["TESTNET_BRIDGE"]["MAX_WAIT_TIME"],
             ),
             SHMONAD=ShmonadConfig(
