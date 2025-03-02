@@ -27,6 +27,27 @@ async def start():
 
     show_logo()
     show_dev_info()
+
+    options = [
+        "😈 Start farm",
+        "🔧 Edit config",
+        "👋 Exit",
+    ]
+
+    choice = await src.utils.show_menu("Choose an option:", options)
+    
+    if choice == "👋 Exit" or choice is None:
+        return
+    elif choice == "🔧 Edit config":
+        config_ui = src.utils.ConfigUI()
+        config_ui.run()
+        return
+    elif choice == "😈 Start farm":
+        pass
+    else:
+        logger.error(f"Invalid choice: {choice}")
+        return
+
     config = src.utils.get_config()
     
     # Читаем все файлы

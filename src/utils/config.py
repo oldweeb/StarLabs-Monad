@@ -17,11 +17,17 @@ class SettingsConfig:
     RANDOM_PAUSE_BETWEEN_ACTIONS: Tuple[int, int]
     BROWSER_PAUSE_MULTIPLIER: float
     RANDOM_INITIALIZATION_PAUSE: Tuple[int, int]
+    TELEGRAM_USERS_IDS: List[int]
+    TELEGRAM_BOT_TOKEN: str
+
+@dataclass
+class FaucetConfig:
+    CAPSOLVER_API_KEY: str
 
 
 @dataclass
 class FlowConfig:
-    TASKS: List[str]
+    TASKS: List
     NUMBER_OF_SWAPS: Tuple[int, int]
     PERCENT_OF_BALANCE_TO_SWAP: Tuple[int, int]
 
@@ -78,6 +84,7 @@ class MemebridgeConfig:
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
 
+
 @dataclass
 class TestnetBridgeConfig:
     NETWORKS_TO_REFUEL_FROM: List[str]
@@ -85,6 +92,7 @@ class TestnetBridgeConfig:
     MINIMUM_BALANCE_TO_REFUEL: float
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
+
 
 @dataclass
 class ShmonadConfig:
@@ -115,6 +123,7 @@ class DisperseConfig:
 class LilchogstarsConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
 
+
 @dataclass
 class DemaskConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
@@ -124,6 +133,7 @@ class DemaskConfig:
 class MonadkingConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
 
+
 @dataclass
 class MagicEdenConfig:
     NFT_CONTRACTS: List[str]
@@ -132,6 +142,7 @@ class MagicEdenConfig:
 @dataclass
 class Config:
     SETTINGS: SettingsConfig
+    FAUCET: FaucetConfig
     FLOW: FlowConfig
     APRIORI: AprioriConfig
     MAGMA: MagmaConfig
@@ -157,6 +168,39 @@ class Config:
         with open(path, "r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
+        # Load tasks from tasks.py
+        try:
+            # Try to import tasks from tasks.py using a regular import
+            import tasks
+
+            if hasattr(tasks, "TASKS"):
+                # TASKS now contains preset names
+                preset_names = [preset_name.upper() for preset_name in tasks.TASKS]
+
+                # Combine tasks from all specified presets
+                combined_tasks = []
+                for preset_name in preset_names:
+                    if hasattr(tasks, preset_name):
+                        preset_tasks = getattr(tasks, preset_name)
+                        combined_tasks.extend(preset_tasks)
+                    else:
+                        print(f"Warning: Preset {preset_name} not found in tasks.py")
+
+                if combined_tasks:
+                    tasks_list = combined_tasks
+                else:
+                    error_msg = "No valid presets found in tasks.py"
+                    print(f"Error: {error_msg}")
+                    raise ValueError(error_msg)
+            else:
+                error_msg = "No TASKS list found in tasks.py"
+                print(f"Error: {error_msg}")
+                raise ValueError(error_msg)
+        except ImportError as e:
+            error_msg = f"Could not import tasks.py: {e}"
+            print(f"Error: {error_msg}")
+            raise ImportError(error_msg) from e
+
         return cls(
             SETTINGS=SettingsConfig(
                 THREADS=data["SETTINGS"]["THREADS"],
@@ -177,9 +221,14 @@ class Config:
                     data["SETTINGS"]["RANDOM_INITIALIZATION_PAUSE"]
                 ),
                 BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
+                TELEGRAM_USERS_IDS=data["SETTINGS"]["TELEGRAM_USERS_IDS"],
+                TELEGRAM_BOT_TOKEN=data["SETTINGS"]["TELEGRAM_BOT_TOKEN"],
+            ),
+            FAUCET=FaucetConfig(
+                CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],
             ),
             FLOW=FlowConfig(
-                TASKS=data["FLOW"]["TASKS"],
+                TASKS=tasks_list,
                 NUMBER_OF_SWAPS=tuple(data["FLOW"]["NUMBER_OF_SWAPS"]),
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(
                     data["FLOW"]["PERCENT_OF_BALANCE_TO_SWAP"]
@@ -210,15 +259,23 @@ class Config:
             MEMEBRIDGE=MemebridgeConfig(
                 NETWORKS_TO_REFUEL_FROM=data["MEMEBRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
                 AMOUNT_TO_REFUEL=tuple(data["MEMEBRIDGE"]["AMOUNT_TO_REFUEL"]),
-                MINIMUM_BALANCE_TO_REFUEL=data["MEMEBRIDGE"]["MINIMUM_BALANCE_TO_REFUEL"],
+                MINIMUM_BALANCE_TO_REFUEL=data["MEMEBRIDGE"][
+                    "MINIMUM_BALANCE_TO_REFUEL"
+                ],
                 WAIT_FOR_FUNDS_TO_ARRIVE=data["MEMEBRIDGE"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
                 MAX_WAIT_TIME=data["MEMEBRIDGE"]["MAX_WAIT_TIME"],
             ),
             TESTNET_BRIDGE=TestnetBridgeConfig(
-                NETWORKS_TO_REFUEL_FROM=data["TESTNET_BRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
+                NETWORKS_TO_REFUEL_FROM=data["TESTNET_BRIDGE"][
+                    "NETWORKS_TO_REFUEL_FROM"
+                ],
                 AMOUNT_TO_REFUEL=tuple(data["TESTNET_BRIDGE"]["AMOUNT_TO_REFUEL"]),
-                MINIMUM_BALANCE_TO_REFUEL=data["TESTNET_BRIDGE"]["MINIMUM_BALANCE_TO_REFUEL"],
-                WAIT_FOR_FUNDS_TO_ARRIVE=data["TESTNET_BRIDGE"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
+                MINIMUM_BALANCE_TO_REFUEL=data["TESTNET_BRIDGE"][
+                    "MINIMUM_BALANCE_TO_REFUEL"
+                ],
+                WAIT_FOR_FUNDS_TO_ARRIVE=data["TESTNET_BRIDGE"][
+                    "WAIT_FOR_FUNDS_TO_ARRIVE"
+                ],
                 MAX_WAIT_TIME=data["TESTNET_BRIDGE"]["MAX_WAIT_TIME"],
             ),
             SHMONAD=ShmonadConfig(
