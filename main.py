@@ -17,13 +17,20 @@ async def main():
     await start()
 
 
+log_format = (
+    "<light-blue>[</light-blue><yellow>{time:HH:mm:ss}</yellow><light-blue>]</light-blue> | "
+    "<level>{level: <8}</level> | "
+    "<cyan>{file}:{line}</cyan> | "
+    "<level>{message}</level>"
+)
+
 def configuration():
     urllib3.disable_warnings()
     logger.remove()
     logger.add(
         sys.stdout,
         colorize=True,
-        format="<light-cyan>{time:HH:mm:ss}</light-cyan> | <level>{level: <8}</level> | <fg #ffffff>{name}:{line}</fg #ffffff> - <bold>{message}</bold>",
+        format=log_format,
     )
     logger.add(
         "logs/app.log",
