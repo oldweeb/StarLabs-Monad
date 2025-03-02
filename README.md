@@ -55,8 +55,7 @@ pip install -r requirements.txt
 ```
 
 3. Configure the bot by starting it (py main.py) and choosing the edit config option`
-![image](https://github.com/user-attachments/assets/c5ca3696-92db-4e48-89a8-e0cd46a57865)
-
+![image](https://github.com/user-attachments/assets/0d887865-049b-4804-9e11-ffc80ae21ce3)
 
 ```
 
