@@ -8,8 +8,11 @@ TUTORIAL - https://star-labs.gitbook.io/star-labs/monad-ru
 # All features are available in config.yaml
 # FAUCETS
 "faucet" - get tokens from faucet
+
 "farm_faucet" - get tokens from faucet ON FARM ACCOUNTS (data/keys_for_faucet.txt)
+
 "disperse_farm_accounts" - disperse tokens from farm accounts to main accounts | keys_for_faucet.txt -> private_keys.txt
+
 "disperse_from_one_wallet" - disperse tokens from one wallet to all other wallets | keys_for_faucet.txt (first wallet) -> private_keys.txt
 
 # SWAPS
