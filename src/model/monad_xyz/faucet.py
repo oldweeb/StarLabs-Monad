@@ -332,7 +332,9 @@ async def faucet(
                 try:
                     for _ in range(10):
                         stack_element = await page.wait_for_selector(
-                            "//ol/li/div[2]/div[@data-title]", state="visible", timeout=int(3000)
+                            "//ol/li/div[2]/div[@data-title]",
+                            state="visible",
+                            timeout=int(3000),
                         )
                         text = await stack_element.inner_text()
                         if text == "Success":
@@ -366,17 +368,18 @@ async def faucet(
                 except Exception as e:
                     pass
 
+                logger.info(
+                    f"[{account_index}] [{wallet.address}] | Faucet is sending tokens... Wait 60 sec..."
+                )
+                await asyncio.sleep(60)
                 # Get final balance and compare
                 final_balance = await my_web3.eth.get_balance(wallet.address)
                 logger.info(
                     f"[{account_index}] [{wallet.address}] | Final balance: {final_balance}"
                 )
 
-                if final_balance == initial_balance:
-                    logger.warning(
-                        f"[{account_index}] [{wallet.address}] | Balance hasn't changed after faucet attempt!"
-                    )
-                    return False
+                if final_balance <= initial_balance:
+                    raise Exception("Balance hasn't changed after faucet attempt!")
 
                 logger.success(
                     f"[{account_index}] [{wallet.address}] | Faucet success!"
