@@ -24,6 +24,7 @@ log_format = (
     "<level>{message}</level>"
 )
 
+
 def configuration():
     urllib3.disable_warnings()
     logger.remove()
