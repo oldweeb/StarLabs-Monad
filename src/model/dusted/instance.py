@@ -12,6 +12,7 @@ from eth_account.messages import encode_defunct
 import functools
 import time
 
+from src.model.dusted.browser_login import dusted_browser_login
 from src.utils.config import Config
 from src.utils.constants import RPC_URL, EXPLORER_URL
 
@@ -824,6 +825,10 @@ class Dusted:
             self.user_id = None
             self.wallet_id = None
             
+            result = await dusted_browser_login(self.config, self.private_key, self.proxy)
+            if not result:
+                logger.error(f"[{self.account_index}] Failed to login to the platform")
+                return False
             # Login to the platform
             await self.login()
             logger.info(f"[{self.account_index}] Login successful")
