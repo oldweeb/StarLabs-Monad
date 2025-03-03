@@ -68,16 +68,20 @@ class MonadSwap:
     
     async def get_tokens_with_balance(self) -> List[Tuple[str, Decimal]]:
         tokens_with_balance = []
+        MIN_BALANCE = Decimal('0.0001')  # Minimum balance threshold
         for token in TOKENS:
             if token == "native":
                 continue
             balance = await self.get_token_balance_ether(token)
-            if balance > 0:
+            if balance > MIN_BALANCE:  # Only include tokens with sufficient balance
                 tokens_with_balance.append((token, balance))
+            else:
+                logger.info(f"Skipping {token} due to insufficient balance: {balance}")
         return tokens_with_balance
     
     async def calculate_amount(self, percentage_to_swap: float, token_out: str) -> float:
         """Calculate the actual amount to swap based on balance if using percentages."""
+        MIN_AMOUNT = Decimal('0.0001')  # Minimum amount threshold
 
         if not 0 < percentage_to_swap <= 100:
             raise ValueError("Percentage must be between 0 and 100")
@@ -88,9 +92,20 @@ class MonadSwap:
         balance_token = "native" if token_out != "native" else token_out
         
         balance_ether = await self.get_token_balance_ether(balance_token)
+        
+        # Check if balance is too small before proceeding
+        if balance_ether < MIN_AMOUNT:
+            logger.warning(f"Balance too small for {balance_token}: {balance_ether} (minimum: {MIN_AMOUNT})")
+            return 0
+            
         balance_wei = self.web3.to_wei(balance_ether, 'ether')
         balance_wei_percentage = int(balance_wei * percentage)
         balance_ether_percentage = float(round(self.web3.from_wei(balance_wei_percentage, 'ether'), random.randint(2, 8)))
+        
+        # Check if calculated amount is too small
+        if Decimal(str(balance_ether_percentage)) < MIN_AMOUNT:
+            logger.warning(f"Calculated swap amount too small: {balance_ether_percentage} (minimum: {MIN_AMOUNT})")
+            return 0
         
         logger.info(f"Balance: {balance_ether} {balance_token}")
         logger.info(f"Swapping {percentage_to_swap}% = {balance_ether_percentage} {balance_token}")

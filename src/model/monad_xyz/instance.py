@@ -34,7 +34,6 @@ class MonadXYZ:
     async def swaps(self, type: str):
         try:
             if type == "swaps": 
-                return
                 number_of_swaps = random.randint(
                     self.config.FLOW.NUMBER_OF_SWAPS[0], self.config.FLOW.NUMBER_OF_SWAPS[1]
                 )
