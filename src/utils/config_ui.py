@@ -685,6 +685,121 @@ class ConfigUI:
             orbiter, "MAX_WAIT_TIME", self.config["ORBITER"]["MAX_WAIT_TIME"]
         )
 
+        # Add EXCHANGES section
+        self.create_category_header(right_column, "💱 EXCHANGES")
+        exchanges = self.create_section(right_column, "EXCHANGES")
+
+        # Exchange selection
+        exchange_frame = ctk.CTkFrame(exchanges, fg_color=self.colors["frame_bg"])
+        exchange_frame.pack(fill="x", pady=5)
+        
+        ctk.CTkLabel(
+            exchange_frame,
+            text="Exchange:",
+            width=200,
+            anchor="w",
+            font=("Helvetica", 12, "bold"),
+            text_color=self.colors["text"],
+        ).grid(row=0, column=0, padx=(10, 10), sticky="w")
+
+        self.exchange_var = ctk.StringVar(value=self.config["EXCHANGES"]["name"])
+        exchange_combobox = ctk.CTkComboBox(
+            exchange_frame,
+            values=["OKX", "BITGET"],
+            variable=self.exchange_var,
+            width=self.input_sizes["medium"],
+            font=("Helvetica", 12, "bold"),
+            fg_color=self.colors["entry_bg"],
+            text_color=self.colors["text"],
+            border_color=self.colors["accent"],
+        )
+        exchange_combobox.grid(row=0, column=1, padx=(0, 10), sticky="e")
+
+        # API credentials
+        self.exchange_api_key = self.create_single_input(
+            exchanges,
+            "API Key",
+            self.config["EXCHANGES"]["apiKey"],
+            width=self.input_sizes["extra_large"],
+        )
+        self.exchange_secret_key = self.create_single_input(
+            exchanges,
+            "Secret Key",
+            self.config["EXCHANGES"]["secretKey"],
+            width=self.input_sizes["extra_large"],
+        )
+        self.exchange_passphrase = self.create_single_input(
+            exchanges,
+            "Passphrase",
+            self.config["EXCHANGES"]["passphrase"],
+            width=self.input_sizes["extra_large"],
+        )
+
+        # Withdrawal settings
+        withdrawal_frame = ctk.CTkFrame(exchanges, fg_color=self.colors["frame_bg"])
+        withdrawal_frame.pack(fill="x", pady=5)
+        
+        ctk.CTkLabel(
+            withdrawal_frame,
+            text="Withdrawal Settings",
+            font=("Helvetica", 14, "bold"),
+            text_color=self.colors["accent"],
+        ).pack(anchor="w", padx=10, pady=10)
+
+        # Currency selection (currently only ETH)
+        self.withdrawal_currency = self.create_single_input(
+            withdrawal_frame,
+            "Currency",
+            self.config["EXCHANGES"]["withdrawals"][0]["currency"],
+            width=self.input_sizes["small"],
+        )
+
+        # Networks selection
+        self.withdrawal_networks = self.create_network_checkboxes(
+            withdrawal_frame,
+            "Networks",
+            self.config["EXCHANGES"]["withdrawals"][0]["networks"],
+        )
+
+        # Min/Max amount
+        self.withdrawal_min_amount, self.withdrawal_max_amount = self.create_range_inputs(
+            withdrawal_frame,
+            "Amount Range",
+            [
+                self.config["EXCHANGES"]["withdrawals"][0]["min_amount"],
+                self.config["EXCHANGES"]["withdrawals"][0]["max_amount"],
+            ],
+        )
+
+        # Max wallet balance
+        self.withdrawal_max_balance = self.create_single_input(
+            withdrawal_frame,
+            "Max Wallet Balance",
+            self.config["EXCHANGES"]["withdrawals"][0].get("max_balance", 1.0),
+            width=self.input_sizes["small"],
+        )
+
+        # Wait for funds checkbox and max wait time
+        self.withdrawal_wait = self.create_checkbox(
+            withdrawal_frame,
+            "Wait for Funds to Arrive",
+            self.config["EXCHANGES"]["withdrawals"][0]["wait_for_funds"],
+        )
+        self.withdrawal_wait_time = self.create_single_input(
+            withdrawal_frame,
+            "Max Wait Time (seconds)",
+            self.config["EXCHANGES"]["withdrawals"][0]["max_wait_time"],
+            width=self.input_sizes["small"],
+        )
+
+        # Retries
+        self.withdrawal_retries = self.create_single_input(
+            withdrawal_frame,
+            "Retries",
+            self.config["EXCHANGES"]["withdrawals"][0]["retries"],
+            width=self.input_sizes["tiny"],
+        )
+
     def _save_and_close(self):
         """Save config and close the window"""
         self.save_config()
@@ -870,10 +985,85 @@ class ConfigUI:
         self.config["ORBITER"]["WAIT_FOR_FUNDS_TO_ARRIVE"] = self.orbiter_wait.get()
         self.config["ORBITER"]["MAX_WAIT_TIME"] = int(self.orbiter_wait_time.get())
 
-        # Save to file
+        # EXCHANGES
+        self.config["EXCHANGES"]["name"] = self.exchange_var.get()
+        self.config["EXCHANGES"]["apiKey"] = self.exchange_api_key.get()
+        self.config["EXCHANGES"]["secretKey"] = self.exchange_secret_key.get()
+        self.config["EXCHANGES"]["passphrase"] = self.exchange_passphrase.get()
+        
+        # Update withdrawals configuration
+        self.config["EXCHANGES"]["withdrawals"] = [{
+            "currency": self.withdrawal_currency.get(),
+            "networks": [
+                network for network, var in self.withdrawal_networks if var.get()
+            ],
+            "min_amount": float(self.withdrawal_min_amount.get()),
+            "max_amount": float(self.withdrawal_max_amount.get()),
+            "max_balance": float(self.withdrawal_max_balance.get()),
+            "wait_for_funds": self.withdrawal_wait.get(),
+            "max_wait_time": int(self.withdrawal_wait_time.get()),
+            "retries": int(self.withdrawal_retries.get())
+        }]
+
+        # Save to file with improved formatting
         config_path = os.path.join(os.path.dirname(__file__), "..", "..", "config.yaml")
+        
+        # Custom YAML dumper for better formatting
+        class OrderedDumper(yaml.SafeDumper):
+            pass
+        
+        def dict_representer(dumper, data):
+            # For the withdrawal dictionary inside EXCHANGES, use a specific order
+            if isinstance(data, dict) and any(key in data for key in ["min_amount", "max_amount", "max_wait_time"]):
+                # This appears to be a withdrawal configuration
+                ordered_items = []
+                # Ensure currency comes first if present
+                if "currency" in data:
+                    ordered_items.append(("currency", data["currency"]))
+                
+                # Custom order for key withdrawal parameters
+                order_priority = ["networks", "min_amount", "max_amount", "max_balance", "wait_for_funds", "max_wait_time", "retries"]
+                
+                for key in order_priority:
+                    if key in data:
+                        ordered_items.append((key, data[key]))
+                
+                # Add any remaining keys alphabetically
+                for key in sorted(data.keys()):
+                    if key not in ["currency"] and key not in order_priority:
+                        ordered_items.append((key, data[key]))
+                
+                return dumper.represent_mapping(yaml.resolver.Resolver.DEFAULT_MAPPING_TAG, ordered_items)
+            
+            # For all other dictionaries, sort keys alphabetically
+            return dumper.represent_mapping(
+                yaml.resolver.Resolver.DEFAULT_MAPPING_TAG,
+                sorted(data.items())
+            )
+        
+        OrderedDumper.add_representer(dict, dict_representer)
+        
         with open(config_path, "w") as file:
-            yaml.dump(self.config, file, default_flow_style=False)
+            # Add a blank line between top-level sections
+            yaml_text = yaml.dump(self.config, Dumper=OrderedDumper, default_flow_style=False, sort_keys=False, width=80)
+            
+            # Insert blank lines between top-level sections for better readability
+            formatted_lines = []
+            prev_indent = None
+            
+            for line in yaml_text.split('\n'):
+                current_indent = len(line) - len(line.lstrip())
+                
+                # If this is a top-level key (no indent) and not the first line
+                if current_indent == 0 and line and prev_indent is not None:
+                    formatted_lines.append('')  # Add a blank line before new section
+                
+                formatted_lines.append(line)
+                prev_indent = current_indent if line else prev_indent
+            
+            file.write('\n'.join(formatted_lines))
+            
+            print(f"Configuration saved to {config_path}")
 
     def run(self):
         """Run the configuration UI"""

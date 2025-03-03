@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 import yaml
 from pathlib import Path
 import asyncio
@@ -140,8 +140,30 @@ class MagicEdenConfig:
 
 
 @dataclass
+class WithdrawalConfig:
+    currency: str
+    networks: List[str]
+    min_amount: float
+    max_amount: float
+    wait_for_funds: bool
+    max_wait_time: int
+    retries: int
+    max_balance: float  # Maximum wallet balance to allow withdrawal to
+
+
+@dataclass
+class ExchangesConfig:
+    name: str  # Exchange name (OKX, BINANCE, BYBIT)
+    apiKey: str
+    secretKey: str
+    passphrase: str  # Only needed for OKX
+    withdrawals: List[WithdrawalConfig]
+
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
+    EXCHANGES: ExchangesConfig
     FAUCET: FaucetConfig
     FLOW: FlowConfig
     APRIORI: AprioriConfig
@@ -223,6 +245,24 @@ class Config:
                 BROWSER_PAUSE_MULTIPLIER=data["SETTINGS"]["BROWSER_PAUSE_MULTIPLIER"],
                 TELEGRAM_USERS_IDS=data["SETTINGS"]["TELEGRAM_USERS_IDS"],
                 TELEGRAM_BOT_TOKEN=data["SETTINGS"]["TELEGRAM_BOT_TOKEN"],
+            ),
+            EXCHANGES=ExchangesConfig(
+                name=data["EXCHANGES"]["name"],
+                apiKey=data["EXCHANGES"]["apiKey"],
+                secretKey=data["EXCHANGES"]["secretKey"],
+                passphrase=data["EXCHANGES"]["passphrase"],
+                withdrawals=[
+                    WithdrawalConfig(
+                        currency=w["currency"],
+                        networks=w["networks"],
+                        min_amount=w["min_amount"],
+                        max_amount=w["max_amount"],
+                        wait_for_funds=w["wait_for_funds"],
+                        max_wait_time=w["max_wait_time"],
+                        retries=w["retries"],
+                        max_balance=w["max_balance"]
+                    ) for w in data["EXCHANGES"]["withdrawals"]
+                ]
             ),
             FAUCET=FaucetConfig(
                 CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],

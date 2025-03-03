@@ -99,7 +99,7 @@ class Gaszip:
                 self.config.GASZIP.AMOUNT_TO_REFUEL[1]
             )
             
-            logger.info(f"[{self.account_index}] Checking balances for refueling {amount_to_refuel} MON")
+            logger.info(f"[{self.account_index}] Checking balances for refueling {amount_to_refuel} ETH")
             
             for network in self.config.GASZIP.NETWORKS_TO_REFUEL_FROM:
                 balance = await self.get_native_balance(network)

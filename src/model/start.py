@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.cex_withdrawal.instance import CexWithdraw
 from src.model.testnet_bridge.instance import TestnetBridge
 from src.model.memebridge.instance import Memebridge
 from src.model.dusted.instance import Dusted
@@ -338,6 +339,13 @@ class Start:
                 self.session,
             )
             await dusty.execute()
+        elif task == "cex_withdrawal":
+            cex_withdrawal = CexWithdraw(
+                self.account_index,
+                self.private_key,
+                self.config,
+            )
+            await cex_withdrawal.withdraw()
 
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""
