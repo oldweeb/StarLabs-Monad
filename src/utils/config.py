@@ -74,6 +74,8 @@ class GaszipConfig:
     MINIMUM_BALANCE_TO_REFUEL: float
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
+    BRIDGE_ALL: bool
+    BRIDGE_ALL_MAX_AMOUNT: float
 
 
 @dataclass
@@ -83,6 +85,8 @@ class MemebridgeConfig:
     MINIMUM_BALANCE_TO_REFUEL: float
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
+    BRIDGE_ALL: bool
+    BRIDGE_ALL_MAX_AMOUNT: float
 
 
 @dataclass
@@ -295,6 +299,8 @@ class Config:
                 MINIMUM_BALANCE_TO_REFUEL=data["GASZIP"]["MINIMUM_BALANCE_TO_REFUEL"],
                 WAIT_FOR_FUNDS_TO_ARRIVE=data["GASZIP"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
                 MAX_WAIT_TIME=data["GASZIP"]["MAX_WAIT_TIME"],
+                BRIDGE_ALL=data["GASZIP"]["BRIDGE_ALL"],
+                BRIDGE_ALL_MAX_AMOUNT=data["GASZIP"]["BRIDGE_ALL_MAX_AMOUNT"],
             ),
             MEMEBRIDGE=MemebridgeConfig(
                 NETWORKS_TO_REFUEL_FROM=data["MEMEBRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
@@ -304,6 +310,8 @@ class Config:
                 ],
                 WAIT_FOR_FUNDS_TO_ARRIVE=data["MEMEBRIDGE"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
                 MAX_WAIT_TIME=data["MEMEBRIDGE"]["MAX_WAIT_TIME"],
+                BRIDGE_ALL=data["MEMEBRIDGE"]["BRIDGE_ALL"],
+                BRIDGE_ALL_MAX_AMOUNT=data["MEMEBRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"],
             ),
             TESTNET_BRIDGE=TestnetBridgeConfig(
                 NETWORKS_TO_REFUEL_FROM=data["TESTNET_BRIDGE"][

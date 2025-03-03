@@ -606,6 +606,17 @@ class ConfigUI:
             self.config["GASZIP"]["MAX_WAIT_TIME"],
             width=self.input_sizes["tiny"],
         )
+        self.gaszip_bridge_all = self.create_checkbox(
+            gaszip,
+            "BRIDGE_ALL (bridge maximum available balance)",
+            self.config["GASZIP"].get("BRIDGE_ALL"),
+        )
+        self.gaszip_bridge_max = self.create_single_input(
+            gaszip,
+            "BRIDGE_ALL_MAX_AMOUNT (max to bridge with 1-3% random reduction)",
+            self.config["GASZIP"].get("BRIDGE_ALL_MAX_AMOUNT"),
+            width=self.input_sizes["small"],
+        )
 
         # Add MEMEBRIDGE section
         memebridge = self.create_section(right_column, "MEMEBRIDGE")
@@ -637,6 +648,17 @@ class ConfigUI:
             "MAX_WAIT_TIME",
             self.config["MEMEBRIDGE"]["MAX_WAIT_TIME"],
             width=self.input_sizes["tiny"],
+        )
+        self.memebridge_bridge_all = self.create_checkbox(
+            memebridge,
+            "BRIDGE_ALL (bridge maximum available balance)",
+            self.config["MEMEBRIDGE"].get("BRIDGE_ALL"),
+        )
+        self.memebridge_bridge_max = self.create_single_input(
+            memebridge,
+            "BRIDGE_ALL_MAX_AMOUNT (max to bridge with 1-3% random reduction)",
+            self.config["MEMEBRIDGE"].get("BRIDGE_ALL_MAX_AMOUNT"),
+            width=self.input_sizes["small"],
         )
 
         # Add TESTNET_BRIDGE section
@@ -901,6 +923,8 @@ class ConfigUI:
         )
         self.config["GASZIP"]["WAIT_FOR_FUNDS_TO_ARRIVE"] = self.gaszip_wait.get()
         self.config["GASZIP"]["MAX_WAIT_TIME"] = int(self.gaszip_wait_time.get())
+        self.config["GASZIP"]["BRIDGE_ALL"] = self.gaszip_bridge_all.get()
+        self.config["GASZIP"]["BRIDGE_ALL_MAX_AMOUNT"] = float(self.gaszip_bridge_max.get())
 
         # MEMEBRIDGE
         self.config["MEMEBRIDGE"]["NETWORKS_TO_REFUEL_FROM"] = [
@@ -919,6 +943,8 @@ class ConfigUI:
         self.config["MEMEBRIDGE"]["MAX_WAIT_TIME"] = int(
             self.memebridge_wait_time.get()
         )
+        self.config["MEMEBRIDGE"]["BRIDGE_ALL"] = self.memebridge_bridge_all.get()
+        self.config["MEMEBRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"] = float(self.memebridge_bridge_max.get())
 
         # TESTNET_BRIDGE
         self.config["TESTNET_BRIDGE"]["NETWORKS_TO_REFUEL_FROM"] = [

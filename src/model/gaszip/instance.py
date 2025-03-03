@@ -76,10 +76,10 @@ class Gaszip:
         logger.error(f"[{self.account_index}] Balance didn't increase after {timeout} seconds")
         return False
 
-    async def get_balances(self) -> Optional[Tuple[str, float]]:
+    async def get_balances(self) -> Optional[Tuple[str, float, Dict[str, int]]]:
         """
-        Check balances across networks and return a random network with sufficient balance.
-        Returns tuple of (network_name, amount_to_refuel) or None if no suitable network found.
+        Check balances across networks and return a network with sufficient balance.
+        Returns tuple of (network_name, amount_to_refuel, gas_params) or None if no suitable network found.
         """
         try:
             # First check if current MON balance is already sufficient
@@ -94,28 +94,96 @@ class Gaszip:
                 return None
             
             eligible_networks = []
-            amount_to_refuel = random.uniform(
-                self.config.GASZIP.AMOUNT_TO_REFUEL[0],
-                self.config.GASZIP.AMOUNT_TO_REFUEL[1]
-            )
             
-            logger.info(f"[{self.account_index}] Checking balances for refueling {amount_to_refuel} ETH")
+            # Determine amount to refuel based on configuration
+            if not self.config.GASZIP.BRIDGE_ALL:
+                # Use the configured range if not bridging all
+                amount_to_refuel = random.uniform(
+                    self.config.GASZIP.AMOUNT_TO_REFUEL[0],
+                    self.config.GASZIP.AMOUNT_TO_REFUEL[1]
+                )
+                logger.info(f"[{self.account_index}] Using configured amount: {amount_to_refuel} ETH")
+            else:
+                # We'll determine the exact amount per network later
+                amount_to_refuel = None
+                logger.info(f"[{self.account_index}] Will bridge maximum amount based on balance")
             
             for network in self.config.GASZIP.NETWORKS_TO_REFUEL_FROM:
                 balance = await self.get_native_balance(network)
                 logger.info(f"[{self.account_index}] {network} balance: {balance}")
                 
-                if balance > amount_to_refuel:
-                    eligible_networks.append(network)
+                if self.config.GASZIP.BRIDGE_ALL:
+                    # Get a Web3 instance for this network
+                    web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(GASZIP_RPCS[network]))
+                    
+                    # Build the actual transaction to estimate its gas cost
+                    try:
+                        # Get the current gas parameters (EIP-1559 or legacy)
+                        # Store these for reuse in the actual transaction
+                        gas_params = await self.get_gas_params(web3)
+                        
+                        # Create transaction object that would be used for bridging
+                        tx = {
+                            'from': self.account.address,
+                            'to': REFUEL_ADDRESS,
+                            'data': REFUEL_CALLLDATA,
+                            'value': web3.to_wei(0.0001, 'ether'),  # Dummy value for estimation
+                            **gas_params
+                        }
+                        
+                        # Estimate gas for this exact transaction
+                        estimated_gas = await web3.eth.estimate_gas(tx)
+                        
+                        # Calculate total cost with a 10% buffer for safety
+                        gas_price_wei = gas_params.get('maxFeePerGas', gas_params.get('gasPrice', 0))
+                        total_gas_cost_wei = int(estimated_gas * gas_price_wei * 1.1)
+                        
+                        # Convert to ETH
+                        gas_reserve = float(web3.from_wei(total_gas_cost_wei, 'ether'))
+                        
+                        logger.info(f"[{self.account_index}] Estimated gas for {network} transaction: {estimated_gas} units")
+                        logger.info(f"[{self.account_index}] Calculated gas reserve: {gas_reserve} ETH")
+                        
+                    except Exception as e:
+                        logger.error(f"[{self.account_index}] Failed to estimate transaction cost: {str(e)}")
+                        continue  # Skip this network if we can't estimate gas
+                    
+                    # Only proceed if we have more than the gas cost
+                    if balance > gas_reserve:
+                        max_to_bridge = balance - gas_reserve
+                        
+                        # If balance exceeds max amount, apply the limit with randomization
+                        if self.config.GASZIP.BRIDGE_ALL_MAX_AMOUNT and max_to_bridge > self.config.GASZIP.BRIDGE_ALL_MAX_AMOUNT:
+                            # Apply 1-3% random reduction to avoid same amount transfers
+                            random_reduction = random.uniform(0.01, 0.05)
+                            network_amount = self.config.GASZIP.BRIDGE_ALL_MAX_AMOUNT * (1 - random_reduction)
+                            logger.info(f"[{self.account_index}] Limiting bridge amount to {network_amount} ETH (max: {self.config.GASZIP.BRIDGE_ALL_MAX_AMOUNT} with {random_reduction*100:.1f}% reduction)")
+                        else:
+                            network_amount = max_to_bridge
+                            logger.info(f"[{self.account_index}] Will bridge {network_amount} ETH (full available balance minus gas cost of {gas_reserve} ETH)")
+                        
+                        eligible_networks.append((network, network_amount, gas_params))
+                else:
+                    # For fixed amount refueling, we still need to get gas params
+                    if balance > amount_to_refuel:
+                        try:
+                            web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(GASZIP_RPCS[network]))
+                            gas_params = await self.get_gas_params(web3)
+                            eligible_networks.append((network, amount_to_refuel, gas_params))
+                        except Exception as e:
+                            logger.error(f"[{self.account_index}] Failed to get gas params for {network}: {str(e)}")
+                            continue
             
             if not eligible_networks:
                 logger.warning(f"[{self.account_index}] No networks with sufficient balance found")
                 return None
             
-            selected_network = random.choice(eligible_networks)
-            logger.info(f"[{self.account_index}] Selected {selected_network} for refueling")
+            # Randomly select from eligible networks
+            selected = random.choice(eligible_networks)
+            selected_network, final_amount, selected_gas_params = selected
+            logger.info(f"[{self.account_index}] Selected {selected_network} for refueling with {final_amount} ETH")
             
-            return (selected_network, amount_to_refuel)
+            return (selected_network, final_amount, selected_gas_params)
             
         except Exception as e:
             logger.error(f"[{self.account_index}] Error checking balances: {str(e)}")
@@ -134,27 +202,31 @@ class Gaszip:
         }
     
     async def refuel(self) -> bool:
-        """Execute the refueling transaction."""
+        """Refuel MON from one of the supported networks."""
         try:
-            network_info = await self.get_balances()
-            if not network_info:
+            # Get current MON balance before refuel
+            initial_balance = await self.get_monad_balance()
+            logger.info(f"[{self.account_index}] Initial MON balance: {initial_balance}")
+            
+            # Check balances across networks and select one to refuel from
+            balance_check = await self.get_balances()
+            if not balance_check:
+                logger.info(f"[{self.account_index}] No refueling needed or possible")
                 return False
                 
-            network, amount = network_info
+            network, amount, gas_params = balance_check
+            logger.info(f"[{self.account_index}] Refueling from {network} with {amount} ETH")
+            
+            # Get web3 for the selected network
             web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(GASZIP_RPCS[network]))
             
-            # Get initial MON balance if we're going to wait for it to increase
-            initial_balance = 0
-            if self.config.GASZIP.WAIT_FOR_FUNDS_TO_ARRIVE:
-                initial_balance = await self.get_monad_balance()
-                logger.info(f"[{self.account_index}] Initial MON balance: {initial_balance}")
-            
-            # Prepare transaction
+            # Convert amount to wei
             amount_wei = web3.to_wei(amount, 'ether')
-            nonce = await web3.eth.get_transaction_count(self.account.address)
-            gas_params = await self.get_gas_params(web3)
             
-            # Estimate gas
+            # Get nonce
+            nonce = await web3.eth.get_transaction_count(self.account.address)
+            
+            # Estimate gas using the same gas parameters from get_balances
             gas_estimate = await web3.eth.estimate_gas({
                 'from': self.account.address,
                 'to': REFUEL_ADDRESS,
@@ -170,7 +242,7 @@ class Gaszip:
                 'nonce': nonce,
                 'gas': int(gas_estimate * 1.1),  # Add 10% buffer to gas estimate
                 'chainId': await web3.eth.chain_id,
-                **gas_params
+                **gas_params  # Use the same gas params that we calculated during get_balances
             }
             
             # Sign and send transaction
