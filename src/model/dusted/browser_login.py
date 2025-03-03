@@ -312,7 +312,7 @@ async def dusted_browser_login(config: Config, private_key: str, proxy: str) -> 
                 pages = page.context.pages
                 metamask_page = None
                 for p in pages:
-                    if "chrome-extension://hjbclcphfbpaoebnggnpdgjpjidhbfpl" in p.url:
+                    if "chrome-extension://" in p.url:
                         metamask_page = p
                         break
 
@@ -335,7 +335,7 @@ async def dusted_browser_login(config: Config, private_key: str, proxy: str) -> 
 
                 logger.info("Logged in to dusted.app")
                 await asyncio.sleep(10)
-                
+
                 await browser.close()
                 cleanup_profile(
                     profile_dir
