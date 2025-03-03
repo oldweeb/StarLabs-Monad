@@ -65,7 +65,7 @@ FULL_TASK = [
     ["izumi", "swaps", "ambient", "bean", "skip", "skip", "skip"],
     ["izumi", "aircraft", "lilchogstars", "bean", "swaps", "skip"],
     ["ambient", "izumi", "bean", "skip", "skip"],
-    "collect_all_to_monad"
+    "collect_all_to_monad",
     ["apriori", "magma", "shmonad", "kintsu", "skip", "skip"],
     ["apriori", "magma", "shmonad", "kintsu", "skip"],
     ["ambient", "izumi", "bean", "magiceden", "monadking", "skip"],
