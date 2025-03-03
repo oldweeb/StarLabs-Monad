@@ -52,6 +52,10 @@ FAUCET = [
     "faucet",
 ]
 
+DUSTED = [
+    "dusted",
+]
+
 BRIDGE_AND_SWAPS = [
     "memebridge",
     ("izumi", "ambient", "bean", "swaps"),
@@ -110,6 +114,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "farm_faucet" - get tokens from faucet ON FARM ACCOUNTS (data/keys_for_faucet.txt)
 # "disperse_farm_accounts" - disperse tokens from farm accounts to main accounts | keys_for_faucet.txt -> private_keys.txt
 # "disperse_from_one_wallet" - disperse tokens from one wallet to all other wallets | keys_for_faucet.txt (first wallet) -> private_keys.txt
+# "dusted" - get tokens from dusted.app
 
 # SWAPS
 # "collect_all_to_monad" - swap all tokens to native token (MON)
