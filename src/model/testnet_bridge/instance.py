@@ -49,26 +49,26 @@ class TestnetBridge:
             sepolia_web3 = self.web3_connections.get("Sepolia")
             if not sepolia_web3:
                 logger.error(f"[{self.account_index}] Sepolia web3 connection not initialized")
-                return 0
+                raise ValueError("Sepolia web3 connection not initialized")
                 
             balance_wei = await sepolia_web3.eth.get_balance(self.account.address)
             return float(sepolia_web3.from_wei(balance_wei, 'ether'))
         except Exception as e:
             logger.error(f"[{self.account_index}] Failed to get Sepolia balance: {str(e)}")
-            return 0
+            raise e
 
     async def get_native_balance(self, network: str) -> float:
         """Get native token balance for a specific network."""
         try:
             if network not in self.web3_connections:
                 logger.error(f"[{self.account_index}] No web3 connection for {network}")
-                return 0
+                raise ValueError(f"No web3 connection for {network}")
                 
             balance_wei = await self.web3_connections[network].eth.get_balance(self.account.address)
             return float(self.web3_connections[network].from_wei(balance_wei, 'ether'))
         except Exception as e:
             logger.error(f"[{self.account_index}] Failed to get balance for {network}: {str(e)}")
-            return 0
+            raise e
 
     async def wait_for_balance_increase(self, initial_balance: float) -> bool:
         """Wait for Sepolia ETH balance to increase after bridge."""
@@ -95,7 +95,7 @@ class TestnetBridge:
             await asyncio.sleep(5)
         
         logger.error(f"[{self.account_index}] Sepolia balance didn't increase after {timeout} seconds")
-        return False
+        raise TimeoutError(f"Sepolia balance didn't increase after {timeout} seconds")
 
     async def get_suitable_network(self) -> Optional[Tuple[str, float]]:
         """
@@ -112,7 +112,7 @@ class TestnetBridge:
                     f"[{self.account_index}] Current Sepolia balance ({current_sepolia_balance}) is above minimum "
                     f"({self.config.TESTNET_BRIDGE.MINIMUM_BALANCE_TO_REFUEL}), skipping bridge"
                 )
-                return None
+                return None  # This is a valid case, not an error
             
             eligible_networks = []
             amount_to_bridge = random.uniform(
@@ -127,12 +127,12 @@ class TestnetBridge:
                 logger.info(f"[{self.account_index}] {network} balance: {balance}")
                 
                 # Adjust the check to ensure there's enough for the bridge plus gas
-                if balance > amount_to_bridge:
+                if balance > amount_to_bridge + 0.01:  # Add buffer for gas
                     eligible_networks.append(network)
             
             if not eligible_networks:
                 logger.warning(f"[{self.account_index}] No networks with sufficient balance found")
-                return None
+                raise ValueError("No networks with sufficient balance found")
             
             selected_network = random.choice(eligible_networks)
             logger.info(f"[{self.account_index}] Selected {selected_network} for bridging to Sepolia")
@@ -141,19 +141,23 @@ class TestnetBridge:
             
         except Exception as e:
             logger.error(f"[{self.account_index}] Error checking balances: {str(e)}")
-            return None
+            raise e
 
     async def get_gas_params(self, web3: AsyncWeb3) -> Dict[str, int]:
         """Get gas parameters for transaction."""
-        latest_block = await web3.eth.get_block('latest')
-        base_fee = latest_block['baseFeePerGas']
-        max_priority_fee = await web3.eth.max_priority_fee
-        max_fee = int((base_fee + max_priority_fee) * 1.5)
-        
-        return {
-            "maxFeePerGas": max_fee,
-            "maxPriorityFeePerGas": max_priority_fee,
-        }
+        try:
+            latest_block = await web3.eth.get_block('latest')
+            base_fee = latest_block['baseFeePerGas']
+            max_priority_fee = await web3.eth.max_priority_fee
+            max_fee = int((base_fee + max_priority_fee) * 1.5)
+            
+            return {
+                "maxFeePerGas": max_fee,
+                "maxPriorityFeePerGas": max_priority_fee,
+            }
+        except Exception as e:
+            logger.error(f"[{self.account_index}] Failed to get gas parameters: {str(e)}")
+            raise e
     
     async def calculate_amount_out_min(self, network: str, amount_in: int) -> int:
         """
@@ -161,78 +165,85 @@ class TestnetBridge:
         Uses the quoter contract to get an accurate estimate.
         Raises exceptions instead of using fallback calculations.
         """
-        # Convert amount_in to hex format for the request
-        amount_in_hex = Web3.to_hex(amount_in)[2:]  # Remove '0x' prefix
-        
-        # Format the amount_in_hex to ensure it's the right length (13 chars)
-        if len(amount_in_hex) < 13:
-            amount_in_hex = f"{'0' * (13 - len(amount_in_hex))}{amount_in_hex}"
-        elif len(amount_in_hex) > 13:
-            amount_in_hex = amount_in_hex[:13]
+        try:
+            # Convert amount_in to hex format for the request
+            amount_in_hex = Web3.to_hex(amount_in)[2:]  # Remove '0x' prefix
             
-        # Common variables across networks
-        fee = "0000000000000000000000000000000000000000000000000000000000000bb8"  # Fee tier (3000)
-        quoter_address = "0xb27308f9f90d607463bb33ea1bebb41c27ce5ab6"  # Uniswap Quoter
-        token_out = "e71bdfe1df69284f00ee185cf0d95d0c7680c0d4"  # Destination token
-        
-        # Define token addresses and RPC URL based on network
-        if network == "Arbitrum":
-            token_in = "82af49447d8a07e3bd95bd0d56f35241523fbab1"  # WETH on Arbitrum
-            rpc_url = TESTNET_BRIDGE_RPCS[network]
-            request_id = 82
-            
-        elif network == "Optimism":
-            token_in = "4200000000000000000000000000000000000006"  # WETH on Optimism
-            rpc_url = TESTNET_BRIDGE_RPCS[network]
-            request_id = 50
-            
-        else:
-            # For unsupported networks, raise an exception
-            raise ValueError(f"Network {network} is not supported for quoter calculation")
-            
-        # Construct the data payload for the eth_call
-        data = f"0xf7729d43000000000000000000000000{token_in}000000000000000000000000{token_out}{fee}000000000000000000000000000000000000000000000000000{amount_in_hex}0000000000000000000000000000000000000000000000000000000000000000"
-        
-        # Prepare the JSON-RPC request
-        json_data = [
-            {
-                "method": "eth_call",
-                "params": [
-                    {
-                        "to": quoter_address,
-                        "data": data,
-                    },
-                    "latest",
-                ],
-                "id": request_id,
-                "jsonrpc": "2.0",
-            },
-        ]
-        
-        logger.info(f"[{self.account_index}] Making eth_call to calculate amountOutMin for {network}")
-        
-        response = await self.session.post(rpc_url, json=json_data)
-        result = response.json()
+            # Format the amount_in_hex to ensure it's the right length (13 chars)
+            if len(amount_in_hex) < 13:
+                amount_in_hex = f"{'0' * (13 - len(amount_in_hex))}{amount_in_hex}"
+            elif len(amount_in_hex) > 13:
+                amount_in_hex = amount_in_hex[:13]
                 
-        # Get the result and convert to an integer
-        if "result" in result[0]:
-            amount_out_hex = int(result[0]["result"], 16)
+            # Common variables across networks
+            fee = "0000000000000000000000000000000000000000000000000000000000000bb8"  # Fee tier (3000)
+            quoter_address = "0xb27308f9f90d607463bb33ea1bebb41c27ce5ab6"  # Uniswap Quoter
+            token_out = "e71bdfe1df69284f00ee185cf0d95d0c7680c0d4"  # Destination token
             
-            # Apply a safety factor (95% of the quoted amount)
-            amount_out = float(amount_out_hex) * 0.95
-            amount_out = Web3.to_wei(amount_out, "ether")
-            
-            # Handle very large numbers
-            if len(str(amount_out)) > 18:
-                amount_out = int(amount_out / 1e18)
+            # Define token addresses and RPC URL based on network
+            if network == "Arbitrum":
+                token_in = "82af49447d8a07e3bd95bd0d56f35241523fbab1"  # WETH on Arbitrum
+                rpc_url = TESTNET_BRIDGE_RPCS[network]
+                request_id = 82
                 
-            logger.info(f"[{self.account_index}] Calculated amountOutMin for {network}: {Web3.from_wei(amount_out, 'ether')} ETH")
-            return amount_out
-        else:
-            # Raise exception if the quote fails
-            error_message = f"Failed to get quote for {network}: {result}"
-            logger.error(f"[{self.account_index}] {error_message}")
-            raise ValueError(error_message)
+            elif network == "Optimism":
+                token_in = "4200000000000000000000000000000000000006"  # WETH on Optimism
+                rpc_url = TESTNET_BRIDGE_RPCS[network]
+                request_id = 50
+                
+            else:
+                # For unsupported networks, raise an exception
+                error_msg = f"Network {network} is not supported for quoter calculation"
+                logger.error(f"[{self.account_index}] {error_msg}")
+                raise ValueError(error_msg)
+                
+            # Construct the data payload for the eth_call
+            data = f"0xf7729d43000000000000000000000000{token_in}000000000000000000000000{token_out}{fee}000000000000000000000000000000000000000000000000000{amount_in_hex}0000000000000000000000000000000000000000000000000000000000000000"
+            
+            # Prepare the JSON-RPC request
+            json_data = [
+                {
+                    "method": "eth_call",
+                    "params": [
+                        {
+                            "to": quoter_address,
+                            "data": data,
+                        },
+                        "latest",
+                    ],
+                    "id": request_id,
+                    "jsonrpc": "2.0",
+                },
+            ]
+            
+            logger.info(f"[{self.account_index}] Making eth_call to calculate amountOutMin for {network}")
+            
+            # Use the existing session instead of creating a new aiohttp session
+            response = await self.session.post(rpc_url, json=json_data)
+            result = response.json()
+                    
+            # Get the result and convert to an integer
+            if "result" in result[0]:
+                amount_out_hex = int(result[0]["result"], 16)
+                
+                # Apply a safety factor (95% of the quoted amount)
+                amount_out = float(amount_out_hex) * 0.95
+                amount_out = Web3.to_wei(amount_out, "ether")
+                
+                # Handle very large numbers
+                if len(str(amount_out)) > 18:
+                    amount_out = int(amount_out / 1e18)
+                    
+                logger.info(f"[{self.account_index}] Calculated amountOutMin for {network}: {Web3.from_wei(amount_out, 'ether')} ETH")
+                return amount_out
+            else:
+                # Raise exception if the quote fails
+                error_message = f"Failed to get quote for {network}: {result}"
+                logger.error(f"[{self.account_index}] {error_message}")
+                raise ValueError(error_message)
+        except Exception as e:
+            logger.error(f"[{self.account_index}] Error calculating amount_out_min: {str(e)}")
+            raise e
     
     async def build_bridge_transaction(self, network: str, amount_to_bridge: float) -> Dict:
         """Build the bridge transaction."""
@@ -279,39 +290,37 @@ class TestnetBridge:
             })
             
             # Manually estimate gas for the transaction
-            try:
-                logger.info(f"[{self.account_index}] Estimating gas for bridge transaction...")
-                estimated_gas = await web3.eth.estimate_gas({
-                    "from": self.account.address,
-                    "to": contract.address,
-                    "value": amount_in + bridge_fee,
-                    "data": built_transaction["data"],
-                    "nonce": nonce,
-                    "maxFeePerGas": gas_params["maxFeePerGas"],
-                    "maxPriorityFeePerGas": gas_params["maxPriorityFeePerGas"],
-                })
-                
-                # Multiply by 1.2 for safety buffer
-                gas_limit = int(estimated_gas * 1.2)
-                logger.info(f"[{self.account_index}] Estimated gas: {estimated_gas}, with buffer: {gas_limit}")
-                
-                # Add gas limit to the transaction
-                built_transaction["gas"] = gas_limit
-            except Exception as e:
-                logger.error(f"[{self.account_index}] Gas estimation failed: {str(e)}.")
+            logger.info(f"[{self.account_index}] Estimating gas for bridge transaction...")
+            estimated_gas = await web3.eth.estimate_gas({
+                "from": self.account.address,
+                "to": contract.address,
+                "value": amount_in + bridge_fee,
+                "data": built_transaction["data"],
+                "nonce": nonce,
+                "maxFeePerGas": gas_params["maxFeePerGas"],
+                "maxPriorityFeePerGas": gas_params["maxPriorityFeePerGas"],
+            })
+            
+            # Multiply by 1.2 for safety buffer
+            gas_limit = int(estimated_gas * 1.2)
+            logger.info(f"[{self.account_index}] Estimated gas: {estimated_gas}, with buffer: {gas_limit}")
+            
+            # Add gas limit to the transaction
+            built_transaction["gas"] = gas_limit
             
             return built_transaction
             
         except Exception as e:
             logger.error(f"[{self.account_index}] Error building bridge transaction: {str(e)}")
-            raise
+            raise e
 
     async def bridge(self) -> bool:
         """Execute the bridge transaction."""
         try:
             network_info = await self.get_suitable_network()
             if not network_info:
-                return False
+                logger.info(f"[{self.account_index}] No need to bridge, Sepolia balance is sufficient")
+                return True  # This is a success case, not an error
                 
             network, amount = network_info
             web3 = self.web3_connections[network]
@@ -340,28 +349,45 @@ class TestnetBridge:
                 # Wait for balance to increase if configured to do so
                 if self.config.TESTNET_BRIDGE.WAIT_FOR_FUNDS_TO_ARRIVE:
                     logger.success(f"[{self.account_index}] Waiting for balance increase on Sepolia...")
-                    if await self.wait_for_balance_increase(initial_balance):
-                        logger.success(f"[{self.account_index}] Successfully bridged from {network} to Sepolia")
-                        return True
-                    logger.warning(f"[{self.account_index}] Sepolia balance didn't increase, but transaction was successful")
+                    await self.wait_for_balance_increase(initial_balance)
+                    logger.success(f"[{self.account_index}] Successfully bridged from {network} to Sepolia")
                     return True
                 else:
                     logger.success(f"[{self.account_index}] Successfully bridged from {network} (not waiting for balance)")
                     return True
             else:
                 logger.error(f"[{self.account_index}] Bridge transaction failed! Explorer URL: {explorer_url}")
-                return False
+                raise ValueError(f"Bridge transaction failed! Status: {receipt['status']}")
                 
         except Exception as e:
             logger.error(f"[{self.account_index}] Bridge failed: {str(e)}")
-            return False
+            raise e
             
     async def execute(self) -> bool:
-        """Main execution method."""
-        try:
-            logger.info(f"[{self.account_index}] Starting TestnetBridge operation to Sepolia")
-            return await self.bridge()
-        except Exception as e:
-            logger.error(f"[{self.account_index}] TestnetBridge execution failed: {str(e)}")
-            return False
+        """Main execution method with retry mechanism."""
+        # Get retry settings from config
+        attempts = getattr(self.config.SETTINGS, 'ATTEMPTS', 5)  # Default to 5 if not set
+        pause_range = getattr(self.config.SETTINGS, 'PAUSE_BETWEEN_ATTEMPTS', [5, 15])  # Default to [5, 15] if not set
+        last_exception = None
+        
+        logger.info(f"[{self.account_index}] Starting TestnetBridge operation with up to {attempts} attempts")
+        
+        for attempt in range(attempts):
+            try:
+                logger.info(f"[{self.account_index}] TestnetBridge attempt {attempt + 1}/{attempts}")
+                result = await self.bridge()
+                return result
+            except Exception as e:
+                last_exception = e
+                logger.warning(f"[{self.account_index}] Attempt {attempt + 1}/{attempts} failed: {str(e)}")
+                
+                if attempt < attempts - 1:  # Don't sleep on the last attempt
+                    pause_time = random.uniform(pause_range[0], pause_range[1])
+                    logger.info(f"[{self.account_index}] Waiting {pause_time:.2f} seconds before next attempt...")
+                    await asyncio.sleep(pause_time)
+        
+        logger.error(f"[{self.account_index}] All {attempts} attempts failed for TestnetBridge")
+        if last_exception:
+            logger.error(f"[{self.account_index}] Last error: {str(last_exception)}")
+        return False
 
