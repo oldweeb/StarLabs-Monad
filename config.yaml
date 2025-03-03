@@ -125,3 +125,21 @@ MAGICEDEN:
 
 FAUCET:
     CAPSOLVER_API_KEY: CAP-
+
+# --------------------------- #
+# EXCHANGES SECTION
+# --------------------------- #
+EXCHANGES:
+    name: "OKX"  # Supported: "OKX", "BITGET"
+    apiKey: ''
+    secretKey: ''
+    passphrase: ''  
+    withdrawals:
+        - currency: "ETH" # ONLY ETH
+          networks: ["Arbitrum", "Base", "Optimism"] # ["Arbitrum", "Base", "Optimism"]
+          min_amount: 0.0003
+          max_amount: 0.0004
+          max_balance: 0.005
+          wait_for_funds: true
+          max_wait_time: 99999  # in seconds
+          retries: 3
