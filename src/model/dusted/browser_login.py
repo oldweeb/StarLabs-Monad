@@ -139,17 +139,17 @@ async def setup_metamask(page, private_key: str) -> None:
 
     # Get all pages and find MetaMask popup
     pages = page.context.pages
-    metamask_page = None
+    metamask_page = pages[2]
 
     # MetaMask popup is typically the second or third page
-    for p in pages:
-        if "chrome-extension://hjbclcphfbpaoebnggnpdgjpjidhbfpl" in p.url:
-            metamask_page = p
-            break
+    # for p in pages:
+    #     if "chrome-extension://hjbclcphfbpaoebnggnpdgjpjidhbfpl" in p.url:
+    #         metamask_page = p
+    #         break
 
-    if not metamask_page:
-        logger.error("MetaMask page not found")
-        return
+    # if not metamask_page:
+    #     logger.error("MetaMask page not found")
+    #     return
 
     await asyncio.sleep(1)
     # Click through import flow
@@ -310,11 +310,7 @@ async def dusted_browser_login(config: Config, private_key: str, proxy: str) -> 
 
                 # Find MetaMask popup and click Connect
                 pages = page.context.pages
-                metamask_page = None
-                for p in pages:
-                    if "chrome-extension://" in p.url:
-                        metamask_page = p
-                        break
+                metamask_page = pages[2]
 
                 if metamask_page:
                     # Click Connect button in MetaMask
