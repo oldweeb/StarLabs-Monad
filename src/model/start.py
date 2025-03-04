@@ -298,6 +298,7 @@ class Start:
         elif task == "monadking":
             monadking = Monadking(
                 self.account_index,
+                self.proxy,
                 self.private_key,
                 self.config,
             )
@@ -306,6 +307,7 @@ class Start:
         elif task == "monadking_unlocked":
             monadking_unlocked = Monadking(
                 self.account_index,
+                self.proxy,
                 self.private_key,
                 self.config,
             )
@@ -314,6 +316,7 @@ class Start:
         elif task == "magiceden":
             magiceden = MagicEden(
                 self.account_index,
+                self.proxy,
                 self.config,
                 self.private_key,
                 self.session,

@@ -61,7 +61,12 @@ class Demask:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
+        self.web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                RPC_URL,
+                request_kwargs={"proxy": (f"http://{proxy}")},
+            )
+        )
 
         self.nft_contract_address = "0x2CDd146Aa75FFA605ff7c5Cc5f62D3B52C140f9c"  # Updated contract address for DeMask
         self.nft_contract: Contract = self.web3.eth.contract(

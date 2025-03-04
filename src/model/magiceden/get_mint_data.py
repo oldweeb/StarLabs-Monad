@@ -62,15 +62,24 @@ async def get_mint_data(
                 json=payload,
                 timeout=30,  # Increase timeout
             )
+            # print(response.text)
 
             if response.status_code == 200:
                 return response.json()
-            
+
             if "Token has no eligible mints":
-                logger.warning(
-                    f"💀 Wait a bit, MagicEden API returned wrong data..."
-                )
+                logger.warning(f"💀 Wait a bit, MagicEden API returned wrong data...")
+                await asyncio.sleep(3)
                 error = "all_nfts_minted"
+
+            elif "max mints per wallet possibly exceeded" in response.text:
+                return "already_minted"
+
+            elif "no healthy upstream" in response.text:
+                logger.error(f"❌ MagicEden API is down now. Trying again...")
+                await asyncio.sleep(3)
+                continue
+
             elif response.status_code == 400:
                 # Проверяем, не связана ли ошибка с тем, что пользователь уже заминтил NFT
                 try:

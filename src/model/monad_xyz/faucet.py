@@ -192,7 +192,12 @@ async def faucet(
     profile_dir = None
     for retry in range(config.SETTINGS.ATTEMPTS):
         try:
-            my_web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
+            my_web3 = AsyncWeb3(
+                AsyncWeb3.AsyncHTTPProvider(
+                    RPC_URL,
+                    request_kwargs={"proxy": (f"http://{proxy}")},
+                )
+            )
             capsolver_path = os.path.join(os.path.dirname(__file__), "capsolver")
 
             # Update the capsolver API key in both files before launching the browser

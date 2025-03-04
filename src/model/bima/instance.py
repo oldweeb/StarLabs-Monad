@@ -35,7 +35,12 @@ class Bima:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
+        self.web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                RPC_URL,
+                request_kwargs={"proxy": (f"http://{proxy}")},
+            )
+        )
 
     async def login(self):
         for retry in range(self.config.SETTINGS.ATTEMPTS):

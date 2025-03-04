@@ -28,7 +28,12 @@ class Memebridge:
         self.private_key = private_key
         self.config = config
         self.account = Account.from_key(private_key)
-        self.monad_web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
+        self.monad_web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                RPC_URL,
+                request_kwargs={"proxy": (f"http://{proxy}")},
+            )
+        )
         
     async def get_monad_balance(self) -> float:
         """Get native MON balance."""

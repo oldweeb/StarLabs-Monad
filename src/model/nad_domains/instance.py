@@ -28,8 +28,13 @@ class NadDomains:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
-        
+        self.web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                RPC_URL,
+                request_kwargs={"proxy": (f"http://{proxy}")},
+            )
+        )
+
         # Initialize contract using constants
         self.contract = self.web3.eth.contract(
             address=self.web3.to_checksum_address(NAD_CONTRACT_ADDRESS),
