@@ -135,7 +135,7 @@ def get_random_launch_args(metamask_path: str) -> List[str]:
 
 async def setup_metamask(page, private_key: str) -> None:
     # Wait for MetaMask popup to appear
-    await asyncio.sleep(6)  # Wait for MetaMask to load
+    await asyncio.sleep(15)  # Wait for MetaMask to load
 
     # Get all pages and find MetaMask popup
     pages = page.context.pages
@@ -330,7 +330,7 @@ async def dusted_browser_login(config: Config, private_key: str, proxy: str) -> 
                     raise Exception("MetaMask popup not found")
 
                 logger.info("Logged in to dusted.app")
-                await asyncio.sleep(10)
+                await asyncio.sleep(20)
 
                 await browser.close()
                 cleanup_profile(
