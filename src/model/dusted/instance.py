@@ -93,7 +93,7 @@ class Dusted:
         try:
             estimated = await self.web3.eth.estimate_gas(transaction)
             # Add 10% to estimated gas for safety
-            return int(estimated * 1.1)
+            return int(estimated * 1.2)
         except Exception as e:
             logger.warning(
                 f"[{self.account_index}] Error estimating gas: {e}. Using default gas limit"
@@ -560,6 +560,13 @@ class Dusted:
             # Initialize user_id and wallet_id
             self.user_id = None
             self.wallet_id = None
+            
+            # Check if wallet has enough native balance before proceeding
+            native_balance = await self.web3.eth.get_balance(self.account.address)
+            native_balance_eth = self.web3.from_wei(native_balance, 'ether')
+            if native_balance_eth < 0.01:
+                logger.warning(f"[{self.account_index}] Insufficient MONAD balance: {native_balance_eth} MONAD. Minimum required: 0.01 MONAD. Skipping.")
+                return False
             
             result = await dusted_browser_login(self.config, self.private_key, self.proxy)
             if not result:
