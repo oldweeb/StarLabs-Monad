@@ -166,7 +166,6 @@ def get_random_launch_args(capsolver_path: str) -> List[str]:
         "--disable-notifications",
     ]
 
-        
     # Randomly select 2-4 optional arguments
     selected_optional = random.sample(optional_args, random.randint(2, 4))
 
@@ -318,8 +317,9 @@ async def faucet(
 
                 # Get initial balance
                 initial_balance = await my_web3.eth.get_balance(wallet.address)
+                initial_balance_eth = my_web3.from_wei(initial_balance, "ether")
                 logger.info(
-                    f"[{account_index}] [{wallet.address}] | Initial balance: {initial_balance}"
+                    f"[{account_index}] [{wallet.address}] | Initial balance: {initial_balance_eth} ETH"
                 )
 
                 await page.click(
@@ -376,8 +376,9 @@ async def faucet(
                 await asyncio.sleep(60)
                 # Get final balance and compare
                 final_balance = await my_web3.eth.get_balance(wallet.address)
+                final_balance_eth = my_web3.from_wei(final_balance, "ether")
                 logger.info(
-                    f"[{account_index}] [{wallet.address}] | Final balance: {final_balance}"
+                    f"[{account_index}] [{wallet.address}] | Final balance: {final_balance_eth} ETH"
                 )
 
                 if final_balance <= initial_balance:
@@ -407,9 +408,15 @@ async def faucet(
                 config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[0],
                 config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[1],
             )
-            logger.error(
-                f"[{account_index}] | Error faucet to monad.xyz ({retry + 1}/{config.SETTINGS.ATTEMPTS}): {e}. Next faucet in {random_pause} seconds"
-            )
+            if "ERR_TUNNEL_CONNECTION_FAILED" in str(e):
+                logger.error(
+                    f"[{account_index}] | Bad proxy or internet connection. Next faucet in {random_pause} seconds"
+                )
+            else:
+                logger.error(
+                    f"[{account_index}] | Error faucet to monad.xyz ({retry + 1}/{config.SETTINGS.ATTEMPTS}): {e}. Next faucet in {random_pause} seconds"
+                )
+
             await asyncio.sleep(random_pause)
             continue
 
