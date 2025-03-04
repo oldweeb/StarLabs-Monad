@@ -31,7 +31,7 @@ class Gaszip:
         self.monad_web3 = AsyncWeb3(
             AsyncWeb3.AsyncHTTPProvider(
                 RPC_URL,
-                request_kwargs={"proxy": (f"http://{proxy}")},
+                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
             )
         )
 
@@ -47,9 +47,13 @@ class Gaszip:
     async def get_native_balance(self, network: str) -> float:
         """Get native token balance for a specific network."""
         try:
-            web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(GASZIP_RPCS[network]))
+            web3 = AsyncWeb3(
+                AsyncWeb3.AsyncHTTPProvider(
+                    GASZIP_RPCS[network], request_kwargs={"ssl": False}
+                )
+            )
             balance_wei = await web3.eth.get_balance(self.account.address)
-            return float(web3.from_wei(balance_wei, 'ether'))
+            return float(web3.from_wei(balance_wei, "ether"))
         except Exception as e:
             logger.error(f"[{self.account_index}] Failed to get balance for {network}: {str(e)}")
             return 0
@@ -119,8 +123,12 @@ class Gaszip:
                 
                 if self.config.GASZIP.BRIDGE_ALL:
                     # Get a Web3 instance for this network
-                    web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(GASZIP_RPCS[network]))
-                    
+                    web3 = AsyncWeb3(
+                        AsyncWeb3.AsyncHTTPProvider(
+                            GASZIP_RPCS[network], request_kwargs={"ssl": False}
+                        )
+                    )
+
                     # Build the actual transaction to estimate its gas cost
                     try:
                         # Get the current gas parameters (EIP-1559 or legacy)
@@ -172,7 +180,11 @@ class Gaszip:
                     # For fixed amount refueling, we still need to get gas params
                     if balance > amount_to_refuel:
                         try:
-                            web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(GASZIP_RPCS[network]))
+                            web3 = AsyncWeb3(
+                                AsyncWeb3.AsyncHTTPProvider(
+                                    GASZIP_RPCS[network], request_kwargs={"ssl": False}
+                                )
+                            )
                             gas_params = await self.get_gas_params(web3)
                             eligible_networks.append((network, amount_to_refuel, gas_params))
                         except Exception as e:
@@ -223,10 +235,14 @@ class Gaszip:
             logger.info(f"[{self.account_index}] Refueling from {network} with {amount} ETH")
             
             # Get web3 for the selected network
-            web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(GASZIP_RPCS[network]))
+            web3 = AsyncWeb3(
+                AsyncWeb3.AsyncHTTPProvider(
+                    GASZIP_RPCS[network], request_kwargs={"ssl": False}
+                )
+            )
             
             # Convert amount to wei
-            amount_wei = web3.to_wei(amount, 'ether')
+            amount_wei = web3.to_wei(amount, "ether")
             
             # Get nonce
             nonce = await web3.eth.get_transaction_count(self.account.address)

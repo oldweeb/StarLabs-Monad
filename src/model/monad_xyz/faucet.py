@@ -195,7 +195,7 @@ async def faucet(
             my_web3 = AsyncWeb3(
                 AsyncWeb3.AsyncHTTPProvider(
                     RPC_URL,
-                    request_kwargs={"proxy": (f"http://{proxy}")},
+                    request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
                 )
             )
             capsolver_path = os.path.join(os.path.dirname(__file__), "capsolver")

@@ -64,7 +64,7 @@ class Demask:
         self.web3 = AsyncWeb3(
             AsyncWeb3.AsyncHTTPProvider(
                 RPC_URL,
-                request_kwargs={"proxy": (f"http://{proxy}")},
+                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
             )
         )
 

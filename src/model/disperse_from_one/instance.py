@@ -20,7 +20,7 @@ class DisperseFromOneWallet:
         self.web3 = AsyncWeb3(
             AsyncHTTPProvider(
                 RPC_URL,
-                request_kwargs={"proxy": (f"http://{proxies[0]}")},
+                request_kwargs={"proxy": (f"http://{proxies[0]}"), "ssl": False},
             )
         )
 

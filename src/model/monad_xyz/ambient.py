@@ -29,9 +29,8 @@ class AmbientDex:
             AsyncWeb3.AsyncHTTPProvider(
                 RPC_URL,
                 request_kwargs={
-                    "proxy": (
-                        f"http://{proxy}"
-                    )
+                    "proxy": (f"http://{proxy}"),
+                    "ssl": False,
                 },
             )
         )

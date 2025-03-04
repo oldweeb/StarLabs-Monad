@@ -31,11 +31,11 @@ class Orbiter:
         self.web3 = AsyncWeb3(
             AsyncWeb3.AsyncHTTPProvider(
                 SEPOLIA_RPC_URL,
-                request_kwargs={"proxy": (f"http://{proxy}")},
+                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
             )
         )
         self.monad_web3 = AsyncWeb3(
-            AsyncWeb3.AsyncHTTPProvider(RPC_URL, request_kwargs={"proxy": (f"http://{proxy}")},
+            AsyncWeb3.AsyncHTTPProvider(RPC_URL, request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
             )
         )
         # Initialize ERC20 contract

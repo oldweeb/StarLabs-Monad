@@ -19,9 +19,13 @@ class WalletInfo:
 
 
 class WalletStats:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, proxy: str):
         # Используем публичную RPC ноду Base
-        self.w3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
+        self.w3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                RPC_URL, request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False}
+            )
+        )
         self.config = config
         self._lock = Lock()
 
