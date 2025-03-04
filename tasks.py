@@ -137,6 +137,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "demask" - mint NFT on app.demask.finance/launchpad/0x2cdd146aa75ffa605ff7c5cc5f62d3b52c140f9c/0
 # "monadking" - mint NFT on nerzo.xyz/monadking
 # "monadking_unlocked" - mint NFT on www.nerzo.xyz/unlocked
+# "monadverse" - mint NFT on monadverse.xyz
 
 # REFUEL
 # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad

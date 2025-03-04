@@ -201,7 +201,7 @@ class Start:
             if self.config.BIMA.LEND:
                 await bima.lend()
 
-        elif task == "monadverse_mint":
+        elif task == "monadverse":
             monadverse_mint = MonadverseMint(
                 self.account_index,
                 self.proxy,
