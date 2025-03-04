@@ -561,12 +561,7 @@ class Dusted:
             self.user_id = None
             self.wallet_id = None
             
-            # Check if wallet has enough native balance before proceeding
-            native_balance = await self.web3.eth.get_balance(self.account.address)
-            native_balance_eth = self.web3.from_wei(native_balance, 'ether')
-            if native_balance_eth < 0.01:
-                logger.warning(f"[{self.account_index}] Insufficient MONAD balance: {native_balance_eth} MONAD. Minimum required: 0.01 MONAD. Skipping.")
-                return False
+
             
             result = await dusted_browser_login(self.config, self.private_key, self.proxy)
             if not result:
@@ -587,6 +582,12 @@ class Dusted:
             
             # Play the lasso game (will handle errors gracefully)
             total_score = await self.claim()
+            # Check if wallet has enough native balance before proceeding
+            native_balance = await self.web3.eth.get_balance(self.account.address)
+            native_balance_eth = self.web3.from_wei(native_balance, 'ether')
+            if native_balance_eth < 0.01:
+                logger.warning(f"[{self.account_index}] Insufficient MONAD balance: {native_balance_eth} MONAD. Minimum required: 0.01 MONAD. Skipping.")
+                return False
             claim_result = await self.claim_rewards()
             
             logger.success(f"[{self.account_index}] Dusted execution completed successfully")
