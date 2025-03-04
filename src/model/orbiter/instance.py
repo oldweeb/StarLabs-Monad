@@ -28,9 +28,16 @@ class Orbiter:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(SEPOLIA_RPC_URL))
-        self.monad_web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
-        
+        self.web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                SEPOLIA_RPC_URL,
+                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+            )
+        )
+        self.monad_web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(RPC_URL, request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+            )
+        )
         # Initialize ERC20 contract
         self.monad_sepolia = self.monad_web3.eth.contract(
             address=self.monad_web3.to_checksum_address(MONAD_SEPOLIA_ETHEREUM_ADDRESS),

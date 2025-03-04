@@ -11,15 +11,26 @@ from src.utils.constants import EXPLORER_URL, RPC_URL
 
 class MagicEden:
     def __init__(
-        self, account_index: int, config: Config, private_key: str, session: AsyncClient
+        self,
+        account_index: int,
+        proxy: str,
+        config: Config,
+        private_key: str,
+        session: AsyncClient,
     ):
         self.account_index = account_index
+        self.proxy = proxy
         self.private_key = private_key
         self.config = config
         self.account = Account.from_key(private_key)
         self.session: AsyncClient = session
 
-        self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
+        self.web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                RPC_URL,
+                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+            )
+        )
 
     async def mint(self) -> bool:
         """
@@ -33,7 +44,7 @@ class MagicEden:
 
             # Используем to_checksum_address для преобразования адреса в правильный формат
             nft_contract_raw = random.choice(self.config.MAGICEDEN.NFT_CONTRACTS)
-            
+
             nft_contract = self.web3.to_checksum_address(nft_contract_raw)
 
             logger.info(

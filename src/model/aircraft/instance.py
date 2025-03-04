@@ -87,7 +87,12 @@ class Aircraft:
         self.auth_token = None
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
+        self.web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                RPC_URL,
+                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+            )
+        )
 
     def get_auth_headers(self) -> Dict[str, str]:
         """Get headers with authorization if token is available."""

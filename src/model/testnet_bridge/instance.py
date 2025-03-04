@@ -32,7 +32,9 @@ class TestnetBridge:
         # Initialize Web3 connections for each network
         self.web3_connections = {}
         for network, rpc in TESTNET_BRIDGE_RPCS.items():
-            self.web3_connections[network] = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(rpc))
+            self.web3_connections[network] = AsyncWeb3(
+                AsyncWeb3.AsyncHTTPProvider(rpc, request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False})
+            )
             
         # Initialize contract objects for each network
         self.bridge_contracts = {}

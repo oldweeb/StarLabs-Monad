@@ -252,7 +252,7 @@ class Start:
             await testnet_bridge.execute()
 
         elif task == "logs":
-            wallet_stats = WalletStats(self.config)
+            wallet_stats = WalletStats(self.config, self.proxy)
             await wallet_stats.get_wallet_stats(self.private_key, self.account_index)
 
         elif task == "nad_domains":
@@ -298,6 +298,7 @@ class Start:
         elif task == "monadking":
             monadking = Monadking(
                 self.account_index,
+                self.proxy,
                 self.private_key,
                 self.config,
             )
@@ -306,6 +307,7 @@ class Start:
         elif task == "monadking_unlocked":
             monadking_unlocked = Monadking(
                 self.account_index,
+                self.proxy,
                 self.private_key,
                 self.config,
             )
@@ -314,6 +316,7 @@ class Start:
         elif task == "magiceden":
             magiceden = MagicEden(
                 self.account_index,
+                self.proxy,
                 self.config,
                 self.private_key,
                 self.session,

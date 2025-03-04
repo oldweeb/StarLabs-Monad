@@ -47,7 +47,12 @@ class MonadverseMint:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = AsyncWeb3(AsyncWeb3.AsyncHTTPProvider(RPC_URL))
+        self.web3 = AsyncWeb3(
+            AsyncWeb3.AsyncHTTPProvider(
+                RPC_URL,
+                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+            )
+        )
 
         self.nft_contract_address = "0x3A9acc3Be6E9678FA5D23810488c37a3192aaf75"
         self.nft_contract: Contract = self.web3.eth.contract(
