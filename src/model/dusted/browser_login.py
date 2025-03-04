@@ -330,7 +330,7 @@ async def dusted_browser_login(config: Config, private_key: str, proxy: str) -> 
                     raise Exception("MetaMask popup not found")
 
                 logger.info("Logged in to dusted.app")
-                await asyncio.sleep(10)
+                await asyncio.sleep(20)
 
                 await browser.close()
                 cleanup_profile(
