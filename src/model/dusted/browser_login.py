@@ -135,7 +135,7 @@ def get_random_launch_args(metamask_path: str) -> List[str]:
 
 async def setup_metamask(page, private_key: str) -> None:
     # Wait for MetaMask popup to appear
-    await asyncio.sleep(15)  # Wait for MetaMask to load
+    await asyncio.sleep(30)  # Wait for MetaMask to load
 
     # Get all pages and find MetaMask popup
     pages = page.context.pages
