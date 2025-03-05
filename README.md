@@ -2,7 +2,7 @@
 
 This tool automates interactions with the Monad testnet, including various DeFi operations and token interactions.
 
-TUTORIAL - [https://star-labs.gitbook.io/star-labs/monad-ru](https://star-labs.gitbook.io/star-labs/monad-eng)
+TUTORIAL - https://star-labs.gitbook.io/star-labs/monad-eng
 
 # All features are available in config:
 # FAUCETS
