@@ -48,13 +48,6 @@ BELOW ARE THE READY-MADE TASKS THAT YOU CAN USE:
 СНИЗУ ПРИВЕДЕНЫ ГОТОВЫЕ ПРИМЕРЫ ЗАДАЧ, КОТОРЫЕ ВЫ МОЖЕТЕ ИСПОЛЬЗОВАТЬ:
 以下是您可以使用的现成任务：
 """
-FAUCET = [
-    "faucet",
-]
-
-DUSTED = [
-    "dusted",
-]
 
 BRIDGE_AND_SWAPS = [
     "memebridge",
@@ -110,11 +103,8 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 ]
 
 # FAUCETS
-# "faucet" - get tokens from faucet
-# "farm_faucet" - get tokens from faucet ON FARM ACCOUNTS (data/keys_for_faucet.txt)
 # "disperse_farm_accounts" - disperse tokens from farm accounts to main accounts | keys_for_faucet.txt -> private_keys.txt
 # "disperse_from_one_wallet" - disperse tokens from one wallet to all other wallets | keys_for_faucet.txt (first wallet) -> private_keys.txt
-# "dusted" - get tokens from dusted.app
 
 # SWAPS
 # "collect_all_to_monad" - swap all tokens to native token (MON)
@@ -137,7 +127,6 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "demask" - mint NFT on app.demask.finance/launchpad/0x2cdd146aa75ffa605ff7c5cc5f62d3b52c140f9c/0
 # "monadking" - mint NFT on nerzo.xyz/monadking
 # "monadking_unlocked" - mint NFT on www.nerzo.xyz/unlocked
-# "monadverse" - mint NFT on monadverse.xyz
 
 # REFUEL
 # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad

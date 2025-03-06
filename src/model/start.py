@@ -68,9 +68,9 @@ class Start:
                 self.session,
             )
 
-            if "farm_faucet" in self.config.FLOW.TASKS:
-                await monad.faucet()
-                return True
+            # if "farm_faucet" in self.config.FLOW.TASKS:
+            #     await monad.faucet()
+            #     return True
 
             # Заранее определяем все задачи
             planned_tasks = []
@@ -121,10 +121,10 @@ class Start:
         """Execute a single task"""
         task = task.lower()
 
-        if task == "faucet":
-            await monad.faucet()
+        # if task == "faucet":
+        #     await monad.faucet()
 
-        elif task == "swaps":
+        if task == "swaps":
             await monad.swaps(type="swaps")
 
         elif task == "ambient":
@@ -333,15 +333,16 @@ class Start:
             )
             await aircraft.execute()
 
-        elif task == "dusted":
-            dusty = Dusted(
-                self.account_index,
-                self.proxy,
-                self.private_key,
-                self.config,
-                self.session,
-            )
-            await dusty.execute()
+        # elif task == "dusted":
+        #     dusty = Dusted(
+        #         self.account_index,
+        #         self.proxy,
+        #         self.private_key,
+        #         self.config,
+        #         self.session,
+        #     )
+        #     await dusty.execute()
+
         elif task == "cex_withdrawal":
             cex_withdrawal = CexWithdraw(
                 self.account_index,
