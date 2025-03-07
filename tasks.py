@@ -1,5 +1,9 @@
 TASKS = [
-    "FULL_TASK",
+    "FAUCET",
+]
+
+FAUCET = [
+    "faucet",
 ]
 
 """
@@ -48,6 +52,7 @@ BELOW ARE THE READY-MADE TASKS THAT YOU CAN USE:
 СНИЗУ ПРИВЕДЕНЫ ГОТОВЫЕ ПРИМЕРЫ ЗАДАЧ, КОТОРЫЕ ВЫ МОЖЕТЕ ИСПОЛЬЗОВАТЬ:
 以下是您可以使用的现成任务：
 """
+
 
 BRIDGE_AND_SWAPS = [
     "memebridge",

@@ -22,7 +22,7 @@ class SettingsConfig:
 
 @dataclass
 class FaucetConfig:
-    CAPSOLVER_API_KEY: str
+    NOCAPTCHA_API_KEY: str
 
 
 @dataclass
@@ -269,7 +269,7 @@ class Config:
                 ]
             ),
             FAUCET=FaucetConfig(
-                CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],
+                NOCAPTCHA_API_KEY=data["FAUCET"]["NOCAPTCHA_API_KEY"],
             ),
             FLOW=FlowConfig(
                 TASKS=tasks_list,
