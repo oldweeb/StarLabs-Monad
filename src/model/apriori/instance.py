@@ -5,7 +5,7 @@ from eth_account import Account
 from loguru import logger
 from web3 import AsyncWeb3, Web3
 from primp import AsyncClient
-from typing import Dict
+from typing import Dict, Optional, List
 
 from src.utils.config import Config
 from src.utils.constants import EXPLORER_URL, RPC_URL
@@ -61,7 +61,7 @@ class Apriori:
             )
             raise e
 
-    async def stake_mon(self, amount: float = 0.0001):
+    async def stake_mon(self):
         for retry in range(self.config.SETTINGS.ATTEMPTS):
             try:
                 random_amount = round(
@@ -69,7 +69,7 @@ class Apriori:
                         self.config.APRIORI.AMOUNT_TO_STAKE[0],
                         self.config.APRIORI.AMOUNT_TO_STAKE[1],
                     ),
-                    5,
+                    random.randint(6, 12),
                 )
                 logger.info(
                     f"[{self.account_index}] Staking {random_amount} MON on Apriori"
@@ -94,7 +94,6 @@ class Apriori:
 
                 # Оцениваем газ
                 estimated_gas = await self.estimate_gas(transaction)
-                logger.info(f"[{self.account_index}] Estimated gas: {estimated_gas}")
 
                 # Добавляем остальные параметры транзакции
                 transaction.update(
@@ -142,3 +141,118 @@ class Apriori:
         if token_symbol == "native":
             balance_wei = await self.web3.eth.get_balance(self.account.address)
             return Decimal(balance_wei) / Decimal(10**18)
+
+    async def request_unstake(self):
+        """
+        Request to unstake MON tokens. If no amount is provided, 
+        it will unstake the maximum available amount.
+        
+        Args:
+            amount (Optional[float]): Amount of shares to unstake (default: None, which means max amount)
+            
+        Returns:
+            Dict with transaction status, hash, and request ID
+        """
+        for retry in range(self.config.SETTINGS.ATTEMPTS):
+            try:
+                logger.info(f"[{self.account_index}] Requesting to unstake MON from Apriori")
+                
+                # Создаем контракт
+                contract = self.web3.eth.contract(address=STAKE_ADDRESS, abi=STAKE_ABI)
+                
+                # Получаем максимальное количество для редимирования, если не указана сумма
+
+                max_shares = await contract.functions.maxRedeem(self.account.address).call()
+                if max_shares == 0:
+                    logger.warning(f"[{self.account_index}] No shares available to redeem")
+                    return {
+                        'status': 0,
+                        'error': 'No shares available to redeem'
+                    }
+                amount_wei = max_shares
+                logger.info(f"[{self.account_index}] Maximum available to unstake: {Web3.from_wei(max_shares, 'ether')} shares")
+
+            
+                # Получаем параметры газа
+                gas_params = await self.get_gas_params()
+                
+                # Создаем базовую транзакцию для вызова requestRedeem
+                transaction = {
+                    "from": self.account.address,
+                    "to": STAKE_ADDRESS,
+                    "data": contract.functions.requestRedeem(
+                        amount_wei,
+                        self.account.address,  # controller
+                        self.account.address   # owner
+                    )._encode_transaction_data(),
+                    "chainId": 10143,
+                    "type": 2,
+                }
+                
+                # Оцениваем газ
+                estimated_gas = await self.estimate_gas(transaction)
+                
+                # Добавляем остальные параметры транзакции
+                transaction.update(
+                    {
+                        "nonce": await self.web3.eth.get_transaction_count(
+                            self.account.address,
+                            "latest",
+                        ),
+                        "gas": estimated_gas,
+                        **gas_params,
+                    }
+                )
+                
+                signed_txn = self.web3.eth.account.sign_transaction(
+                    transaction, self.private_key
+                )
+                tx_hash = await self.web3.eth.send_raw_transaction(
+                    signed_txn.raw_transaction
+                )
+                
+                # Ждем подтверждения транзакции
+                logger.info(f"[{self.account_index}] Waiting for unstake request confirmation...")
+                receipt = await self.web3.eth.wait_for_transaction_receipt(tx_hash)
+                
+                if receipt["status"] == 1:
+                    logger.success(
+                        f"[{self.account_index}] Successfully requested to unstake {Web3.from_wei(amount_wei, 'ether')} MON from Apriori. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                    )
+                    return True
+                else:
+                    logger.error(f"[{self.account_index}] Transaction failed. Status: {receipt['status']}")
+                    return False
+                    
+            except Exception as e:
+                random_pause = random.randint(
+                    self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[0],
+                    self.config.SETTINGS.PAUSE_BETWEEN_ATTEMPTS[1],
+                )
+                logger.error(
+                    f"[{self.account_index}] | Error in request_unstake on Apriori: {e}. Sleeping for {random_pause} seconds"
+                )
+                await asyncio.sleep(random_pause)
+        
+        return {
+            'status': 0,
+            'error': 'Maximum retry attempts reached'
+        }
+
+    async def execute(self):
+        """
+        Execute Apriori operations based on config settings.
+        Will stake, unstake, or both depending on config.
+        
+        Returns:
+            Dict with results of operations performed
+        """
+        if self.config.APRIORI.STAKE:
+            await self.stake_mon()
+        
+        if self.config.APRIORI.UNSTAKE:
+            await self.request_unstake()
+
+
+        
+

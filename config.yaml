@@ -52,13 +52,19 @@ DISPERSE:
 
 APRIORI:
     AMOUNT_TO_STAKE: [0.0001, 0.0003]
+    STAKE: true
+    UNSTAKE: true
 
 MAGMA:
     AMOUNT_TO_STAKE: [0.0001, 0.0003]
+    STAKE: true
+    UNSTAKE: true
 
 KINTSU:
     # MINIMUM IS 0.01 $MON
     AMOUNT_TO_STAKE: [0.01, 0.02]
+    STAKE: true
+    UNSTAKE: true
 
 BIMA:
     LEND: true

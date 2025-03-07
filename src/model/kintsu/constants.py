@@ -1,5 +1,6 @@
 STAKE_ADDRESS = "0x07AabD925866E8353407E67C1D157836f7Ad923e"
 
+
 STAKE_ABI = [
     {
         "type": "function",
@@ -9,5 +10,14 @@ STAKE_ABI = [
             {"name": "newShares", "type": "uint128", "internalType": "uint128"}
         ],
         "stateMutability": "payable",
+    },
+    {
+        "type": "function",
+        "name": "requestUnlock",
+        "inputs": [
+            {"name": "shares", "type": "uint128", "internalType": "uint128"}
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable",
     }
 ]

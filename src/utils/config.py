@@ -38,16 +38,22 @@ class FlowConfig:
 @dataclass
 class AprioriConfig:
     AMOUNT_TO_STAKE: Tuple[float, float]
+    STAKE: bool
+    UNSTAKE: bool
 
 
 @dataclass
 class MagmaConfig:
     AMOUNT_TO_STAKE: Tuple[float, float]
+    STAKE: bool
+    UNSTAKE: bool
 
 
 @dataclass
 class KintsuConfig:
     AMOUNT_TO_STAKE: Tuple[float, float]
+    STAKE: bool
+    UNSTAKE: bool
 
 
 @dataclass
@@ -286,12 +292,18 @@ class Config:
             ),
             APRIORI=AprioriConfig(
                 AMOUNT_TO_STAKE=tuple(data["APRIORI"]["AMOUNT_TO_STAKE"]),
+                STAKE=data["APRIORI"]["STAKE"],
+                UNSTAKE=data["APRIORI"]["UNSTAKE"],
             ),
             MAGMA=MagmaConfig(
                 AMOUNT_TO_STAKE=tuple(data["MAGMA"]["AMOUNT_TO_STAKE"]),
+                STAKE=data["MAGMA"]["STAKE"],
+                UNSTAKE=data["MAGMA"]["UNSTAKE"],
             ),
             KINTSU=KintsuConfig(
                 AMOUNT_TO_STAKE=tuple(data["KINTSU"]["AMOUNT_TO_STAKE"]),
+                STAKE=data["KINTSU"]["STAKE"],
+                UNSTAKE=data["KINTSU"]["UNSTAKE"],
             ),
             BIMA=BimaConfig(
                 LEND=data["BIMA"]["LEND"],

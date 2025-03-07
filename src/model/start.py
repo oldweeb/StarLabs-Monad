@@ -165,7 +165,7 @@ class Start:
                 self.config,
                 self.session,
             )
-            await apriori.stake_mon()
+            await apriori.execute()
 
         elif task == "magma":
             magma = Magma(
@@ -175,7 +175,7 @@ class Start:
                 self.config,
                 self.session,
             )
-            await magma.stake_mon()
+            await magma.execute()
 
         elif task == "owlto":
             owlto = Owlto(
@@ -273,7 +273,7 @@ class Start:
                 self.config,
                 self.session,
             )
-            await kintsu.stake_mon()
+            await kintsu.execute()
 
         elif task == "lilchogstars":
             lilchogstars = Lilchogstars(

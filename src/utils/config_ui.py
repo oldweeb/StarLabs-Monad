@@ -560,16 +560,49 @@ class ConfigUI:
         self.apriori_stake_min, self.apriori_stake_max = self.create_range_inputs(
             apriori, "AMOUNT_TO_STAKE", self.config["APRIORI"]["AMOUNT_TO_STAKE"]
         )
+        self.apriori_stake = self.create_checkbox(
+            apriori,
+            "STAKE",
+            self.config["APRIORI"]["STAKE"],
+        )
+        self.apriori_unstake = self.create_checkbox(
+            apriori,
+            "UNSTAKE",
+            self.config["APRIORI"]["UNSTAKE"],
+        )
+
 
         magma = self.create_section(right_column, "MAGMA")
         self.magma_stake_min, self.magma_stake_max = self.create_range_inputs(
             magma, "AMOUNT_TO_STAKE", self.config["MAGMA"]["AMOUNT_TO_STAKE"]
         )
+        self.magma_stake = self.create_checkbox(
+            magma,
+            "STAKE",
+            self.config["MAGMA"]["STAKE"],
+        )
+        self.magma_unstake = self.create_checkbox(
+            magma,
+            "UNSTAKE",
+            self.config["MAGMA"]["UNSTAKE"],
+        )
+
 
         kintsu = self.create_section(right_column, "KINTSU")
         self.kintsu_stake_min, self.kintsu_stake_max = self.create_range_inputs(
             kintsu, "AMOUNT_TO_STAKE", self.config["KINTSU"]["AMOUNT_TO_STAKE"]
         )
+        self.kintsu_stake = self.create_checkbox(
+            kintsu,
+            "STAKE",
+            self.config["KINTSU"]["STAKE"],
+        )
+        self.kintsu_unstake = self.create_checkbox(
+            kintsu,
+            "UNSTAKE",
+            self.config["KINTSU"]["UNSTAKE"],
+        )
+
 
         shmonad = self.create_section(right_column, "SHMONAD")
         self.buy_stake = self.create_checkbox(
@@ -927,18 +960,25 @@ class ConfigUI:
             float(self.apriori_stake_min.get()),
             float(self.apriori_stake_max.get()),
         ]
+        self.config["APRIORI"]["STAKE"] = self.apriori_stake.get()
+        self.config["APRIORI"]["UNSTAKE"] = self.apriori_unstake.get()
 
         # MAGMA
         self.config["MAGMA"]["AMOUNT_TO_STAKE"] = [
             float(self.magma_stake_min.get()),
             float(self.magma_stake_max.get()),
         ]
+        self.config["MAGMA"]["STAKE"] = self.magma_stake.get()
+        self.config["MAGMA"]["UNSTAKE"] = self.magma_unstake.get()
+
 
         # KINTSU
         self.config["KINTSU"]["AMOUNT_TO_STAKE"] = [
             float(self.kintsu_stake_min.get()),
             float(self.kintsu_stake_max.get()),
         ]
+        self.config["KINTSU"]["STAKE"] = self.kintsu_stake.get()
+        self.config["KINTSU"]["UNSTAKE"] = self.kintsu_unstake.get()
 
         # GASZIP
         self.config["GASZIP"]["NETWORKS_TO_REFUEL_FROM"] = [
