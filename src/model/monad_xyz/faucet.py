@@ -131,6 +131,8 @@ async def faucet(
 
             if wanda_result and wanda_result["data"]:
                 claim_result = wanda_result["data"]
+            else:
+                raise Exception(f"wrong wanda_result: {wanda_result}")
 
             response_text = claim_result.get("response", {}).get("text", "")
             # curl_session = AsyncSession(
