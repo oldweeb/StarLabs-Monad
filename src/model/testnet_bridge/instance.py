@@ -129,7 +129,7 @@ class TestnetBridge:
                 logger.info(f"[{self.account_index}] {network} balance: {balance}")
                 
                 # Adjust the check to ensure there's enough for the bridge plus gas
-                if balance > amount_to_bridge + 0.01:  # Add buffer for gas
+                if balance > amount_to_bridge:  # Add buffer for gas
                     eligible_networks.append(network)
             
             if not eligible_networks:
