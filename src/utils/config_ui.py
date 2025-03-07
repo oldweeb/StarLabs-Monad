@@ -472,7 +472,7 @@ class ConfigUI:
 
         faucet = self.create_section(left_column, "FAUCET")
         self.capsolver_key = self.create_single_input(
-            faucet, "CAPSOLVER_API_KEY", self.config["FAUCET"]["CAPSOLVER_API_KEY"]
+            faucet, "NOCAPTCHA_API_KEY", self.config["FAUCET"]["NOCAPTCHA_API_KEY"]
         )
 
         disperse = self.create_section(left_column, "DISPERSE")
@@ -714,7 +714,7 @@ class ConfigUI:
         # Exchange selection
         exchange_frame = ctk.CTkFrame(exchanges, fg_color=self.colors["frame_bg"])
         exchange_frame.pack(fill="x", pady=5)
-        
+
         ctk.CTkLabel(
             exchange_frame,
             text="Exchange:",
@@ -760,7 +760,7 @@ class ConfigUI:
         # Withdrawal settings
         withdrawal_frame = ctk.CTkFrame(exchanges, fg_color=self.colors["frame_bg"])
         withdrawal_frame.pack(fill="x", pady=5)
-        
+
         ctk.CTkLabel(
             withdrawal_frame,
             text="Withdrawal Settings",
@@ -784,13 +784,15 @@ class ConfigUI:
         )
 
         # Min/Max amount
-        self.withdrawal_min_amount, self.withdrawal_max_amount = self.create_range_inputs(
-            withdrawal_frame,
-            "Amount Range",
-            [
-                self.config["EXCHANGES"]["withdrawals"][0]["min_amount"],
-                self.config["EXCHANGES"]["withdrawals"][0]["max_amount"],
-            ],
+        self.withdrawal_min_amount, self.withdrawal_max_amount = (
+            self.create_range_inputs(
+                withdrawal_frame,
+                "Amount Range",
+                [
+                    self.config["EXCHANGES"]["withdrawals"][0]["min_amount"],
+                    self.config["EXCHANGES"]["withdrawals"][0]["max_amount"],
+                ],
+            )
         )
 
         # Max wallet balance
@@ -884,7 +886,7 @@ class ConfigUI:
         ]
 
         # FAUCET
-        self.config["FAUCET"]["CAPSOLVER_API_KEY"] = self.capsolver_key.get()
+        self.config["FAUCET"]["NOCAPTCHA_API_KEY"] = self.capsolver_key.get()
 
         # DISPERSE
         self.config["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"] = [
@@ -924,7 +926,9 @@ class ConfigUI:
         self.config["GASZIP"]["WAIT_FOR_FUNDS_TO_ARRIVE"] = self.gaszip_wait.get()
         self.config["GASZIP"]["MAX_WAIT_TIME"] = int(self.gaszip_wait_time.get())
         self.config["GASZIP"]["BRIDGE_ALL"] = self.gaszip_bridge_all.get()
-        self.config["GASZIP"]["BRIDGE_ALL_MAX_AMOUNT"] = float(self.gaszip_bridge_max.get())
+        self.config["GASZIP"]["BRIDGE_ALL_MAX_AMOUNT"] = float(
+            self.gaszip_bridge_max.get()
+        )
 
         # MEMEBRIDGE
         self.config["MEMEBRIDGE"]["NETWORKS_TO_REFUEL_FROM"] = [
@@ -944,7 +948,9 @@ class ConfigUI:
             self.memebridge_wait_time.get()
         )
         self.config["MEMEBRIDGE"]["BRIDGE_ALL"] = self.memebridge_bridge_all.get()
-        self.config["MEMEBRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"] = float(self.memebridge_bridge_max.get())
+        self.config["MEMEBRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"] = float(
+            self.memebridge_bridge_max.get()
+        )
 
         # TESTNET_BRIDGE
         self.config["TESTNET_BRIDGE"]["NETWORKS_TO_REFUEL_FROM"] = [
@@ -1016,79 +1022,98 @@ class ConfigUI:
         self.config["EXCHANGES"]["apiKey"] = self.exchange_api_key.get()
         self.config["EXCHANGES"]["secretKey"] = self.exchange_secret_key.get()
         self.config["EXCHANGES"]["passphrase"] = self.exchange_passphrase.get()
-        
+
         # Update withdrawals configuration
-        self.config["EXCHANGES"]["withdrawals"] = [{
-            "currency": self.withdrawal_currency.get(),
-            "networks": [
-                network for network, var in self.withdrawal_networks if var.get()
-            ],
-            "min_amount": float(self.withdrawal_min_amount.get()),
-            "max_amount": float(self.withdrawal_max_amount.get()),
-            "max_balance": float(self.withdrawal_max_balance.get()),
-            "wait_for_funds": self.withdrawal_wait.get(),
-            "max_wait_time": int(self.withdrawal_wait_time.get()),
-            "retries": int(self.withdrawal_retries.get())
-        }]
+        self.config["EXCHANGES"]["withdrawals"] = [
+            {
+                "currency": self.withdrawal_currency.get(),
+                "networks": [
+                    network for network, var in self.withdrawal_networks if var.get()
+                ],
+                "min_amount": float(self.withdrawal_min_amount.get()),
+                "max_amount": float(self.withdrawal_max_amount.get()),
+                "max_balance": float(self.withdrawal_max_balance.get()),
+                "wait_for_funds": self.withdrawal_wait.get(),
+                "max_wait_time": int(self.withdrawal_wait_time.get()),
+                "retries": int(self.withdrawal_retries.get()),
+            }
+        ]
 
         # Save to file with improved formatting
         config_path = os.path.join(os.path.dirname(__file__), "..", "..", "config.yaml")
-        
+
         # Custom YAML dumper for better formatting
         class OrderedDumper(yaml.SafeDumper):
             pass
-        
+
         def dict_representer(dumper, data):
             # For the withdrawal dictionary inside EXCHANGES, use a specific order
-            if isinstance(data, dict) and any(key in data for key in ["min_amount", "max_amount", "max_wait_time"]):
+            if isinstance(data, dict) and any(
+                key in data for key in ["min_amount", "max_amount", "max_wait_time"]
+            ):
                 # This appears to be a withdrawal configuration
                 ordered_items = []
                 # Ensure currency comes first if present
                 if "currency" in data:
                     ordered_items.append(("currency", data["currency"]))
-                
+
                 # Custom order for key withdrawal parameters
-                order_priority = ["networks", "min_amount", "max_amount", "max_balance", "wait_for_funds", "max_wait_time", "retries"]
-                
+                order_priority = [
+                    "networks",
+                    "min_amount",
+                    "max_amount",
+                    "max_balance",
+                    "wait_for_funds",
+                    "max_wait_time",
+                    "retries",
+                ]
+
                 for key in order_priority:
                     if key in data:
                         ordered_items.append((key, data[key]))
-                
+
                 # Add any remaining keys alphabetically
                 for key in sorted(data.keys()):
                     if key not in ["currency"] and key not in order_priority:
                         ordered_items.append((key, data[key]))
-                
-                return dumper.represent_mapping(yaml.resolver.Resolver.DEFAULT_MAPPING_TAG, ordered_items)
-            
+
+                return dumper.represent_mapping(
+                    yaml.resolver.Resolver.DEFAULT_MAPPING_TAG, ordered_items
+                )
+
             # For all other dictionaries, sort keys alphabetically
             return dumper.represent_mapping(
-                yaml.resolver.Resolver.DEFAULT_MAPPING_TAG,
-                sorted(data.items())
+                yaml.resolver.Resolver.DEFAULT_MAPPING_TAG, sorted(data.items())
             )
-        
+
         OrderedDumper.add_representer(dict, dict_representer)
-        
+
         with open(config_path, "w") as file:
             # Add a blank line between top-level sections
-            yaml_text = yaml.dump(self.config, Dumper=OrderedDumper, default_flow_style=False, sort_keys=False, width=80)
-            
+            yaml_text = yaml.dump(
+                self.config,
+                Dumper=OrderedDumper,
+                default_flow_style=False,
+                sort_keys=False,
+                width=80,
+            )
+
             # Insert blank lines between top-level sections for better readability
             formatted_lines = []
             prev_indent = None
-            
-            for line in yaml_text.split('\n'):
+
+            for line in yaml_text.split("\n"):
                 current_indent = len(line) - len(line.lstrip())
-                
+
                 # If this is a top-level key (no indent) and not the first line
                 if current_indent == 0 and line and prev_indent is not None:
-                    formatted_lines.append('')  # Add a blank line before new section
-                
+                    formatted_lines.append("")  # Add a blank line before new section
+
                 formatted_lines.append(line)
                 prev_indent = current_indent if line else prev_indent
-            
-            file.write('\n'.join(formatted_lines))
-            
+
+            file.write("\n".join(formatted_lines))
+
             print(f"Configuration saved to {config_path}")
 
     def run(self):
