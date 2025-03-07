@@ -563,10 +563,10 @@ class Dusted:
             
 
             
-            result = await dusted_browser_login(self.config, self.private_key, self.proxy)
-            if not result:
-                logger.error(f"[{self.account_index}] Failed to login to the platform")
-                return False
+            # result = await dusted_browser_login(self.config, self.private_key, self.proxy)
+            # if not result:
+            #     logger.error(f"[{self.account_index}] Failed to login to the platform")
+            #     return False
             # Login to the platform
             await self.login()
             logger.info(f"[{self.account_index}] Login successful")
@@ -585,7 +585,7 @@ class Dusted:
             # Check if wallet has enough native balance before proceeding
             native_balance = await self.web3.eth.get_balance(self.account.address)
             native_balance_eth = self.web3.from_wei(native_balance, 'ether')
-            if native_balance_eth < 0.01:
+            if native_balance_eth < 0.001:
                 logger.warning(f"[{self.account_index}] Insufficient MONAD balance: {native_balance_eth} MONAD. Minimum required: 0.01 MONAD. Skipping.")
                 return False
             claim_result = await self.claim_rewards()

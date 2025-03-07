@@ -6,6 +6,9 @@ FAUCET = [
     "faucet",
 ]
 
+DUSTED = [
+    "dusted",
+]
 """
 EN:
 You can create your own task with the modules you need 
