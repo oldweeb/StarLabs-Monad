@@ -63,6 +63,11 @@ class BimaConfig:
 
 
 @dataclass
+class DustedConfig:
+    CLAIM: bool
+
+
+@dataclass
 class WalletInfo:
     account_index: int
     private_key: str
@@ -194,6 +199,7 @@ class Config:
     MAGICEDEN: MagicEdenConfig
     MEMEBRIDGE: MemebridgeConfig
     TESTNET_BRIDGE: TestnetBridgeConfig
+    DUSTED: DustedConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -310,6 +316,9 @@ class Config:
                 PERCENT_OF_BALANCE_TO_LEND=tuple(
                     data["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"]
                 ),
+            ),
+            DUSTED=DustedConfig(
+                CLAIM=data["DUSTED"]["CLAIM"],
             ),
             GASZIP=GaszipConfig(
                 NETWORKS_TO_REFUEL_FROM=data["GASZIP"]["NETWORKS_TO_REFUEL_FROM"],

@@ -494,6 +494,14 @@ class ConfigUI:
             self.config["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"],
         )
 
+        # DUSTED Category
+        dusted = self.create_section(left_column, "DUSTED")
+        self.dusted_claim = self.create_checkbox(
+            dusted,
+            "CLAIM",
+            self.config["DUSTED"]["CLAIM"],
+        )
+
         # Swaps Category
         self.create_category_header(left_column, "💱 SWAPS")
 
@@ -933,15 +941,6 @@ class ConfigUI:
         ]
         self.config["SETTINGS"]["TELEGRAM_BOT_TOKEN"] = self.telegram_token.get()
 
-        # FLOW
-        self.config["FLOW"]["NUMBER_OF_SWAPS"] = [
-            int(float(self.swaps_min.get())),
-            int(float(self.swaps_max.get())),
-        ]
-        self.config["FLOW"]["PERCENT_OF_BALANCE_TO_SWAP"] = [
-            int(float(self.balance_swap_min.get())),
-            int(float(self.balance_swap_max.get())),
-        ]
 
         # FAUCET
         self.config["FAUCET"]["NOCAPTCHA_API_KEY"] = self.nocaptcha_key.get()
@@ -953,6 +952,19 @@ class ConfigUI:
         self.config["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"] = [
             float(self.min_balance_min.get()),
             float(self.min_balance_max.get()),
+        ]
+        
+        # DUSTED
+        self.config["DUSTED"]["CLAIM"] = self.dusted_claim.get()
+
+        # FLOW
+        self.config["FLOW"]["NUMBER_OF_SWAPS"] = [
+            int(float(self.swaps_min.get())),
+            int(float(self.swaps_max.get())),
+        ]
+        self.config["FLOW"]["PERCENT_OF_BALANCE_TO_SWAP"] = [
+            int(float(self.balance_swap_min.get())),
+            int(float(self.balance_swap_max.get())),
         ]
 
         # APRIORI

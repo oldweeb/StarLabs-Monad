@@ -588,7 +588,12 @@ class Dusted:
             if native_balance_eth < 0.001:
                 logger.warning(f"[{self.account_index}] Insufficient MONAD balance: {native_balance_eth} MONAD. Minimum required: 0.01 MONAD. Skipping.")
                 return False
-            claim_result = await self.claim_rewards()
+            
+            # Only claim rewards if the CLAIM option is enabled in config
+            if self.config.DUSTED.CLAIM:
+                claim_result = await self.claim_rewards()
+            else:
+                logger.info(f"[{self.account_index}] CLAIM option is disabled, skipping reward claiming")
             
             logger.success(f"[{self.account_index}] Dusted execution completed successfully")
             return True
