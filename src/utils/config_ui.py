@@ -467,12 +467,24 @@ class ConfigUI:
             width=self.input_sizes["extra_large"],
         )
 
-        # Faucets Category
+        # FAUCET Category
         self.create_category_header(left_column, "🚰 FAUCETS")
 
         faucet = self.create_section(left_column, "FAUCET")
-        self.capsolver_key = self.create_single_input(
+        self.nocaptcha_key = self.create_single_input(
             faucet, "NOCAPTCHA_API_KEY", self.config["FAUCET"]["NOCAPTCHA_API_KEY"]
+        )
+        self.proxy_nocaptcha = self.create_single_input(
+            faucet, "PROXY_FOR_NOCAPTCHA", self.config["FAUCET"]["PROXY_FOR_NOCAPTCHA"]
+        )
+        # Add new Cloudflare settings
+        self.use_capsolver = self.create_checkbox(
+            faucet,
+            "USE_CAPSOLVER_FOR_CLOUDFLARE",
+            self.config["FAUCET"]["USE_CAPSOLVER_FOR_CLOUDFLARE"],
+        )
+        self.capsolver_key = self.create_single_input(
+            faucet, "CAPSOLVER_API_KEY", self.config["FAUCET"]["CAPSOLVER_API_KEY"]
         )
 
         disperse = self.create_section(left_column, "DISPERSE")
@@ -824,6 +836,19 @@ class ConfigUI:
             width=self.input_sizes["tiny"],
         )
 
+        # Add BIMA section
+        bima = self.create_section(right_column, "BIMA")
+        self.bima_lend = self.create_checkbox(
+            bima,
+            "LEND",
+            self.config["BIMA"]["LEND"],
+        )
+        self.bima_percent_min, self.bima_percent_max = self.create_range_inputs(
+            bima,
+            "PERCENT_OF_BALANCE_TO_LEND",
+            self.config["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"],
+        )
+
     def _save_and_close(self):
         """Save config and close the window"""
         self.save_config()
@@ -886,7 +911,10 @@ class ConfigUI:
         ]
 
         # FAUCET
-        self.config["FAUCET"]["NOCAPTCHA_API_KEY"] = self.capsolver_key.get()
+        self.config["FAUCET"]["NOCAPTCHA_API_KEY"] = self.nocaptcha_key.get()
+        self.config["FAUCET"]["PROXY_FOR_NOCAPTCHA"] = self.proxy_nocaptcha.get()
+        self.config["FAUCET"]["USE_CAPSOLVER_FOR_CLOUDFLARE"] = self.use_capsolver.get()
+        self.config["FAUCET"]["CAPSOLVER_API_KEY"] = self.capsolver_key.get()
 
         # DISPERSE
         self.config["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"] = [
@@ -1037,6 +1065,13 @@ class ConfigUI:
                 "max_wait_time": int(self.withdrawal_wait_time.get()),
                 "retries": int(self.withdrawal_retries.get()),
             }
+        ]
+
+        # BIMA
+        self.config["BIMA"]["LEND"] = self.bima_lend.get()
+        self.config["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"] = [
+            int(float(self.bima_percent_min.get())),
+            int(float(self.bima_percent_max.get())),
         ]
 
         # Save to file with improved formatting

@@ -128,8 +128,17 @@ MAGICEDEN:
     ]
 
 FAUCET:
-    NOCAPTCHA_API_KEY: asdfasdf-asdf-12412-dsd-asdvasdafsd
+    # MUST HAVE
+    NOCAPTCHA_API_KEY: sadfjasdasdlsadkfasdkljas
     
+    # if does not work without proxy, set proxy here
+    # format: username:password@ip:port
+    PROXY_FOR_NOCAPTCHA: ""
+
+    # optional, but Nocaptcha still will do part of work
+    USE_CAPSOLVER_FOR_CLOUDFLARE: false
+    CAPSOLVER_API_KEY: CAP-
+
 # --------------------------- #
 # EXCHANGES SECTION
 # --------------------------- #

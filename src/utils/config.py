@@ -23,7 +23,10 @@ class SettingsConfig:
 @dataclass
 class FaucetConfig:
     NOCAPTCHA_API_KEY: str
+    PROXY_FOR_NOCAPTCHA: str
 
+    USE_CAPSOLVER_FOR_CLOUDFLARE: bool
+    CAPSOLVER_API_KEY: str
 
 @dataclass
 class FlowConfig:
@@ -270,6 +273,9 @@ class Config:
             ),
             FAUCET=FaucetConfig(
                 NOCAPTCHA_API_KEY=data["FAUCET"]["NOCAPTCHA_API_KEY"],
+                PROXY_FOR_NOCAPTCHA=data["FAUCET"]["PROXY_FOR_NOCAPTCHA"],
+                USE_CAPSOLVER_FOR_CLOUDFLARE=data["FAUCET"]["USE_CAPSOLVER_FOR_CLOUDFLARE"],
+                CAPSOLVER_API_KEY=data["FAUCET"]["CAPSOLVER_API_KEY"],
             ),
             FLOW=FlowConfig(
                 TASKS=tasks_list,

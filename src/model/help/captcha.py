@@ -369,7 +369,7 @@ class Capsolver:
         #     if cdata:
         #         metadata["cdata"] = cdata
         #     data["task"]["metadata"] = metadata
-        
+
         try:
             response = await self.session.post(
                 f"{self.base_url}/createTask",
@@ -401,6 +401,125 @@ class Capsolver:
             pageurl=pageurl,
             action=action,
             cdata=cdata,
+        )
+        if not task_id:
+            return None
+
+        return await self.get_task_result(task_id)
+
+
+class TwoCaptcha:
+    def __init__(
+        self,
+        api_key: str,
+        proxy: Optional[str] = None,
+        session: AsyncClient = None,
+    ):
+        self.api_key = api_key
+        self.base_url = "http://2captcha.com"
+        self.proxy = self._format_proxy(proxy) if proxy else None
+        self.session = session or AsyncClient(verify=False)
+
+    def _format_proxy(self, proxy: str) -> str:
+        if not proxy:
+            return None
+        if "@" in proxy:
+            return proxy
+        return proxy
+
+    async def create_turnstile_task(
+        self,
+        sitekey: str,
+        pageurl: str,
+        action: Optional[str] = None,
+        data: Optional[str] = None,
+        pagedata: Optional[str] = None,
+    ) -> Optional[str]:
+        """Creates a Turnstile captcha solving task"""
+        form_data = {
+            "key": self.api_key,
+            "method": "turnstile",
+            "sitekey": sitekey,
+            "pageurl": pageurl,
+            "json": "1",
+        }
+
+        if action:
+            form_data["action"] = action
+        if data:
+            form_data["data"] = data
+        if pagedata:
+            form_data["pagedata"] = pagedata
+        if self.proxy:
+            form_data["proxy"] = self.proxy
+
+        try:
+            response = await self.session.post(
+                f"{self.base_url}/in.php",
+                data=form_data,
+                timeout=30,
+            )
+            result = response.json()
+
+            if result.get("status") == 1:
+                return result["request"]
+
+            logger.error(f"Error creating Turnstile task: {result}")
+            return None
+
+        except Exception as e:
+            logger.error(f"Error creating Turnstile task: {e}")
+            return None
+
+    async def get_task_result(self, task_id: str) -> Optional[str]:
+        """Gets the result of the captcha solution"""
+        params = {
+            "key": self.api_key,
+            "action": "get",
+            "id": task_id,
+            "json": "1",
+        }
+
+        max_attempts = 30
+        for _ in range(max_attempts):
+            try:
+                response = await self.session.get(
+                    f"{self.base_url}/res.php",
+                    params=params,
+                    timeout=30,
+                )
+                result = response.json()
+
+                if result.get("status") == 1:
+                    return result["request"]
+                elif result.get("request") == "CAPCHA_NOT_READY":
+                    await asyncio.sleep(5)
+                    continue
+
+                logger.error(f"Error getting result: {result}")
+                return None
+
+            except Exception as e:
+                logger.error(f"Error getting result: {e}")
+                return None
+
+        return None
+
+    async def solve_turnstile(
+        self,
+        sitekey: str,
+        pageurl: str,
+        action: Optional[str] = None,
+        data: Optional[str] = None,
+        pagedata: Optional[str] = None,
+    ) -> Optional[str]:
+        """Solves Cloudflare Turnstile captcha and returns token"""
+        task_id = await self.create_turnstile_task(
+            sitekey=sitekey,
+            pageurl=pageurl,
+            action=action,
+            data=data,
+            pagedata=pagedata,
         )
         if not task_id:
             return None

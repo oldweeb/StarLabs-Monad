@@ -2,6 +2,7 @@ import asyncio
 from loguru import logger
 import random
 import primp
+from src.model.help.captcha import Capsolver
 from src.utils.config import Config
 from eth_account import Account
 import hashlib
@@ -63,21 +64,31 @@ async def faucet(
                 "priority": "u=0, i",
             }
 
-            # Solve Cloudflare challenge - matching working example configuration
-            logger.info(f"[{account_index}] | Solving Cloudflare challenge...")
-            cracker = CloudFlareCracker(
-                internal_host=True,
-                user_token=config.FAUCET.NOCAPTCHA_API_KEY,
-                href=href,
-                sitekey="0x4AAAAAAA-3X4Nd7hf3mNGx",
-                proxy=proxy,
-                debug=False,
-                show_ad=False,
-                timeout=60,
-            )
-            cf_result = cracker.crack()
+            if config.FAUCET.USE_CAPSOLVER_FOR_CLOUDFLARE:
+                logger.info(f"[{account_index}] | Solving Cloudflare challenge with Capsolver...")
+                capsolver = Capsolver(api_key=config.FAUCET.CAPSOLVER_API_KEY, proxy=proxy, session=session)
+                cf_result = await capsolver.solve_turnstile(
+                    "0x4AAAAAAA-3X4Nd7hf3mNGx",
+                    "https://testnet.monad.xyz/",
+                )
+           
+            else:
+                # Solve Cloudflare challenge - matching working example configuration
+                logger.info(f"[{account_index}] | Solving Cloudflare challenge with Nocaptcha...")
+                cracker = CloudFlareCracker(
+                    internal_host=True,
+                    user_token=config.FAUCET.NOCAPTCHA_API_KEY,
+                    href=href,
+                    sitekey="0x4AAAAAAA-3X4Nd7hf3mNGx",
+                    proxy=proxy,
+                    debug=False,
+                    show_ad=False,
+                    timeout=60,
+                )
+                cf_result = cracker.crack()
+                cf_result = cf_result["token"]
 
-            if not cf_result or "token" not in cf_result:
+            if not cf_result:
                 raise Exception("Failed to solve Cloudflare challenge")
 
             logger.success(f"[{account_index}] | Cloudflare challenge solved")
@@ -88,7 +99,7 @@ async def faucet(
             json_data = {
                 "address": wallet.address,
                 "visitorId": visitor_id,
-                "cloudFlareResponseToken": cf_result["token"],
+                "cloudFlareResponseToken": cf_result,
             }
 
             # Make claim request using TlsV1Cracker - matching working example configuration
@@ -156,9 +167,14 @@ async def faucet(
                 config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
                 config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
             )
-            logger.error(
-                f"[{account_index}] | Error faucet to monad.xyz ({retry + 1}/{config.SETTINGS.ATTEMPTS}): {e}. Next faucet in {random_pause} seconds"
-            )
+            if "operation timed out" in str(e):
+                logger.error(
+                    f"[{account_index}] | Error faucet to monad.xyz ({retry + 1}/{config.SETTINGS.ATTEMPTS}): Connection timed out. Next faucet in {random_pause} seconds"
+                )
+            else:
+                logger.error(
+                    f"[{account_index}] | Error faucet to monad.xyz ({retry + 1}/{config.SETTINGS.ATTEMPTS}): {e}. Next faucet in {random_pause} seconds"
+                )
             await asyncio.sleep(random_pause)
             continue
     return False
