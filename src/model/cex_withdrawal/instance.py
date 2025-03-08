@@ -95,7 +95,7 @@ class CexWithdraw:
                 return {}
                 
             networks = self.exchange.currencies[currency]["networks"]
-            logger.info(f"[{self.account_index}] Available networks for {currency}:")
+            # logger.info(f"[{self.account_index}] Available networks for {currency}:")
             
             for key, info in networks.items():
                 withdraw_fee = info["fee"]
