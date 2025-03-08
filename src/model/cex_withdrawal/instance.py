@@ -46,14 +46,10 @@ class CexWithdraw:
         if not withdrawal_config.networks:
             raise ValueError("No networks specified in withdrawal configuration")
             
-        self.network = random.choice(withdrawal_config.networks)
-        logger.info(f"[{self.account_index}] Selected network for withdrawal: {self.network}")
-        
-        # Initialize Web3 with appropriate RPC URL
-        rpc_url = CEX_WITHDRAWAL_RPCS.get(self.network)
-        if not rpc_url:
-            raise ValueError(f"No RPC URL found for network: {self.network}")
-        self.web3 = Web3(Web3.HTTPProvider(rpc_url))
+        # The network will be selected during withdrawal, not in __init__
+        # We'll initialize web3 only after network selection in the withdraw method
+        self.network = None
+        self.web3 = None
 
     async def __aenter__(self):
         """Async context manager entry"""
@@ -165,6 +161,9 @@ class CexWithdraw:
 
     async def get_eth_balance(self) -> Decimal:
         """Get ETH balance for the wallet address"""
+        if self.web3 is None:
+            raise ValueError(f"[{self.account_index}] Web3 instance not initialized. Network must be selected first.")
+
         balance_wei = self.web3.eth.get_balance(self.address)
         return Decimal(self.web3.from_wei(balance_wei, 'ether'))
 
@@ -237,6 +236,15 @@ class CexWithdraw:
             network, exchange_network, network_info = random.choice(available_networks)
             logger.info(f"[{self.account_index}] Selected network for withdrawal: {network} ({exchange_network})")
             
+            # Update web3 instance with the correct RPC URL for the selected network
+            self.network = network
+            rpc_url = CEX_WITHDRAWAL_RPCS.get(self.network)
+            if not rpc_url:
+                logger.error(f"[{self.account_index}] No RPC URL found for network: {self.network}")
+                return False
+            self.web3 = Web3(Web3.HTTPProvider(rpc_url))
+            # logger.info(f"[{self.account_index}] Updated web3 provider to: {rpc_url}")
+            
             # Ensure withdrawal amount respects network minimum
             min_amount = max(withdrawal_config.min_amount, network_info["withdrawMin"])
             max_amount = withdrawal_config.max_amount
@@ -252,13 +260,13 @@ class CexWithdraw:
             if not await self.check_balance(amount):
                 return False
                 
-            # Check if destination wallet balance is below the maximum allowed
-            current_balance = await self.get_eth_balance()
-            if current_balance >= Decimal(str(withdrawal_config.max_balance)):
-                logger.warning(f"[{self.account_index}] Destination wallet balance ({current_balance}) exceeds maximum allowed ({withdrawal_config.max_balance})")
+            # Check if destination wallet balance exceeds maximum on ANY network
+            # This prevents withdrawals if the wallet already has sufficient funds on any chain
+            if not await self.check_all_networks_balance(withdrawal_config.max_balance):
+                logger.warning(f"[{self.account_index}] Skipping withdrawal as destination wallet balance exceeds maximum on at least one network")
                 await self.exchange.close()
                 return False
-                
+             
             max_retries = withdrawal_config.retries
             
             for attempt in range(max_retries):
@@ -337,3 +345,44 @@ class CexWithdraw:
             logger.error(f"[{self.account_index}] Fatal error during withdrawal process: {str(e)}")
             await self.exchange.close()
             raise 
+
+    async def check_all_networks_balance(self, max_balance: float) -> bool:
+        """
+        Check balances on all networks in the withdrawal configuration.
+        Returns False if any network's balance exceeds the maximum allowed.
+        """
+        withdrawal_config = self.config.EXCHANGES.withdrawals[0]
+        if not withdrawal_config.networks:
+            raise ValueError("No networks specified in withdrawal configuration")
+            
+        # Store the current network and web3 instance to restore later
+        original_network = self.network
+        original_web3 = self.web3
+        
+        try:
+            # Check balance on each network
+            for network in withdrawal_config.networks:
+                rpc_url = CEX_WITHDRAWAL_RPCS.get(network)
+                if not rpc_url:
+                    logger.warning(f"[{self.account_index}] No RPC URL found for network: {network}, skipping balance check")
+                    continue
+                    
+                # Set up web3 for this network
+                self.network = network
+                self.web3 = Web3(Web3.HTTPProvider(rpc_url))
+                
+                try:
+                    current_balance = await self.get_eth_balance()
+                    if current_balance >= Decimal(str(max_balance)):
+                        logger.warning(f"[{self.account_index}] Destination wallet balance on {network} ({current_balance}) exceeds maximum allowed ({max_balance})")
+                        return False
+                    logger.info(f"[{self.account_index}] Balance on {network}: {current_balance} ETH (below max: {max_balance})")
+                except Exception as e:
+                    logger.warning(f"[{self.account_index}] Error checking balance on {network}: {str(e)}")
+                    
+            return True
+            
+        finally:
+            # Restore original network and web3 instance
+            self.network = original_network
+            self.web3 = original_web3 
