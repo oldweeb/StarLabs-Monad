@@ -221,15 +221,15 @@ class Start:
             )
             await shmonad.swaps()
 
-        elif task == "accountable":
-            accountable = Accountable(
-                self.account_index,
-                self.proxy,
-                self.private_key,
-                self.config,
-                self.session,
-            )
-            await accountable.mint()
+        # elif task == "accountable":
+        #     accountable = Accountable(
+        #         self.account_index,
+        #         self.proxy,
+        #         self.private_key,
+        #         self.config,
+        #         self.session,
+        #     )
+        #     await accountable.mint()
 
         elif task == "orbiter":
             orbiter = Orbiter(
