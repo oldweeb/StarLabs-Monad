@@ -58,7 +58,7 @@ def show_dev_info():
         box=box.DOUBLE,
         border_style="bright_cyan",
         pad_edge=False,
-        width=49,
+        width=85,
         highlight=True,
     )
 
@@ -72,6 +72,12 @@ def show_dev_info():
     table.add_row("⚡ GitHub: [link]https://github.com/0xStarLabs[/link]")
     table.add_row("👤 Dev: [link]https://t.me/StarLabsTech[/link]")
     table.add_row("💬 Chat: [link]https://t.me/StarLabsChat[/link]")
+    table.add_row(
+        "📚 Tutorial: [link]https://star-labs.gitbook.io/star-labs/monad-eng[/link]"
+    )
+    table.add_row(
+        "🎥 Video Guide: [link]https://www.youtube.com/watch?v=48kfCJhjsaI[/link]"
+    )
     table.add_row("")
 
     # Выводим таблицу с отступом

@@ -9,6 +9,7 @@ import hashlib
 from pynocaptcha import CloudFlareCracker, TlsV1Cracker
 from curl_cffi.requests import AsyncSession
 from src.model.monad_xyz.tls_op import make_wanda_request
+from src.utils.ported_tls_client import TLSClient
 
 
 async def faucet(
@@ -114,39 +115,18 @@ async def faucet(
                 "cloudFlareResponseToken": cf_result,
             }
 
-            # Заменяем TlsV1Cracker на асинхронный запрос
-            logger.info(f"[{account_index}] | Sending claim request...")
-            wanda_result = await make_wanda_request(
-                session=session,
-                user_token=config.FAUCET.NOCAPTCHA_API_KEY,
-                url=f"{href}api/claim",
-                method="post",
+            # Заменяем curl_session на наш TLS клиент
+            tls_client = TLSClient()
+
+            status_code, response_text = tls_client.send_request(
+                url="https://testnet.monad.xyz/api/claim",
+                method="POST",
                 headers=headers,
                 json_data=json_data,
                 proxy=proxy,
-                http2=True,
-                timeout=30,
-                debug=False,
             )
-
-            if wanda_result and wanda_result["data"]:
-                claim_result = wanda_result["data"]
-            else:
-                raise Exception(f"wrong wanda_result: {wanda_result}")
-
-            response_text = claim_result.get("response", {}).get("text", "")
-            # curl_session = AsyncSession(
-            #     impersonate="chrome131",
-            #     proxies={"http": f"http://{proxy}", "https": f"http://{proxy}"},
-            #     verify=False,
-            # )
-
-            # claim_result = await curl_session.post(
-            #     "https://testnet.monad.xyz/api/claim", headers=headers, json=json_data
-            # )
-
-            # response_text = claim_result.text
-
+            # print(response_text)
+            # input()
             if not response_text:
                 raise Exception("Failed to send claim request")
 
