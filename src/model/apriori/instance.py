@@ -249,6 +249,11 @@ class Apriori:
         """
         if self.config.APRIORI.STAKE:
             await self.stake_mon()
+            
+        await asyncio.sleep(random.randint(
+            self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
+            self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
+        ))
         
         if self.config.APRIORI.UNSTAKE:
             await self.request_unstake()
