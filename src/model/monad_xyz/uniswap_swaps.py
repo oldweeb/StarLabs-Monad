@@ -336,8 +336,6 @@ class MonadSwap:
                 logger.info(f"Swapping MON to {token_out}...")
                 tx_data = await self.get_swap_quote(percentage_to_swap, token_out)
                 await self.execute_transaction(tx_data)
-            await self.session.close()
         except Exception as e:
             logger.error(f"Swap failed: {str(e)}")
-            await self.session.close()
             raise
