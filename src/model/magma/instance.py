@@ -258,7 +258,12 @@ class Magma:
         # Check if staking is enabled in config
         if self.config.MAGMA.STAKE:
             await self.stake_mon()
-
+            
+        await asyncio.sleep(random.randint(
+            self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
+            self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
+        ))
+        
         # Check if unstaking is enabled in config
         if self.config.MAGMA.UNSTAKE:
             await self.request_unstake()

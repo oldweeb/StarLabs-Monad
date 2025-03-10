@@ -9,7 +9,8 @@ from src.model.testnet_bridge.constants import (
     TESTNET_BRIDGE_RPCS, 
     TESTNET_BRIDGE_ADDRESS, 
     TESTNET_BRIDGE_ABI,
-    TESTNET_BRIDGE_EXPLORERS
+    TESTNET_BRIDGE_EXPLORERS,
+    ESTIMATE_SEND_FEE_CONTRACT_ADDRESS
 )
 
 
@@ -151,7 +152,7 @@ class TestnetBridge:
             latest_block = await web3.eth.get_block('latest')
             base_fee = latest_block['baseFeePerGas']
             max_priority_fee = await web3.eth.max_priority_fee
-            max_fee = int((base_fee + max_priority_fee) * 1.5)
+            max_fee = int((base_fee + max_priority_fee) * 2)
             
             return {
                 "maxFeePerGas": max_fee,
@@ -160,6 +161,29 @@ class TestnetBridge:
         except Exception as e:
             logger.error(f"[{self.account_index}] Failed to get gas parameters: {str(e)}")
             raise e
+    
+    async def estimate_bridge_fee(self, network: str, amount_in: int) -> int:
+        """Estimate the bridge fee for a given amount."""
+        try:
+            contract = self.web3_connections[network].eth.contract(
+                address=ESTIMATE_SEND_FEE_CONTRACT_ADDRESS,
+                abi=TESTNET_BRIDGE_ABI
+            )
+
+            # Get the estimateSendFee function
+            fee = await contract.functions.estimateSendFee(
+                161,
+                self.account.address,
+                amount_in,
+                False,
+                b""
+            ).call()
+            adjusted_fee = int(fee[0] * 1.2)
+            return adjusted_fee
+        except Exception as e:
+            logger.error(f"[{self.account_index}] Error estimating bridge fee: {str(e)}")
+            raise e
+            
     
     async def calculate_amount_out_min(self, network: str, amount_in: int) -> int:
         """
@@ -265,7 +289,6 @@ class TestnetBridge:
             
             # Get nonce and gas parameters
             nonce = await web3.eth.get_transaction_count(self.account.address)
-            gas_params = await self.get_gas_params(web3)
             
             # Build the transaction using the contract function
             transaction = contract.functions.swapAndBridge(
@@ -279,9 +302,9 @@ class TestnetBridge:
             )
             
             # Estimate bridge fee based on the example
-            bridge_fee = web3.to_wei(0.000005627, 'ether')  # 5627000000000 wei as in the example
-            
+            bridge_fee = await self.estimate_bridge_fee(network, amount_in)
             # Build the transaction without gas limit first
+            gas_params = await self.get_gas_params(web3)
             built_transaction = await transaction.build_transaction({
                 "from": self.account.address,
                 "value": amount_in + bridge_fee,  # The amount plus a fee for bridging

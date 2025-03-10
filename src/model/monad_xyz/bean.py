@@ -157,6 +157,14 @@ class BeanDex:
     ) -> Dict:
         """Generate swap transaction data based on token types."""
         try:
+            # Prevent swapping between identical tokens
+            if token_in == token_out:
+                raise ValueError(f"Cannot swap {token_in} to itself")
+                
+            # Special case: native to wmon or wmon to native are essentially wrap/unwrap operations
+            if (token_in == "native" and token_out == "wmon") or (token_in == "wmon" and token_out == "native"):
+                logger.info(f"This is a {token_in} to {token_out} operation, which is essentially a wrap/unwrap")
+            
             # Calculate deadline as current timestamp + 30 minutes (in seconds)
             current_time = int(time.time())
             deadline = current_time + 1800  # 30 minutes
@@ -167,26 +175,52 @@ class BeanDex:
             path = []
             if token_in == "native":
                 # MON -> Token needs WMON in the path
-                path = [
-                    BEAN_TOKENS["wmon"]["address"],
-                    BEAN_TOKENS[token_out]["address"],
-                ]
-                logger.info(f"Swap path: MON -> WMON -> {token_out}")
+                if token_out == "wmon":
+                    # Special case: If we're swapping MON to WMON directly
+                    path = [BEAN_TOKENS[token_out]["address"]]
+                    logger.info(f"Swap path: MON -> {token_out} (direct wrap)")
+                else:
+                    path = [
+                        BEAN_TOKENS["wmon"]["address"],
+                        BEAN_TOKENS[token_out]["address"],
+                    ]
+                    logger.info(f"Swap path: MON -> WMON -> {token_out}")
             elif token_out == "native":
                 # Token -> MON needs WMON in the path
-                path = [
-                    BEAN_TOKENS[token_in]["address"],
-                    BEAN_TOKENS["wmon"]["address"],
-                ]
-                logger.info(f"Swap path: {token_in} -> WMON -> MON")
+                if token_in == "wmon":
+                    # Special case: If we're already using WMON as input, don't duplicate it in the path
+                    path = [BEAN_TOKENS[token_in]["address"]]
+                    logger.info(f"Swap path: {token_in} -> MON (direct unwrap)")
+                else:
+                    path = [
+                        BEAN_TOKENS[token_in]["address"],
+                        BEAN_TOKENS["wmon"]["address"],
+                    ]
+                    logger.info(f"Swap path: {token_in} -> WMON -> MON")
             else:
                 # Token -> Token through WMON
-                path = [
-                    BEAN_TOKENS[token_in]["address"],
-                    BEAN_TOKENS["wmon"]["address"],
-                    BEAN_TOKENS[token_out]["address"],
-                ]
-                logger.info(f"Swap path: {token_in} -> WMON -> {token_out}")
+                if token_in == "wmon":
+                    # If input is already WMON, we don't need to go through WMON again
+                    path = [
+                        BEAN_TOKENS[token_in]["address"],
+                        BEAN_TOKENS[token_out]["address"],
+                    ]
+                    logger.info(f"Swap path: {token_in} -> {token_out} (direct)")
+                elif token_out == "wmon":
+                    # If output is WMON, we don't need to go through WMON again
+                    path = [
+                        BEAN_TOKENS[token_in]["address"],
+                        BEAN_TOKENS[token_out]["address"],
+                    ]
+                    logger.info(f"Swap path: {token_in} -> {token_out} (direct)")
+                else:
+                    # Standard path through WMON
+                    path = [
+                        BEAN_TOKENS[token_in]["address"],
+                        BEAN_TOKENS["wmon"]["address"],
+                        BEAN_TOKENS[token_out]["address"],
+                    ]
+                    logger.info(f"Swap path: {token_in} -> WMON -> {token_out}")
 
             if token_in == "native":
                 # MON -> Token

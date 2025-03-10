@@ -1,5 +1,5 @@
 from .client import create_client, create_twitter_client, get_headers
-from .reader import read_abi, read_txt_file
+from .reader import read_abi, read_txt_file, check_proxy_format
 from .logs import report_error, report_success
 from .output import show_dev_info, show_logo, show_menu
 from .config import get_config
@@ -14,6 +14,7 @@ __all__ = [
     "read_abi",
     "read_config",
     "read_txt_file",
+    "check_proxy_format",
     "show_dev_info",
     "show_logo",
     "show_menu",

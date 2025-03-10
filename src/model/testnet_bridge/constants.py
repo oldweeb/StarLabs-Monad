@@ -14,6 +14,9 @@ TESTNET_BRIDGE_ADDRESS = {
     "Optimism": "0x8352C746839699B1fc631fddc0C3a00d4AC71A17",
 }
 
+ESTIMATE_SEND_FEE_CONTRACT_ADDRESS = "0xE71bDfE1Df69284f00EE185cf0d95d0c7680c0d4"
+
+
 TESTNET_BRIDGE_ABI = [
     {
         "inputs": [
@@ -28,6 +31,22 @@ TESTNET_BRIDGE_ABI = [
         "name": "swapAndBridge",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {"internalType": "uint16", "name": "_dstChainId", "type": "uint16"},
+            {"internalType": "bytes", "name": "_toAddress", "type": "bytes"},
+            {"internalType": "uint256", "name": "_amount", "type": "uint256"},
+            {"internalType": "bool", "name": "_useZro", "type": "bool"},
+            {"internalType": "bytes", "name": "_adapterParams", "type": "bytes"}
+        ],
+        "name": "estimateSendFee",
+        "outputs": [
+            {"internalType": "uint256", "name": "nativeFee", "type": "uint256"},
+            {"internalType": "uint256", "name": "zroFee", "type": "uint256"}
+        ],
+        "stateMutability": "view",
         "type": "function"
     }
 ]
