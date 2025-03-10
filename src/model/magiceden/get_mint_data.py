@@ -3,11 +3,10 @@ import asyncio
 from loguru import logger
 from eth_account import Account
 from eth_account.signers.local import LocalAccount
-from primp import AsyncClient
-
+from curl_cffi import requests
 
 async def get_mint_data(
-    session: AsyncClient,
+    proxy: str,
     nft_contract: str,
     wallet: Account,
     max_retries: int = 10,
@@ -27,6 +26,18 @@ async def get_mint_data(
         dict: The mint data response or None if error
         str: Error message if there's a specific error to handle (like "already minted")
     """
+    if proxy:
+        curl_session = requests.AsyncSession(
+            impersonate="chrome131",
+            proxies={"http": f"http://{proxy}", "https": f"http://{proxy}"},
+            verify=False,
+        )
+    else:
+        curl_session = requests.AsyncSession(
+            impersonate="chrome131",
+            verify=False,
+        )
+
     error_log_frequency = 5  # Выводить ошибки каждую 5-ю попытку
     error = ""
     for attempt in range(1, max_retries + 1):
@@ -49,14 +60,14 @@ async def get_mint_data(
 
             headers = {
                 "Content-Type": "application/json",
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
                 "x-rkc-version": "2.5.4",
                 "Accept": "application/json",
                 "Origin": "https://magiceden.io",
                 "Referer": "https://magiceden.io/",
             }
 
-            response = await session.post(
+            response = await curl_session.post(
                 "https://api-mainnet.magiceden.io/v3/rtp/monad-testnet/execute/mint/v1",
                 headers=headers,
                 json=payload,
