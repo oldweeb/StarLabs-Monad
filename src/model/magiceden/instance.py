@@ -52,7 +52,7 @@ class MagicEden:
             )
 
             # Get mint data from MagicEden API
-            mint_data = await get_mint_data(self.session, nft_contract, self.account)
+            mint_data = await get_mint_data(self.proxy, nft_contract, self.account)
 
             # Проверяем, не заминтил ли пользователь уже NFT
             if mint_data == "already_minted":
