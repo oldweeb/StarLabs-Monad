@@ -1,9 +1,13 @@
 import asyncio
+import base64
+import hashlib
+import os
 import random
 import json
 from eth_account import Account
 from loguru import logger
 from primp import AsyncClient
+from uuid import uuid4
 from web3 import AsyncWeb3, Web3
 from typing import Dict, Optional, List
 from eth_account.messages import encode_defunct
@@ -47,6 +51,7 @@ class Dusted:
         account_index: int,
         proxy: str,
         private_key: str,
+        twitter_token: str,
         config: Config,
         session: AsyncClient,
     ):
@@ -54,9 +59,10 @@ class Dusted:
         self.proxy = proxy
         self.private_key = private_key
         self.config = config
+        self.twitter_token = twitter_token
         self.session = session
         self.auth_token = None
-
+        print("Twitter token: ", self.twitter_token)
         self.account: Account = Account.from_key(private_key=private_key)
         self.web3 = AsyncWeb3(
             AsyncWeb3.AsyncHTTPProvider(
@@ -71,7 +77,20 @@ class Dusted:
         if self.auth_token:
             headers['Authorization'] = f'Bearer {self.auth_token}'
         return headers
+    
+    @classmethod
+    def _b64safe(cls, value: bytes) -> str:
+        return base64.urlsafe_b64encode(value).rstrip(b'=').decode('utf-8')
+    @classmethod
+    def _random_string(cls) -> str:
+        random_bytes = os.urandom(36)
+        return cls._b64safe(random_bytes)
 
+    @classmethod
+    def _sha256(cls, value: str) -> str:
+        h = hashlib.sha256(value.encode('utf-8')).digest()
+        return cls._b64safe(h)
+    
     @with_retries
     async def get_gas_params(self) -> Dict[str, int]:
         """Get current gas parameters from the network."""
@@ -252,6 +271,113 @@ class Dusted:
             logger.error(f"[{self.account_index}] Error agreeing to TOS: {e}")
             raise e
 
+    @with_retries
+    async def _get_twitter_connect_link(self) -> str:
+        try:
+            logger.info(f"[{self.account_index}] Getting Twitter connect link")
+            
+            # params = {
+            #     'return_url': 'https://www.dusted.app/rewards?oauth_status=error&error_data=%7B%22code%22%3A%22TWITTER_AUTH_FAILED%22%2C%22message%22%3A%22access_denied%22%2C%22details%22%3A400%7D',
+            #     'jwt': 'eyJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJkdXN0ZWQuYXBwIiwic3ViIjoiNDA3MzgzNDU2OTI2OTY5MDgiLCJpYXQiOjE3NDE2Nzk1OTUsInNjb3BlcyI6WyJsb2dpbiJdLCJleHAiOjE3NDE3NjU5OTUsImF1ZCI6IndzLmR1c3RlZC5hcHAifQ.cjn0gkqeILzWsZs1dwAMpGENJyJwDSY44v_p7tyQFiyNOFdbgCnziULp_8gWf3NQW_rKy-WUlJzfBcgMvuhlPA',
+            # }
+
+            # response = requests.get('https://api.xyz.land/auth/twitter', params=params, headers=headers)
+            params = {
+                'return_url': 'https://www.dusted.app/rewards',
+                'jwt': self.auth_token,
+            }
+            print(params)
+            response = await self.session.get(
+                'https://api.xyz.land/auth/twitter',
+                params=params,
+            )
+            print(response.text)
+            # return response.json()
+
+        except Exception as e:
+            logger.error(f"[{self.account_index}] Error getting Twitter connect link: {e}")
+            raise e
+        
+    @with_retries
+    async def _authorize_twitter(self) -> str:
+        try:
+            code_verifier = self._random_string()
+            state_code = self._random_string()
+            code_challenge = self._sha256(code_verifier)
+            
+            # params = {
+            #     'client_id': 'SExCRWxqZU9NcDE2U0o1V0pKYUs6MTpjaQ',
+            #     'redirect_uri': 'https://api.xyz.land/auth/twitter/callback',
+            #     'scope': 'users.read tweet.read offline.access',
+            #     'response_type': 'code',
+            #     'state': state_code,
+            #     'code_challenge': code_challenge,
+            #     'code_challenge_method': 'S256',
+            # }
+            # response = await self.session.get('https://x.com/i/oauth2/authorize', params=params)
+            # print(response.text)
+            print("\n\n\n\n\n\n")
+            await self._api_authorize_twitter(state_code, code_challenge)
+        except Exception as e:
+            logger.error(f"[{self.account_index}] Error authorizing Twitter: {e}")
+            raise e
+        
+    @with_retries
+    async def _api_authorize_twitter(self, state: str, code_challenge: str) -> str:
+        try:
+            url = 'https://x.com/i/api/2/oauth2/authorize'
+            params = {
+                'client_id': "SExCRWxqZU9NcDE2U0o1V0pKYUs6MTpjaQ",
+                'code_challenge': code_challenge,
+                'code_challenge_method': 'S256',
+                'state': state,
+                'scope': 'users.read tweet.read offline.access',
+                'response_type': 'code',
+                'redirect_uri': 'https://api.xyz.land/auth/twitter/callback',
+            }
+            auth_code = await self.session.get(
+                url,
+                params=params,
+            )
+            print(auth_code.text)
+            print("\n\n\n\n\n\n")
+            await asyncio.sleep(999)
+            BEARER_TOKEN = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA'
+            headers = {
+                'authorization': BEARER_TOKEN,
+                'origin': 'https://x.com',
+                'referer': 'https://x.com/',
+                'sec-fetch-site': 'same-origin',
+                'x-client-uuid': str(uuid4()),
+                'x-twitter-active-user': 'yes',
+                'x-twitter-auth-type': 'OAuth2Session',
+                'x-twitter-client-language': 'en',
+            }
+            data = {
+                'approval': 'true',
+                'code': 'bjFrRDFDY1k1NjE3WmhDSW5qaUE3TnVyalVwc2o1c3FSVjc1djJjSTVQY3RYOjE3NDE2Nzk2NTkyNzk6MToxOmFjOjE',
+            }
+            response = await self.session.post('https://x.com/i/api/2/oauth2/authorize', headers=headers, data=data)
+            print(response.text)
+            pass
+        except Exception as e:
+            logger.error(f"[{self.account_index}] Error authorizing Twitter: {e}")
+            raise e        
+    
+    @with_retries
+    async def connect_twitter(self) -> str:
+        """Connect Twitter account."""
+        try:
+            logger.info(f"[{self.account_index}] Connecting Twitter account")
+            
+            connect_link = await self._get_twitter_connect_link()
+            print("\n\n\n\n\n\n")
+            await self._authorize_twitter()
+            await asyncio.sleep(999)
+        except Exception as e:
+            logger.error(f"[{self.account_index}] Error connecting Twitter: {e}")
+            raise e
+    
     @with_retries
     async def claim(self) -> int:
         """Play the lasso game until no plays remain. Returns the total score."""
@@ -579,7 +705,7 @@ class Dusted:
             
             # Agree to terms of service
             await self.agree_to_tos()
-            
+            # await self.connect_twitter()
             # Play the lasso game (will handle errors gracefully)
             total_score = await self.claim()
             # Check if wallet has enough native balance before proceeding

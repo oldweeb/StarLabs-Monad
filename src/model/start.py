@@ -36,13 +36,16 @@ class Start:
         proxy: str,
         private_key: str,
         discord_token: str,
+        twitter_token: str,
         email: str,
         config: Config,
+
     ):
         self.account_index = account_index
         self.proxy = proxy
         self.private_key = private_key
         self.discord_token = discord_token
+        self.twitter_token = twitter_token
         self.email = email
         self.config = config
 
@@ -338,6 +341,7 @@ class Start:
                 self.account_index,
                 self.proxy,
                 self.private_key,
+                self.twitter_token,
                 self.config,
                 self.session,
             )

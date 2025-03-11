@@ -15,13 +15,14 @@ from src.utils.logs import ProgressTracker, create_progress_tracker
 
 
 async def start():
-    async def launch_wrapper(index, proxy, private_key, discord_token, email):
+    async def launch_wrapper(index, proxy, private_key, discord_token, twitter_token, email):
         async with semaphore:
             await account_flow(
                 index,
                 proxy,
                 private_key,
                 discord_token,
+                twitter_token,
                 email,
                 config,
                 lock,
@@ -90,7 +91,7 @@ async def start():
     if len(proxies) == 0:
         logger.error("Invalid proxy format in data/proxies.txt")
         return
-
+    twitter_tokens = src.utils.read_txt_file("twitter tokens", "data/twitter_tokens.txt")
     if "disperse_farm_accounts" in config.FLOW.TASKS:
         main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
         farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
@@ -110,6 +111,7 @@ async def start():
         private_keys = src.utils.read_txt_file(
             "private keys", "data/keys_for_faucet.txt"
         )
+    
     else:
         private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
 
@@ -141,7 +143,6 @@ async def start():
 
     discord_tokens = [""] * len(accounts_to_process)
     emails = [""] * len(accounts_to_process)
-
     threads = config.SETTINGS.THREADS
 
     # Подготавливаем прокси для выбранных аккаунтов
@@ -179,6 +180,7 @@ async def start():
                     cycled_proxies[shuffled_idx],
                     accounts_to_process[shuffled_idx],
                     discord_tokens[shuffled_idx],
+                    twitter_tokens[shuffled_idx],
                     emails[shuffled_idx],
                 )
             )
@@ -196,6 +198,7 @@ async def account_flow(
     proxy: str,
     private_key: str,
     discord_token: str,
+    twitter_token: str,
     email: str,
     config: src.utils.config.Config,
     lock: asyncio.Lock,
@@ -212,7 +215,7 @@ async def account_flow(
         report = False
 
         instance = src.model.Start(
-            account_index, proxy, private_key, discord_token, email, config
+            account_index, proxy, private_key, discord_token, twitter_token, email, config
         )
 
         result = await wrapper(instance.initialize, config)
