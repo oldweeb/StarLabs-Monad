@@ -5,7 +5,7 @@ SETTINGS:
     # number of concurrent threads
     THREADS: 1
     # number of retries for ANY action
-    ATTEMPTS: 5
+    ATTEMPTS: 3
     # account range.
     # BY DEFAULT: [0, 0] - all accounts
     # [3, 5] - only 3 4 5 accounts
@@ -26,7 +26,7 @@ SETTINGS:
     RANDOM_PAUSE_BETWEEN_ACTIONS: [3, 10]
     # random pause before start of every account
     # to make sure that all accounts will be started at different times
-    RANDOM_INITIALIZATION_PAUSE: [5, 20]
+    RANDOM_INITIALIZATION_PAUSE: [5, 30]
     # pause multiplier for browser actions
     BROWSER_PAUSE_MULTIPLIER: 1.5
     # telegram settings
@@ -138,14 +138,14 @@ MAGICEDEN:
 
 FAUCET:
     # MUST HAVE
-    NOCAPTCHA_API_KEY: sadfjasdasdlsadkfasdkljas
+    NOCAPTCHA_API_KEY: abc
     
     # if does not work without proxy, set proxy here
     # format: username:password@ip:port
     PROXY_FOR_NOCAPTCHA: ""
 
     # optional, but Nocaptcha still will do part of work
-    USE_CAPSOLVER_FOR_CLOUDFLARE: false
+    USE_CAPSOLVER_FOR_CLOUDFLARE: true
     CAPSOLVER_API_KEY: CAP-
 
 # --------------------------- #
