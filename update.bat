@@ -74,5 +74,3 @@ echo - Any conflicts were resolved by using GitHub's version
 
 :end
 echo.
-echo Press any key to exit...
-pause >nul
