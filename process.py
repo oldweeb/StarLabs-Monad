@@ -83,9 +83,6 @@ async def start():
             logger.error("No proxies found in data/proxies.txt")
             return
         proxies = src.utils.check_proxy_format(proxies)
-        if len(proxies) == 0:
-            logger.error("Invalid proxy format in data/proxies.txt")
-            return
         if proxies is False:
             return
         private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
@@ -110,9 +107,6 @@ async def start():
         logger.error("No proxies found in data/proxies.txt")
         return
     proxies = src.utils.check_proxy_format(proxies)
-    if len(proxies) == 0:
-        logger.error("Invalid proxy format in data/proxies.txt")
-        return
     if proxies is False:
         return
     

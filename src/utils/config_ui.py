@@ -759,6 +759,21 @@ class ConfigUI:
             width=self.input_sizes["tiny"],
         )
 
+        # Add the BRIDGE_ALL checkbox
+        self.testnet_bridge_all = self.create_checkbox(
+            testnet,
+            "BRIDGE_ALL",
+            self.config["TESTNET_BRIDGE"]["BRIDGE_ALL"],
+        )
+        
+        # Add the BRIDGE_ALL_MAX_AMOUNT input
+        self.testnet_bridge_max = self.create_single_input(
+            testnet,
+            "BRIDGE_ALL_MAX_AMOUNT",
+            self.config["TESTNET_BRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"],
+            width=100,
+        )
+
         orbiter = self.create_section(right_column, "ORBITER")
         self.orbiter_amount_min, self.orbiter_amount_max = self.create_range_inputs(
             orbiter, "AMOUNT_TO_BRIDGE", self.config["ORBITER"]["AMOUNT_TO_BRIDGE"]
@@ -1063,6 +1078,10 @@ class ConfigUI:
         ] = self.testnet_wait.get()
         self.config["TESTNET_BRIDGE"]["MAX_WAIT_TIME"] = int(
             self.testnet_wait_time.get()
+        )
+        self.config["TESTNET_BRIDGE"]["BRIDGE_ALL"] = self.testnet_bridge_all.get()
+        self.config["TESTNET_BRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"] = float(
+            self.testnet_bridge_max.get()
         )
 
         # ACCOUNTABLE

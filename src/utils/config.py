@@ -110,6 +110,8 @@ class TestnetBridgeConfig:
     MINIMUM_BALANCE_TO_REFUEL: float
     WAIT_FOR_FUNDS_TO_ARRIVE: bool
     MAX_WAIT_TIME: int
+    BRIDGE_ALL: bool
+    BRIDGE_ALL_MAX_AMOUNT: float
 
 
 @dataclass
@@ -359,6 +361,8 @@ class Config:
                     "WAIT_FOR_FUNDS_TO_ARRIVE"
                 ],
                 MAX_WAIT_TIME=data["TESTNET_BRIDGE"]["MAX_WAIT_TIME"],
+                BRIDGE_ALL=data["TESTNET_BRIDGE"]["BRIDGE_ALL"],
+                BRIDGE_ALL_MAX_AMOUNT=data["TESTNET_BRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"],
             ),
             SHMONAD=ShmonadConfig(
                 PERCENT_OF_BALANCE_TO_SWAP=tuple(
