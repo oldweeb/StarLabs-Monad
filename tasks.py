@@ -151,4 +151,3 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 # "nad_domains" - register random domain on nad.domains
 # "aircraft" - mint NFT on aircraft.fun
-# updater_test
