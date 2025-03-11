@@ -502,6 +502,13 @@ class ConfigUI:
             self.config["DUSTED"]["CLAIM"],
         )
 
+        # Add the SKIP_TWITTER_VERIFICATION checkbox after the CLAIM checkbox
+        self.dusted_skip_twitter_verification = self.create_checkbox(
+            dusted,
+            "SKIP_TWITTER_VERIFICATION",
+            self.config["DUSTED"]["SKIP_TWITTER_VERIFICATION"],
+        )
+
         # Swaps Category
         self.create_category_header(left_column, "💱 SWAPS")
 
@@ -986,6 +993,7 @@ class ConfigUI:
         
         # DUSTED
         self.config["DUSTED"]["CLAIM"] = self.dusted_claim.get()
+        self.config["DUSTED"]["SKIP_TWITTER_VERIFICATION"] = self.dusted_skip_twitter_verification.get()
 
         # FLOW
         self.config["FLOW"]["NUMBER_OF_SWAPS"] = [

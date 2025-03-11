@@ -837,14 +837,17 @@ class Dusted:
             await self.get_user()
             
             # Connect Twitter only if not already connected and Twitter token is available
-            if not self.twitter_connected and self.twitter_token and self.twitter_token.strip():
-                logger.info(f"[{self.account_index}] Twitter not connected. Attempting to connect...")
-                await self.connect_twitter()
-            elif not self.twitter_token or not self.twitter_token.strip():
-                logger.warning(f"[{self.account_index}] No valid Twitter token provided. Skipping Twitter connection.")
+            if not self.config.DUSTED.SKIP_TWITTER_VERIFICATION:
+                if not self.twitter_connected and self.twitter_token and self.twitter_token.strip():
+                    logger.info(f"[{self.account_index}] Twitter not connected. Attempting to connect...")
+                    await self.connect_twitter()
+                elif not self.twitter_token or not self.twitter_token.strip():
+                    logger.warning(f"[{self.account_index}] No valid Twitter token provided. Skipping Twitter connection.")
+                else:
+                    logger.info(f"[{self.account_index}] Twitter already connected. Skipping connection step.")
             else:
-                logger.info(f"[{self.account_index}] Twitter already connected. Skipping connection step.")
-                
+                logger.info(f"[{self.account_index}] Twitter verification is disabled. Skipping Twitter connection.")
+
             # Play the lasso game (will handle errors gracefully)
             total_score = await self.claim()
             # Check if wallet has enough native balance before proceeding

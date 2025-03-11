@@ -65,6 +65,7 @@ class BimaConfig:
 @dataclass
 class DustedConfig:
     CLAIM: bool
+    SKIP_TWITTER_VERIFICATION: bool
 
 
 @dataclass
@@ -328,6 +329,7 @@ class Config:
             ),
             DUSTED=DustedConfig(
                 CLAIM=data["DUSTED"]["CLAIM"],
+                SKIP_TWITTER_VERIFICATION=data["DUSTED"]["SKIP_TWITTER_VERIFICATION"],
             ),
             GASZIP=GaszipConfig(
                 NETWORKS_TO_REFUEL_FROM=data["GASZIP"]["NETWORKS_TO_REFUEL_FROM"],

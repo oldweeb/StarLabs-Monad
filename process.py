@@ -133,7 +133,7 @@ async def start():
     else:
         private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
 
-    if "dusted" in config.FLOW.TASKS:
+    if "dusted" in config.FLOW.TASKS and not config.DUSTED.SKIP_TWITTER_VERIFICATION:
         twitter_tokens = src.utils.read_txt_file("twitter tokens", "data/twitter_tokens.txt")
         if len(twitter_tokens) < len(private_keys):
             logger.error(f"Not enough twitter tokens. Twitter tokens: {len(twitter_tokens)} < Private keys: {len(private_keys)}")
