@@ -7,11 +7,11 @@ from src.model.disperse_from_one.instance import DisperseFromOneWallet
 from src.model.balance_checker.instance import BalanceChecker
 from src.model.disperse_one_one.instance import DisperseOneOne
 import src.utils
-from src.utils.logs import report_error, report_success
 from src.utils.output import show_dev_info, show_logo
 import src.model
 from src.utils.statistics import print_wallets_stats
 from src.utils.check_github_version import check_version
+from src.utils.logs import ProgressTracker, create_progress_tracker
 
 
 async def start():
@@ -25,11 +25,12 @@ async def start():
                 email,
                 config,
                 lock,
+                progress_tracker,
             )
 
     show_logo()
     show_dev_info()
-    
+
     try:
         await check_version("0xStarLabs", "StarLabs-Monad")
     except Exception as e:
@@ -40,7 +41,7 @@ async def start():
         logger.info("Continue with current version\n")
 
     print("")
-    
+
     print("Available options:\n")
     print("[1] 😈 Start farm")
     print("[2] 🔧 Edit config")
@@ -89,7 +90,7 @@ async def start():
     if len(proxies) == 0:
         logger.error("Invalid proxy format in data/proxies.txt")
         return
-    
+
     if "disperse_farm_accounts" in config.FLOW.TASKS:
         main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
         farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
@@ -104,7 +105,7 @@ async def start():
         )
         await disperse_one_wallet.disperse()
         return
-    
+
     if "farm_faucet" in config.FLOW.TASKS:
         private_keys = src.utils.read_txt_file(
             "private keys", "data/keys_for_faucet.txt"
@@ -163,6 +164,12 @@ async def start():
     semaphore = asyncio.Semaphore(value=threads)
     tasks = []
 
+    # Создаем трекер прогресса перед созданием задач
+    total_accounts = len(accounts_to_process)
+    progress_tracker = await create_progress_tracker(
+        total=total_accounts, description="Accounts completed"
+    )
+
     # Используем перемешанные индексы для создания задач
     for shuffled_idx in shuffled_indices:
         tasks.append(
@@ -192,6 +199,7 @@ async def account_flow(
     email: str,
     config: src.utils.config.Config,
     lock: asyncio.Lock,
+    progress_tracker: ProgressTracker,
 ):
     try:
         pause = random.randint(
@@ -215,11 +223,6 @@ async def account_flow(
         if not result:
             report = True
 
-        if report:
-            await report_error(lock, private_key, proxy, discord_token)
-        else:
-            await report_success(lock, private_key, proxy, discord_token)
-
         pause = random.randint(
             config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACCOUNTS[0],
             config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACCOUNTS[1],
@@ -227,8 +230,13 @@ async def account_flow(
         logger.info(f"Sleeping for {pause} seconds before next account...")
         await asyncio.sleep(pause)
 
+        # В конце функции, независимо от результата, обновляем прогресс
+        await progress_tracker.increment(1)
+
     except Exception as err:
         logger.error(f"{account_index} | Account flow failed: {err}")
+        # Даже если произошла ошибка, все равно считаем аккаунт обработанным
+        await progress_tracker.increment(1)
 
 
 async def wrapper(function, config: src.utils.config.Config, *args, **kwargs):
