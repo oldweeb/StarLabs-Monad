@@ -10,6 +10,7 @@ from src.utils.logs import report_error, report_success
 from src.utils.output import show_dev_info, show_logo
 import src.model
 from src.utils.statistics import print_wallets_stats
+from src.utils.check_github_version import check_version
 
 
 async def start():
@@ -27,8 +28,19 @@ async def start():
 
     show_logo()
     show_dev_info()
+    
+    try:
+        await check_version("0xStarLabs", "StarLabs-Monad")
+    except Exception as e:
+        import traceback
 
-    print("\nAvailable options:\n")
+        traceback.print_exc()
+        logger.error(f"Failed to check version: {e}")
+        logger.info("Continue with current version\n")
+
+    print("")
+    
+    print("Available options:\n")
     print("[1] 😈 Start farm")
     print("[2] 🔧 Edit config")
     print("[3] 👋 Exit")
