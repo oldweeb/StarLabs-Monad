@@ -3,12 +3,10 @@ import base64
 import hashlib
 import os
 import random
-import json
 import secrets
 from eth_account import Account
 from loguru import logger
 from primp import AsyncClient
-from uuid import uuid4
 from web3 import AsyncWeb3, Web3
 from typing import Dict, Optional, List
 from eth_account.messages import encode_defunct
@@ -73,6 +71,9 @@ class Dusted:
         self.twitter_token = twitter_token
         self.session = session
         self.auth_token = None
+        self.wallet_id = None
+        self.user_id = None
+        self.twitter_connected = False
         self.account: Account = Account.from_key(private_key=private_key)
         self.web3 = AsyncWeb3(
             AsyncWeb3.AsyncHTTPProvider(
@@ -654,6 +655,14 @@ class Dusted:
 
                 # Update user_id if it's available in the response
                 self.user_id = user_data["profile"]["user_id"]
+                
+                # Check if Twitter is connected by looking for x_id
+                if "x_id" in user_data["profile"] and user_data["profile"]["x_id"] is not None:
+                    self.twitter_connected = True
+                    logger.info(f"[{self.account_index}] Twitter already connected (ID: {user_data['profile']['x_id']})")
+                else:
+                    self.twitter_connected = False
+                    logger.info(f"[{self.account_index}] Twitter not connected yet")
 
             logger.info(f"[{self.account_index}] User information check completed")
             return user_data
@@ -823,7 +832,19 @@ class Dusted:
 
             # Agree to terms of service
             await self.agree_to_tos()
-            await self.connect_twitter()
+            
+            # Get user info and check Twitter connection status
+            await self.get_user()
+            
+            # Connect Twitter only if not already connected and Twitter token is available
+            if not self.twitter_connected and self.twitter_token and self.twitter_token.strip():
+                logger.info(f"[{self.account_index}] Twitter not connected. Attempting to connect...")
+                await self.connect_twitter()
+            elif not self.twitter_token or not self.twitter_token.strip():
+                logger.warning(f"[{self.account_index}] No valid Twitter token provided. Skipping Twitter connection.")
+            else:
+                logger.info(f"[{self.account_index}] Twitter already connected. Skipping connection step.")
+                
             # Play the lasso game (will handle errors gracefully)
             total_score = await self.claim()
             # Check if wallet has enough native balance before proceeding
