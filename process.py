@@ -1,5 +1,7 @@
 import asyncio
 import random
+import subprocess
+import os
 
 from loguru import logger
 
@@ -47,16 +49,34 @@ async def start():
     print("[1] 😈 Start farm")
     print("[2] 🔧 Edit config")
     print("[3] 🔍 Balance checker")
-    print("[4] 👋 Exit")
-    print()
-
+    print("[4] 🔄 Update")
+    print("[5] 👋 Exit")
+    
     try:
-        choice = input("Enter option (1-4): ").strip()
+        choice = input("Enter option (1-5): ").strip()
     except Exception as e:
         logger.error(f"Input error: {e}")
         return
-    if choice == "4" or not choice:
+    if choice == "5" or not choice:
         return
+    elif choice == "4":
+        try:
+            logger.info("Running update.bat script...")
+            
+            # Get the directory where process.py is located
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            
+            # Run the update.bat file from the current directory
+            update_script = os.path.join(current_dir, "update.bat")
+            
+            # Use subprocess to run the batch file and wait for it to complete
+            subprocess.run(update_script, shell=True, check=True)
+            
+            logger.success("Update completed")
+            return
+        except Exception as e:
+            logger.error(f"Failed to run update script: {e}")
+            return
     elif choice == "3":
         proxies = src.utils.read_txt_file("proxies", "data/proxies.txt")
         if len(proxies) == 0:
