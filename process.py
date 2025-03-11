@@ -91,7 +91,12 @@ async def start():
     if len(proxies) == 0:
         logger.error("Invalid proxy format in data/proxies.txt")
         return
-    twitter_tokens = src.utils.read_txt_file("twitter tokens", "data/twitter_tokens.txt")
+    
+    if "dusted" in config.FLOW.TASKS:
+        twitter_tokens = src.utils.read_txt_file("twitter tokens", "data/twitter_tokens.txt")
+    else:
+        twitter_tokens = [""] * len(accounts_to_process)
+        
     if "disperse_farm_accounts" in config.FLOW.TASKS:
         main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
         farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
