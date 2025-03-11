@@ -89,6 +89,11 @@ BRIDGE_SEPOLIA_AND_CONVERT_TO_MON = [
     "collect_all_to_monad",
 ]
 
+SWAPS_TASK = [
+    ("izumi", "ambient", "bean", "swaps"),
+    "collect_all_to_monad",
+]
+
 STAKING_TASK = [
     ("apriori", "magma", "shmonad", "kintsu"),
 ]
@@ -107,7 +112,6 @@ EXCHANGE_AND_TESTNET_BRIDGE_TASK = [
 EXCHANGE_AND_MEMEBRIDGE_TASK = [
     "cex_withdrawal",
     "memebridge",
-    "collect_all_to_monad",
 ]
 
 # FAUCETS

@@ -147,11 +147,7 @@ async def start():
         accounts_to_process = private_keys[start_index - 1 : end_index]
 
     discord_tokens = [""] * len(accounts_to_process)
-    emails = [""] * len(accounts_to_process)
-    
-    if len(twitter_tokens) < len(accounts_to_process):
-        # Add empty strings to match the number of accounts
-        twitter_tokens.extend([""] * (len(accounts_to_process) - len(twitter_tokens)))
+    emails = [""] * len(accounts_to_process) 
 
     threads = config.SETTINGS.THREADS
 
