@@ -30,10 +30,10 @@ if exist data\keys_for_faucet.txt copy /Y data\keys_for_faucet.txt backup\keys_f
 if exist data\discord_tokens.txt copy /Y data\discord_tokens.txt backup\discord_tokens.txt
 if exist data\email_tokens.txt copy /Y data\email_tokens.txt backup\email_tokens.txt
 
-:: Backup config files
-echo Backing up configuration files...
-if exist config.yaml copy /Y config.yaml backup\config.yaml
-if exist tasks.py copy /Y tasks.py backup\tasks.py
+:: Backup config files (for reference only, will not be restored)
+echo Backing up configuration files (for reference only)...
+if exist config.yaml copy /Y config.yaml backup\config.yaml.bak
+if exist tasks.py copy /Y tasks.py backup\tasks.py.bak
 
 :: Fetch latest changes from GitHub
 echo Fetching latest changes from GitHub...
@@ -43,9 +43,17 @@ if %ERRORLEVEL% NEQ 0 (
     goto end
 )
 
+:: Make sure tasks.py and config.yaml are tracked and not ignored
+echo Ensuring configuration files are not ignored...
+git update-index --no-assume-unchanged tasks.py config.yaml 2>nul
+
 :: Force reset to match GitHub version (this will overwrite ALL files except those in .gitignore)
 echo Applying GitHub updates (overwriting local changes)...
 git reset --hard origin/main
+
+:: Explicitly checkout tasks.py and config.yaml from GitHub to ensure they're updated
+echo Ensuring tasks.py and config.yaml are updated from GitHub...
+git checkout origin/main -- tasks.py config.yaml
 
 :: Restore data files (these will not be affected by GitHub changes)
 echo Restoring your data files...
@@ -60,7 +68,8 @@ echo.
 echo Update completed successfully!
 echo.
 echo - Your data files have been preserved
-echo - Configuration has been updated to match GitHub version
+echo - Configuration (tasks.py, config.yaml) has been REPLACED with GitHub version
+echo - Old configuration backups are in backup\tasks.py.bak and backup\config.yaml.bak
 echo - Any conflicts were resolved by using GitHub's version
 
 :end
