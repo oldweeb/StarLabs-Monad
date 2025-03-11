@@ -43,7 +43,7 @@ def check_proxy_format(proxies: list):
                 formatted_proxy = f"{user}:{password}@{ip}:{port}"
                 formatted_proxies.append(formatted_proxy)
             else:
-                logger.warning(f"Unable to parse proxy format: {proxy}. Keeping as is.")
-                formatted_proxies.append(proxy)
+                logger.warning(f"Unable to parse proxy format: {proxy}")
+                return False
     
     return formatted_proxies

@@ -66,6 +66,8 @@ async def start():
         if len(proxies) == 0:
             logger.error("Invalid proxy format in data/proxies.txt")
             return
+        if proxies is False:
+            return
         private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
         balance_checker = BalanceChecker(private_keys, proxies[0])
         await balance_checker.run()
@@ -90,6 +92,8 @@ async def start():
     proxies = src.utils.check_proxy_format(proxies)
     if len(proxies) == 0:
         logger.error("Invalid proxy format in data/proxies.txt")
+        return
+    if proxies is False:
         return
     
     if "disperse_farm_accounts" in config.FLOW.TASKS:
