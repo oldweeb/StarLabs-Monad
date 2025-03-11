@@ -32,8 +32,8 @@ if exist data\email_tokens.txt copy /Y data\email_tokens.txt backup\email_tokens
 
 :: Backup config files (for reference only, will not be restored)
 echo Backing up configuration files (for reference only)...
-if exist config.yaml copy /Y config.yaml backup\config.yaml.bak
-if exist tasks.py copy /Y tasks.py backup\tasks.py.bak
+if exist config.yaml copy /Y config.yaml backup\config.yaml
+if exist tasks.py copy /Y tasks.py backup\tasks.py
 
 :: Fetch latest changes from GitHub
 echo Fetching latest changes from GitHub...
@@ -69,7 +69,7 @@ echo Update completed successfully!
 echo.
 echo - Your data files have been preserved
 echo - Configuration (tasks.py, config.yaml) has been REPLACED with GitHub version
-echo - Old configuration backups are in backup\tasks.py.bak and backup\config.yaml.bak
+echo - Old configuration backups are in backup\tasks.py and backup\config.yaml
 echo - Any conflicts were resolved by using GitHub's version
 
 :end
