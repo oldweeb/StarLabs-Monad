@@ -4,6 +4,7 @@ import random
 from loguru import logger
 
 from src.model.disperse_from_one.instance import DisperseFromOneWallet
+from src.model.balance_checker.instance import BalanceChecker
 from src.model.disperse_one_one.instance import DisperseOneOne
 import src.utils
 from src.utils.logs import report_error, report_success
@@ -43,16 +44,29 @@ async def start():
     print("Available options:\n")
     print("[1] 😈 Start farm")
     print("[2] 🔧 Edit config")
-    print("[3] 👋 Exit")
+    print("[3] 🔍 Balance checker")
+    print("[4] 👋 Exit")
     print()
 
     try:
-        choice = input("Enter option (1-3): ").strip()
+        choice = input("Enter option (1-4): ").strip()
     except Exception as e:
         logger.error(f"Input error: {e}")
         return
-
-    if choice == "3" or not choice:
+    if choice == "4" or not choice:
+        return
+    elif choice == "3":
+        proxies = src.utils.read_txt_file("proxies", "data/proxies.txt")
+        if len(proxies) == 0:
+            logger.error("No proxies found in data/proxies.txt")
+            return
+        proxies = src.utils.check_proxy_format(proxies)
+        if len(proxies) == 0:
+            logger.error("Invalid proxy format in data/proxies.txt")
+            return
+        private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
+        balance_checker = BalanceChecker(private_keys, proxies[0])
+        await balance_checker.run()
         return
     elif choice == "2":
         config_ui = src.utils.ConfigUI()
@@ -90,7 +104,7 @@ async def start():
         )
         await disperse_one_wallet.disperse()
         return
-
+    
     if "farm_faucet" in config.FLOW.TASKS:
         private_keys = src.utils.read_txt_file(
             "private keys", "data/keys_for_faucet.txt"
