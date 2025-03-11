@@ -156,7 +156,7 @@ class Monadking:
 
                 # Параметры для минта на основе транзакций
                 native_token_address = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-                price = self.web3.to_wei(0.02, "ether")
+                price = self.web3.to_wei(0.5, "ether")
 
                 # Структура allowlistProof из транзакций
                 allowlist_proof = (
@@ -247,7 +247,7 @@ class Monadking:
                 # Параметры для минта на основе транзакций
                 native_token_address = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
                 price = self.web3.to_wei(
-                    0.05, "ether"
+                    0.5, "ether"
                 )  # 0.05 ETH based on the transaction
 
                 # Структура allowlistProof из транзакций
