@@ -147,6 +147,9 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # CEX WITHDRAWAL
 # "cex_withdrawal" - withdraw tokens from cex
 
+#GAMES
+# "frontrunner" - play frontrunner game
+
 # OTHER
 # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 # "nad_domains" - register random domain on nad.domains

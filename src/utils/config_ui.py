@@ -559,6 +559,21 @@ class ConfigUI:
             self.config["MAGICEDEN"]["NFT_CONTRACTS"],
         )
 
+        # FRONT_RUNNER
+        frame_front_runner = self.create_section(right_column, "FRONT_RUNNER")
+
+        self.max_transactions_for_one_run = self.create_range_inputs(
+            frame_front_runner,
+            "MAX_AMOUNT_TRANSACTIONS_FOR_ONE_RUN:",
+            self.config["FRONT_RUNNER"]["MAX_AMOUNT_TRANSACTIONS_FOR_ONE_RUN"],
+        )
+        
+        self.pause_between_transactions = self.create_range_inputs(
+            frame_front_runner,
+            "PAUSE_BETWEEN_TRANSACTIONS:",
+            self.config["FRONT_RUNNER"]["PAUSE_BETWEEN_TRANSACTIONS"],
+        )
+
         # RIGHT COLUMN
 
         # Staking Category
@@ -1078,6 +1093,16 @@ class ConfigUI:
             x.strip()
             for x in self.magiceden_contracts.get("1.0", "end-1c").split("\n")
             if x.strip()
+        ]
+
+        # FRONT_RUNNER
+        self.config["FRONT_RUNNER"]["MAX_AMOUNT_TRANSACTIONS_FOR_ONE_RUN"] = [
+            int(self.max_transactions_for_one_run[0].get()),
+            int(self.max_transactions_for_one_run[1].get()),
+        ]
+        self.config["FRONT_RUNNER"]["PAUSE_BETWEEN_TRANSACTIONS"] = [
+            int(self.pause_between_transactions[0].get()),
+            int(self.pause_between_transactions[1].get()),
         ]
 
         # SHMONAD

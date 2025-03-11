@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.frontrunner.instance import Frontrunner
 from src.model.cex_withdrawal.instance import CexWithdraw
 from src.model.testnet_bridge.instance import TestnetBridge
 from src.model.memebridge.instance import Memebridge
@@ -346,6 +347,16 @@ class Start:
                 self.session,
             )
             await dusty.execute()
+
+        elif task == "frontrunner":
+            frontrunner = Frontrunner(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await frontrunner.send_transaction()
 
         elif task == "cex_withdrawal":
             cex_withdrawal = CexWithdraw(

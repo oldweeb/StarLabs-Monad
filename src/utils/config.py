@@ -153,6 +153,12 @@ class MonadkingConfig:
 
 
 @dataclass
+class FrontRunnerConfig:
+    MAX_AMOUNT_TRANSACTIONS_FOR_ONE_RUN: Tuple[int, int]
+    PAUSE_BETWEEN_TRANSACTIONS: Tuple[int, int]
+
+
+@dataclass
 class MagicEdenConfig:
     NFT_CONTRACTS: List[str]
 
@@ -196,6 +202,7 @@ class Config:
     LILCHOGSTARS: LilchogstarsConfig
     DEMASK: DemaskConfig
     MONADKING: MonadkingConfig
+    FRONT_RUNNER: FrontRunnerConfig
     MAGICEDEN: MagicEdenConfig
     MEMEBRIDGE: MemebridgeConfig
     TESTNET_BRIDGE: TestnetBridgeConfig
@@ -387,6 +394,14 @@ class Config:
             MONADKING=MonadkingConfig(
                 MAX_AMOUNT_FOR_EACH_ACCOUNT=tuple(
                     data["MONADKING"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"]
+                ),
+            ),
+            FRONT_RUNNER=FrontRunnerConfig(
+                MAX_AMOUNT_TRANSACTIONS_FOR_ONE_RUN=tuple(
+                    data["FRONT_RUNNER"]["MAX_AMOUNT_TRANSACTIONS_FOR_ONE_RUN"]
+                ),
+                PAUSE_BETWEEN_TRANSACTIONS=tuple(
+                    data["FRONT_RUNNER"]["PAUSE_BETWEEN_TRANSACTIONS"]
                 ),
             ),
             MAGICEDEN=MagicEdenConfig(
