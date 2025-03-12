@@ -5,6 +5,7 @@ from eth_account import Account
 from eth_account.signers.local import LocalAccount
 from curl_cffi import requests
 
+
 async def get_mint_data(
     proxy: str,
     nft_contract: str,
@@ -68,7 +69,7 @@ async def get_mint_data(
             }
 
             response = await curl_session.post(
-                "https://api-mainnet.magiceden.io/v3/rtp/monad-testnet/execute/mint/v1",
+                "https://api-mainnet.magiceden.io/v4/self_serve/nft/mint_token",
                 headers=headers,
                 json=payload,
                 timeout=30,  # Increase timeout
