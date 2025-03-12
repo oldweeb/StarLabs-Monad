@@ -145,7 +145,8 @@ class Memebridge:
                 
                 # Calculate amount we can send
                 amount_wei = balance - max_total_gas_cost
-                
+                if web3.to_wei(amount_wei, 'ether') > self.config.MEMEBRIDGE.BRIDGE_ALL_MAX_AMOUNT:
+                    amount_wei = int(web3.to_wei(self.config.MEMEBRIDGE.BRIDGE_ALL_MAX_AMOUNT * (random.uniform(0.95, 0.99)), 'ether'))
                 # Double check our math
                 total_needed = amount_wei + max_total_gas_cost
 
