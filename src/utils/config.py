@@ -69,6 +69,15 @@ class DustedConfig:
 
 
 @dataclass
+class NostraConfig:
+    PERCENT_OF_BALANCE_TO_DEPOSIT: Tuple[float, float]
+    DEPOSIT: bool
+    BORROW: bool
+    REPAY: bool
+    WITHDRAW: bool
+
+
+@dataclass
 class WalletInfo:
     account_index: int
     private_key: str
@@ -210,6 +219,7 @@ class Config:
     MEMEBRIDGE: MemebridgeConfig
     TESTNET_BRIDGE: TestnetBridgeConfig
     DUSTED: DustedConfig
+    NOSTRA: NostraConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -330,6 +340,13 @@ class Config:
             DUSTED=DustedConfig(
                 CLAIM=data["DUSTED"]["CLAIM"],
                 SKIP_TWITTER_VERIFICATION=data["DUSTED"]["SKIP_TWITTER_VERIFICATION"],
+            ),
+            NOSTRA=NostraConfig(
+                PERCENT_OF_BALANCE_TO_DEPOSIT=tuple(data["NOSTRA"]["PERCENT_OF_BALANCE_TO_DEPOSIT"]),
+                DEPOSIT=data["NOSTRA"]["DEPOSIT"],
+                BORROW=data["NOSTRA"]["BORROW"],
+                REPAY=data["NOSTRA"]["REPAY"],
+                WITHDRAW=data["NOSTRA"]["WITHDRAW"],
             ),
             GASZIP=GaszipConfig(
                 NETWORKS_TO_REFUEL_FROM=data["GASZIP"]["NETWORKS_TO_REFUEL_FROM"],

@@ -927,6 +927,32 @@ class ConfigUI:
             self.config["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"],
         )
 
+        # Add NOSTRA section
+        nostra = self.create_section(right_column, "NOSTRA")
+        self.nostra_deposit_min, self.nostra_deposit_max = self.create_range_inputs(
+            nostra, "PERCENT_OF_BALANCE_TO_DEPOSIT", self.config["NOSTRA"]["PERCENT_OF_BALANCE_TO_DEPOSIT"]
+        )
+        self.nostra_deposit = self.create_checkbox(
+            nostra,
+            "DEPOSIT",
+            self.config["NOSTRA"]["DEPOSIT"],
+        )
+        self.nostra_borrow = self.create_checkbox(
+            nostra,
+            "BORROW",
+            self.config["NOSTRA"]["BORROW"],
+        )
+        self.nostra_repay = self.create_checkbox(
+            nostra,
+            "REPAY",
+            self.config["NOSTRA"]["REPAY"],
+        )
+        self.nostra_withdraw = self.create_checkbox(
+            nostra,
+            "WITHDRAW",
+            self.config["NOSTRA"]["WITHDRAW"],
+        )
+
     def _save_and_close(self):
         """Save config and close the window"""
         self.save_config()
@@ -1177,6 +1203,16 @@ class ConfigUI:
             int(float(self.bima_percent_min.get())),
             int(float(self.bima_percent_max.get())),
         ]
+
+        # NOSTRA
+        self.config["NOSTRA"]["PERCENT_OF_BALANCE_TO_DEPOSIT"] = [
+            float(self.nostra_deposit_min.get()),
+            float(self.nostra_deposit_max.get()),
+        ]
+        self.config["NOSTRA"]["DEPOSIT"] = self.nostra_deposit.get()
+        self.config["NOSTRA"]["BORROW"] = self.nostra_borrow.get()
+        self.config["NOSTRA"]["REPAY"] = self.nostra_repay.get()
+        self.config["NOSTRA"]["WITHDRAW"] = self.nostra_withdraw.get()
 
         # Save to file with improved formatting
         config_path = os.path.join(os.path.dirname(__file__), "..", "..", "config.yaml")

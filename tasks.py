@@ -130,6 +130,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "magma" - stake MON token on Magma
 # "shmonad" - buy and stake shmon on shmonad.xyz | LOOK SETTINGS BELOW
 # "kintsu" - stake MON token on kintsu.xyz/
+# "nostra" - deposit, borrow, repay, withdraw 
 
 # MINT
 # "magiceden" - mint NFT on magiceden.io
