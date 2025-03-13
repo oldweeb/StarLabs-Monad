@@ -609,7 +609,7 @@ class Nostra:
                     )
                     return True
                 else:
-                    logger.exception(f"[{self.account_index}] Repay transaction failed.")
+                    logger.error(f"[{self.account_index}] Repay transaction failed.")
                     continue
                     
             except Exception as e:
