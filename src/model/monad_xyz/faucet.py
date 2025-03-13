@@ -163,7 +163,7 @@ async def faucet(
             }
 
             response = await curl_session.post(
-                "https://testnet.monad.xyz/api/claim", headers=headers, json=json_data
+                "https://testnet.monad.xyz/api/faucet/claim", headers=headers, json=json_data
             )
             response_text = response.text
 
