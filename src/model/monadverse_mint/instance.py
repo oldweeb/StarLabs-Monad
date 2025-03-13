@@ -53,7 +53,7 @@ class MonadverseMint:
             account_index=account_index,
             proxy=proxy,
         )
-        self.nft_contract_address = "0xCaB08943346761701EC9757befe79eA88dD67670"
+        self.nft_contract_address = "0xba838E4Cca4b852e1AebD32f248967aD98C3AA45"
         self.nft_contract: Contract = self.web3.eth.contract(
             address=self.nft_contract_address, abi=ERC1155_ABI
         )
@@ -66,7 +66,7 @@ class MonadverseMint:
         """
         try:
             balance = await self.nft_contract.functions.balanceOf(
-                self.account.address, 3  # ID токена из транзакции
+                self.account.address, 5  # Updated token ID
             ).call()
 
             return balance
@@ -78,7 +78,7 @@ class MonadverseMint:
         for retry in range(self.config.SETTINGS.ATTEMPTS):
             try:
                 balance = await self.get_nft_balance()
-
+        
                 if balance > 0:
                     logger.success(
                         f"[{self.account_index}] Monadverse NFT already minted"
@@ -92,8 +92,8 @@ class MonadverseMint:
                     {
                         "from": self.account.address,
                         "value": self.web3.to_wei(
-                            1.69691, "ether"
-                        ),  # Обновляем оплату до 1.69691 MON
+                            1.79, "ether"  # Updated minting value
+                        ),
                         "nonce": await self.web3.eth.get_transaction_count(
                             self.account.address
                         ),
