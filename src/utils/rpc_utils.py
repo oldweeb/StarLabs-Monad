@@ -12,8 +12,8 @@ def _format_log_prefix(account_index: Optional[int]) -> str:
 async def make_request_with_retry(
     original_make_request,
     account_index: Optional[int] = None,
-    request_timeout: int = 10,
-    max_retries: int = 50,
+    request_timeout: int = 60,
+    max_retries: int = 10,
     *args,
     **kwargs
 ) -> Any:
