@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.nostra.instance import Nostra
 from src.model.frontrunner.instance import Frontrunner
 from src.model.cex_withdrawal.instance import CexWithdraw
 from src.model.testnet_bridge.instance import TestnetBridge
@@ -316,6 +317,16 @@ class Start:
                 self.config,
             )
             await monadking_unlocked.mint_unlocked()
+
+        elif task == "nostra":
+            nostra = Nostra(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await nostra.execute()
 
         elif task == "magiceden":
             magiceden = MagicEden(
