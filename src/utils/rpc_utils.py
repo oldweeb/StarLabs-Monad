@@ -4,10 +4,15 @@ from typing import Any, Callable, Optional, Tuple, Dict
 from web3 import AsyncWeb3
 
 
+def _format_log_prefix(account_index: Optional[int]) -> str:
+    """Format log prefix based on account index."""
+    return f"[{account_index}] " if account_index is not None else ""
+
+
 async def make_request_with_retry(
     original_make_request,
-    account_index: int,
-    request_timeout: int = 60,
+    account_index: Optional[int] = None,
+    request_timeout: int = 10,
     max_retries: int = 50,
     *args,
     **kwargs
@@ -17,7 +22,7 @@ async def make_request_with_retry(
     
     Args:
         original_make_request: The original make_request method from the web3 provider
-        account_index: Account index for logging purposes
+        account_index: Account index for logging purposes (can be None)
         request_timeout: Timeout for the request in seconds
         max_retries: Maximum number of retry attempts
         args: Positional arguments to pass to the request method
@@ -31,6 +36,7 @@ async def make_request_with_retry(
     """
     retries = 0
     last_exception = None
+    log_prefix = _format_log_prefix(account_index)
     
     while retries <= max_retries:
         try:
@@ -43,7 +49,7 @@ async def make_request_with_retry(
             retries += 1
             last_exception = e
             logger.warning(
-                f"[{account_index}] RPC call timed out after {request_timeout}s (attempt {retries}/{max_retries}). "
+                f"{log_prefix}RPC call timed out after {request_timeout}s (attempt {retries}/{max_retries}). "
                 f"Retrying immediately..."
             )
             # Add a small delay before retry to avoid overwhelming the RPC server
@@ -54,13 +60,13 @@ async def make_request_with_retry(
             
             # Log the retry attempt with detailed error information
             logger.warning(
-                f"[{account_index}] RPC call failed (attempt {retries}/{max_retries}): {str(e)}. "
+                f"{log_prefix}RPC call failed (attempt {retries}/{max_retries}): {str(e)}. "
                 f"Retrying immediately..."
             )
             # Add a small delay before retry to avoid overwhelming the RPC server
             await asyncio.sleep(0.1)
         
-    logger.error(f"[{account_index}] All {max_retries} retry attempts failed. Last error: {last_exception}")
+    logger.error(f"{log_prefix}All {max_retries} retry attempts failed. Last error: {last_exception}")
     raise last_exception
 
 
@@ -74,7 +80,7 @@ class Web3RetryMiddleware:
     def __init__(
         self, 
         provider, 
-        account_index: int,
+        account_index: Optional[int] = None,
         request_timeout: int = 60,
         max_retries: int = 50
     ):
@@ -83,7 +89,7 @@ class Web3RetryMiddleware:
         
         Args:
             provider: The Web3 provider to wrap
-            account_index: Account index for logging purposes
+            account_index: Account index for logging purposes (can be None)
             request_timeout: Timeout for requests in seconds
             max_retries: Maximum number of retry attempts
         """
@@ -112,7 +118,7 @@ class Web3RetryMiddleware:
 
 def create_web3_client(
     rpc_url: str,
-    account_index: int,
+    account_index: Optional[int] = None,
     proxy: Optional[str] = None,
     request_timeout: int = 60,
     max_retries: int = 50
@@ -122,7 +128,7 @@ def create_web3_client(
     
     Args:
         rpc_url: The RPC endpoint URL
-        account_index: Account index for logging purposes
+        account_index: Account index for logging purposes (can be None)
         proxy: Optional proxy URL in format 'user:pass@host:port'
         request_timeout: Timeout for requests in seconds
         max_retries: Maximum number of retry attempts

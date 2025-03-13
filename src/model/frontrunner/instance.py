@@ -7,6 +7,7 @@ from web3 import AsyncWeb3
 from src.model.frontrunner.constants import ABI, CONTRACT_ADDRESS
 from src.utils.config import Config
 from src.utils.constants import RPC_URL, EXPLORER_URL
+from src.utils.rpc_utils import create_web3_client
 
 class Frontrunner:
     def __init__(
@@ -24,12 +25,11 @@ class Frontrunner:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = AsyncWeb3(
-            AsyncWeb3.AsyncHTTPProvider(
-                RPC_URL,
-                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
-            )
-        )
+        self.web3 = create_web3_client(
+            rpc_url=RPC_URL,
+            account_index=account_index,
+            proxy=proxy,
+        )        
         self.contract = self.web3.eth.contract(
             address=self.web3.to_checksum_address(CONTRACT_ADDRESS),
             abi=ABI
