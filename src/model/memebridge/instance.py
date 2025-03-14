@@ -120,6 +120,12 @@ class Memebridge:
             # Get current MON balance before refuel
             initial_balance = await self.get_monad_balance()
             logger.info(f"[{self.account_index}] Initial MON balance: {initial_balance}")
+            if initial_balance > self.config.MEMEBRIDGE.MINIMUM_BALANCE_TO_REFUEL:
+                logger.info(f"[{self.account_index}] Current balance ({initial_balance}) is above minimum "
+                    f"({self.config.MEMEBRIDGE.MINIMUM_BALANCE_TO_REFUEL}), skipping refuel"
+                )
+                return False
+            logger.info(f"[{self.account_index}] Initial MON balance: {initial_balance}")
             network, balance = await self.pick_network_to_refuel_from()
             if not network:
                 logger.error(f"[{self.account_index}] No network found")
