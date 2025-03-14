@@ -847,6 +847,8 @@ class Dusted:
                 logger.info(f"[{self.account_index}] Twitter verification is disabled. Skipping Twitter connection.")
 
             # Play the lasso game (will handle errors gracefully)
+            random_pause = random.randint(5,10)
+            await asyncio.sleep(random_pause)
             total_score = await self.claim()
             # Check if wallet has enough native balance before proceeding
             native_balance = await self.web3.eth.get_balance(self.account.address)
