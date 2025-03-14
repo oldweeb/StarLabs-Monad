@@ -139,29 +139,24 @@ FRONT_RUNNER:
 
 MAGICEDEN:
     NFT_CONTRACTS: [
-        "0xb81fbb4362a586fdb3edfe261b2e1bbe73e6cd67",  # 0.01 $MON
-        "0x281df2c9178aa2dfd229771ef8f03cce90e60373",  # 0.01 $MON
-        "0x002c8fd766605b609d31cc9764e27289daf033e9",  # 0.001 $MON
-        "0x471af5eb201adc7851f4abec99ba1c78e51de0ce",  # 0.01 $MON
-        "0x63300257926af6f2a1bf2d4efb4240d8d8f250d6",  # free
-        "0xfd3b54bd826cea09d15e87f95a869ecf3e462f92",  # free
-        "0xb2ea0ff3ad4134367fb7dc75d48b3493e5a09c81",
-        "0x74e9115cfcaa5edbfc6670139c0b2a2833fc64ed",
-        "0x961f37f781350c3b0e16a75e6112f5e922a49811"
+        "0x9e313cbd57a35661072c1b96684454cebd09acdc"
     ]
 
 FAUCET:
-    # MUST HAVE
+    USE_SOLVIUM_FOR_CLOUDFLARE: true
+    # CHEAPEST CAPTCHA SOLVER - https://t.me/solvium_crypto_bot
+    SOLVIUM_API_KEY: sadfhasldfhalsdjfhalsdjf
+
+    # optional
+    USE_CAPSOLVER_FOR_CLOUDFLARE: false
+    CAPSOLVER_API_KEY: CAP-asdfasldjkfashdfadhasd
+
+    # Using Nocaptcha by default
     NOCAPTCHA_API_KEY: abc
-    
     # if does not work without proxy, set proxy here
     # format: username:password@ip:port
     PROXY_FOR_NOCAPTCHA: ""
-
-    # optional, but Nocaptcha still will do part of work
-    USE_CAPSOLVER_FOR_CLOUDFLARE: true
-    CAPSOLVER_API_KEY: CAP-
-
+    
 # --------------------------- #
 # EXCHANGES SECTION
 # --------------------------- #

@@ -1,3 +1,3 @@
-from .captcha import Capsolver
+from .captcha import Capsolver, Solvium
 
-__all__ = ["Capsolver"]
+__all__ = ["Capsolver", "Solvium"]

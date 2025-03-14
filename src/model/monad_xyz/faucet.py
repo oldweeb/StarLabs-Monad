@@ -2,13 +2,15 @@ import asyncio
 from loguru import logger
 import random
 import primp
-from src.model.help.captcha import Capsolver
+from src.model.help.captcha import Capsolver, Solvium
 from src.utils.config import Config
 from eth_account import Account
 import hashlib
 from pynocaptcha import CloudFlareCracker, TlsV1Cracker
 from curl_cffi.requests import AsyncSession
 from src.model.monad_xyz.tls_op import make_wanda_request
+from src.utils.tls_client import TLSClient
+import json
 
 
 async def faucet(
@@ -68,7 +70,22 @@ async def faucet(
             #     "priority": "u=0, i",
             # }
 
-            if config.FAUCET.USE_CAPSOLVER_FOR_CLOUDFLARE:
+            if config.FAUCET.USE_SOLVIUM_FOR_CLOUDFLARE:
+                logger.info(f"[{account_index}] | Solving Cloudflare challenge with Solvium...")
+                solvium = Solvium(
+                    api_key=config.FAUCET.SOLVIUM_API_KEY,
+                    session=session,
+                    proxy=proxy,
+                )
+
+                result = await solvium.solve_captcha(
+                    sitekey="0x4AAAAAAA-3X4Nd7hf3mNGx",
+                    pageurl="https://testnet.monad.xyz/",
+                )
+                cf_result = result
+
+
+            elif config.FAUCET.USE_CAPSOLVER_FOR_CLOUDFLARE:
                 logger.info(
                     f"[{account_index}] | Solving Cloudflare challenge with Capsolver..."
                 )
@@ -81,6 +98,7 @@ async def faucet(
                     "0x4AAAAAAA-3X4Nd7hf3mNGx",
                     "https://testnet.monad.xyz/",
                 )
+
 
             else:
                 # Solve Cloudflare challenge - matching working example configuration
@@ -135,16 +153,17 @@ async def faucet(
             #     raise Exception(f"wrong wanda_result: {wanda_result}")
 
             # response_text = claim_result.get("response", {}).get("text", "")
-            curl_session = AsyncSession(
-                impersonate="chrome131",
-                proxies={"http": f"http://{proxy}", "https": f"http://{proxy}"},
-                verify=False,
-            )
+            # curl_session = AsyncSession(
+            #     impersonate="chrome131",
+            #     proxies={"http": f"http://{proxy}", "https": f"http://{proxy}"},
+            #     verify=False,
+            # )
 
             # claim_result = await curl_session.post(
             #     "https://testnet.monad.xyz/api/claim", headers=headers, json=json_data
             # )
-
+            logger.info(f"[{account_index}] | Initializing TLS client...")
+            tls_client = TLSClient()
             # response_text = claim_result.text
             headers = {
                 "sec-ch-ua-platform": '"Windows"',
@@ -162,10 +181,42 @@ async def faucet(
                 "priority": "u=1, i",
             }
 
-            response = await curl_session.post(
-                "https://testnet.monad.xyz/api/faucet/claim", headers=headers, json=json_data
+            # Выполняем запрос через TLS клиент
+            logger.info(f"[{account_index}] | Sending claim request via TLS client...")
+
+            # Преобразуем прокси в формат http://user:pass@ip:port
+            proxy_parts = proxy.split("@")
+            if len(proxy_parts) == 2:
+                proxy_url = f"http://{proxy}"
+            else:
+                proxy_url = f"http://{proxy}"
+
+            response = tls_client.make_request(
+                url="https://faucet-claim.monadinfra.com/",
+                method="POST",
+                headers=headers,
+                data=json_data,
+                proxy=proxy_url,
+                tls_client_identifier="chrome_133",
+                follow_redirects=False,
+                timeout_seconds=30,
             )
-            response_text = response.text
+
+            # Получаем текст ответа
+            response_text = response.get("body", "")
+            status_code = response.get("status", 0)
+
+            logger.info(
+                f"[{account_index}] | Received response with status code: {status_code}"
+            )
+
+            if "Faucet is currently closed" in response_text:
+                logger.error(f"[{account_index}] | Faucet is currently closed")
+                return False
+            
+            if "used Cloudflare to restrict access" in response_text:
+                logger.error(f"[{account_index}] | Cloudflare solved wrong...")
+                continue
 
             if not response_text:
                 raise Exception("Failed to send claim request")
