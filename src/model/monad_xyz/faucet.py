@@ -11,6 +11,7 @@ from curl_cffi.requests import AsyncSession
 from src.model.monad_xyz.tls_op import make_wanda_request
 from src.utils.tls_client import TLSClient
 import json
+import platform
 
 
 async def faucet(
@@ -134,6 +135,23 @@ async def faucet(
 
             # Заменяем TlsV1Cracker на асинхронный запрос
             logger.info(f"[{account_index}] | Sending claim request...")
+
+            headers = {
+                "sec-ch-ua-platform": '"Windows"',
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+                "sec-ch-ua": '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+                "content-type": "application/json",
+                "sec-ch-ua-mobile": "?0",
+                "accept": "*/*",
+                "origin": "https://testnet.monad.xyz",
+                "sec-fetch-site": "same-origin",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-dest": "empty",
+                "referer": "https://testnet.monad.xyz/",
+                "accept-language": "en-GB,en;q=0.9",
+                "priority": "u=1, i",
+            }
+
             # wanda_result = await make_wanda_request(
             #     session=session,
             #     user_token=config.FAUCET.NOCAPTCHA_API_KEY,
@@ -153,58 +171,50 @@ async def faucet(
             #     raise Exception(f"wrong wanda_result: {wanda_result}")
 
             # response_text = claim_result.get("response", {}).get("text", "")
-            # curl_session = AsyncSession(
-            #     impersonate="chrome131",
-            #     proxies={"http": f"http://{proxy}", "https": f"http://{proxy}"},
-            #     verify=False,
-            # )
 
-            # claim_result = await curl_session.post(
-            #     "https://testnet.monad.xyz/api/claim", headers=headers, json=json_data
-            # )
-            logger.info(f"[{account_index}] | Initializing TLS client...")
-            tls_client = TLSClient()
-            # response_text = claim_result.text
-            headers = {
-                "sec-ch-ua-platform": '"Windows"',
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
-                "sec-ch-ua": '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
-                "content-type": "application/json",
-                "sec-ch-ua-mobile": "?0",
-                "accept": "*/*",
-                "origin": "https://testnet.monad.xyz",
-                "sec-fetch-site": "same-origin",
-                "sec-fetch-mode": "cors",
-                "sec-fetch-dest": "empty",
-                "referer": "https://testnet.monad.xyz/",
-                "accept-language": "en-GB,en;q=0.9",
-                "priority": "u=1, i",
-            }
+            # Проверка операционной системы
+            if platform.system().lower() != "windows":
+                curl_session = AsyncSession(
+                    impersonate="chrome131",
+                    proxies={"http": f"http://{proxy}", "https": f"http://{proxy}"},
+                    verify=False,
+                )
 
-            # Выполняем запрос через TLS клиент
-            logger.info(f"[{account_index}] | Sending claim request via TLS client...")
-
-            # Преобразуем прокси в формат http://user:pass@ip:port
-            proxy_parts = proxy.split("@")
-            if len(proxy_parts) == 2:
-                proxy_url = f"http://{proxy}"
+                claim_result = await curl_session.post(
+                    "https://testnet.monad.xyz/api/claim", headers=headers, json=json_data
+                )
+                response_text = claim_result.text
+                status_code = claim_result.status_code
+                
             else:
-                proxy_url = f"http://{proxy}"
+                logger.info(f"[{account_index}] | Initializing TLS client...")
+                tls_client = TLSClient()
+                # response_text = claim_result.text
+                
+                # Выполняем запрос через TLS клиент
+                logger.info(f"[{account_index}] | Sending claim request via TLS client...")
 
-            response = tls_client.make_request(
-                url="https://faucet-claim.monadinfra.com/",
-                method="POST",
-                headers=headers,
-                data=json_data,
-                proxy=proxy_url,
-                tls_client_identifier="chrome_133",
-                follow_redirects=False,
-                timeout_seconds=30,
-            )
+                # Преобразуем прокси в формат http://user:pass@ip:port
+                proxy_parts = proxy.split("@")
+                if len(proxy_parts) == 2:
+                    proxy_url = f"http://{proxy}"
+                else:
+                    proxy_url = f"http://{proxy}"
 
-            # Получаем текст ответа
-            response_text = response.get("body", "")
-            status_code = response.get("status", 0)
+                response = tls_client.make_request(
+                    url="https://faucet-claim.monadinfra.com/",
+                    method="POST",
+                    headers=headers,
+                    data=json_data,
+                    proxy=proxy_url,
+                    tls_client_identifier="chrome_133",
+                    follow_redirects=False,
+                    timeout_seconds=30,
+                )
+
+                # Получаем текст ответа
+                response_text = response.get("body", "")
+                status_code = response.get("status", 0)
 
             logger.info(
                 f"[{account_index}] | Received response with status code: {status_code}"
