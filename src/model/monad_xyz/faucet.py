@@ -181,7 +181,7 @@ async def faucet(
                 )
 
                 claim_result = await curl_session.post(
-                    "https://testnet.monad.xyz/api/claim", headers=headers, json=json_data
+                    "https://faucet-claim.monadinfra.com/", headers=headers, json=json_data
                 )
                 response_text = claim_result.text
                 status_code = claim_result.status_code
