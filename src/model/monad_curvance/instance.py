@@ -9,7 +9,7 @@ from web3 import AsyncWeb3
 
 from src.utils.config import Config
 from src.utils.constants import RPC_URL
-from src.utils.rpc_utils import create_web3_client
+
 
 class MonadCurvance:
     def __init__(
@@ -27,11 +27,12 @@ class MonadCurvance:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = create_web3_client(
-            rpc_url=RPC_URL,
-            account_index=account_index,
-            proxy=proxy,
-        )
+        self.web3 = AsyncWeb3(
+             AsyncWeb3.AsyncHTTPProvider(
+                 RPC_URL,
+                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+             )
+        ) 
 
     async def login(self):
         for retry in range(self.config.SETTINGS.ATTEMPTS):

@@ -4,18 +4,19 @@ from src.model.balance_checker.constants import CONTRACT_ABI, CONTRACT_ADDRESS, 
 from src.utils.constants import RPC_URL
 from tabulate import tabulate
 from loguru import logger
-from src.utils.rpc_utils import create_web3_client
+
 
 class BalanceChecker:
     def __init__(self, private_keys, proxy):
         self.private_keys = private_keys
         self.addresses = self.convert_private_keys()
         self.proxy = proxy
-        self.web3 = create_web3_client(
-            rpc_url=RPC_URL,
-            account_index=1,
-            proxy=proxy,
-        )
+        self.web3 = AsyncWeb3(
+             AsyncWeb3.AsyncHTTPProvider(
+                 RPC_URL,
+                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+             )
+        ) 
     def convert_private_keys(self):
         addresses = []
         for private_key in self.private_keys:

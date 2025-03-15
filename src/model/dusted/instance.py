@@ -16,7 +16,7 @@ import time
 from src.model.dusted.browser_login import dusted_browser_login
 from src.utils.config import Config
 from src.utils.constants import RPC_URL, EXPLORER_URL
-from src.utils.rpc_utils import create_web3_client
+
 
 def with_retries(func):
     """Decorator to add retry functionality to async methods."""
@@ -75,11 +75,12 @@ class Dusted:
         self.user_id = None
         self.twitter_connected = False
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = create_web3_client(
-            rpc_url=RPC_URL,
-            account_index=account_index,
-            proxy=proxy,
-        )
+        self.web3 = AsyncWeb3(
+             AsyncWeb3.AsyncHTTPProvider(
+                 RPC_URL,
+                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+             )
+        ) 
     def get_auth_headers(self) -> Dict[str, str]:
         """Get headers with authorization if token is available."""
         headers = {"Content-Type": "application/json"}
