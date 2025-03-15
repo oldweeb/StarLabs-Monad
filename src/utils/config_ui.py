@@ -1008,8 +1008,14 @@ class ConfigUI:
         # FAUCET
         self.config["FAUCET"]["NOCAPTCHA_API_KEY"] = self.nocaptcha_key.get()
         self.config["FAUCET"]["PROXY_FOR_NOCAPTCHA"] = self.proxy_nocaptcha.get()
-        self.config["FAUCET"]["USE_CAPSOLVER_FOR_CLOUDFLARE"] = self.use_capsolver.get()
+        self.config["FAUCET"]["USE_CAPSOLVER_FOR_CLOUDFLARE"] = bool(self.use_capsolver.get())
         self.config["FAUCET"]["CAPSOLVER_API_KEY"] = self.capsolver_key.get()
+        
+        # Добавляем поля для Solvium, которые есть в config.py
+        if "USE_SOLVIUM_FOR_CLOUDFLARE" not in self.config["FAUCET"]:
+            self.config["FAUCET"]["USE_SOLVIUM_FOR_CLOUDFLARE"] = False
+        if "SOLVIUM_API_KEY" not in self.config["FAUCET"]:
+            self.config["FAUCET"]["SOLVIUM_API_KEY"] = ""
 
         # DISPERSE
         self.config["DISPERSE"]["MIN_BALANCE_FOR_DISPERSE"] = [
@@ -1018,8 +1024,8 @@ class ConfigUI:
         ]
         
         # DUSTED
-        self.config["DUSTED"]["CLAIM"] = self.dusted_claim.get()
-        self.config["DUSTED"]["SKIP_TWITTER_VERIFICATION"] = self.dusted_skip_twitter_verification.get()
+        self.config["DUSTED"]["CLAIM"] = bool(self.dusted_claim.get())
+        self.config["DUSTED"]["SKIP_TWITTER_VERIFICATION"] = bool(self.dusted_skip_twitter_verification.get())
 
         # FLOW
         self.config["FLOW"]["NUMBER_OF_SWAPS"] = [
@@ -1036,16 +1042,16 @@ class ConfigUI:
             float(self.apriori_stake_min.get()),
             float(self.apriori_stake_max.get()),
         ]
-        self.config["APRIORI"]["STAKE"] = self.apriori_stake.get()
-        self.config["APRIORI"]["UNSTAKE"] = self.apriori_unstake.get()
+        self.config["APRIORI"]["STAKE"] = bool(self.apriori_stake.get())
+        self.config["APRIORI"]["UNSTAKE"] = bool(self.apriori_unstake.get())
 
         # MAGMA
         self.config["MAGMA"]["AMOUNT_TO_STAKE"] = [
             float(self.magma_stake_min.get()),
             float(self.magma_stake_max.get()),
         ]
-        self.config["MAGMA"]["STAKE"] = self.magma_stake.get()
-        self.config["MAGMA"]["UNSTAKE"] = self.magma_unstake.get()
+        self.config["MAGMA"]["STAKE"] = bool(self.magma_stake.get())
+        self.config["MAGMA"]["UNSTAKE"] = bool(self.magma_unstake.get())
 
 
         # KINTSU
@@ -1053,8 +1059,8 @@ class ConfigUI:
             float(self.kintsu_stake_min.get()),
             float(self.kintsu_stake_max.get()),
         ]
-        self.config["KINTSU"]["STAKE"] = self.kintsu_stake.get()
-        self.config["KINTSU"]["UNSTAKE"] = self.kintsu_unstake.get()
+        self.config["KINTSU"]["STAKE"] = bool(self.kintsu_stake.get())
+        self.config["KINTSU"]["UNSTAKE"] = bool(self.kintsu_unstake.get())
 
         # GASZIP
         self.config["GASZIP"]["NETWORKS_TO_REFUEL_FROM"] = [
@@ -1067,9 +1073,9 @@ class ConfigUI:
         self.config["GASZIP"]["MINIMUM_BALANCE_TO_REFUEL"] = float(
             self.gaszip_min_balance.get()
         )
-        self.config["GASZIP"]["WAIT_FOR_FUNDS_TO_ARRIVE"] = self.gaszip_wait.get()
+        self.config["GASZIP"]["WAIT_FOR_FUNDS_TO_ARRIVE"] = bool(self.gaszip_wait.get())
         self.config["GASZIP"]["MAX_WAIT_TIME"] = int(self.gaszip_wait_time.get())
-        self.config["GASZIP"]["BRIDGE_ALL"] = self.gaszip_bridge_all.get()
+        self.config["GASZIP"]["BRIDGE_ALL"] = bool(self.gaszip_bridge_all.get())
         self.config["GASZIP"]["BRIDGE_ALL_MAX_AMOUNT"] = float(
             self.gaszip_bridge_max.get()
         )
@@ -1087,11 +1093,11 @@ class ConfigUI:
         )
         self.config["MEMEBRIDGE"][
             "WAIT_FOR_FUNDS_TO_ARRIVE"
-        ] = self.memebridge_wait.get()
+        ] = bool(self.memebridge_wait.get())
         self.config["MEMEBRIDGE"]["MAX_WAIT_TIME"] = int(
             self.memebridge_wait_time.get()
         )
-        self.config["MEMEBRIDGE"]["BRIDGE_ALL"] = self.memebridge_bridge_all.get()
+        self.config["MEMEBRIDGE"]["BRIDGE_ALL"] = bool(self.memebridge_bridge_all.get())
         self.config["MEMEBRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"] = float(
             self.memebridge_bridge_max.get()
         )
@@ -1109,11 +1115,11 @@ class ConfigUI:
         )
         self.config["TESTNET_BRIDGE"][
             "WAIT_FOR_FUNDS_TO_ARRIVE"
-        ] = self.testnet_wait.get()
+        ] = bool(self.testnet_wait.get())
         self.config["TESTNET_BRIDGE"]["MAX_WAIT_TIME"] = int(
             self.testnet_wait_time.get()
         )
-        self.config["TESTNET_BRIDGE"]["BRIDGE_ALL"] = self.testnet_bridge_all.get()
+        self.config["TESTNET_BRIDGE"]["BRIDGE_ALL"] = bool(self.testnet_bridge_all.get())
         self.config["TESTNET_BRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"] = float(
             self.testnet_bridge_max.get()
         )
@@ -1159,8 +1165,8 @@ class ConfigUI:
         ]
 
         # SHMONAD
-        self.config["SHMONAD"]["BUY_AND_STAKE_SHMON"] = self.buy_stake.get()
-        self.config["SHMONAD"]["UNSTAKE_AND_SELL_SHMON"] = self.unstake_sell.get()
+        self.config["SHMONAD"]["BUY_AND_STAKE_SHMON"] = bool(self.buy_stake.get())
+        self.config["SHMONAD"]["UNSTAKE_AND_SELL_SHMON"] = bool(self.unstake_sell.get())
         self.config["SHMONAD"]["PERCENT_OF_BALANCE_TO_SWAP"] = [
             int(float(self.shmonad_percent_min.get())),
             int(float(self.shmonad_percent_max.get())),
@@ -1171,8 +1177,8 @@ class ConfigUI:
             float(self.orbiter_amount_min.get()),
             float(self.orbiter_amount_max.get()),
         ]
-        self.config["ORBITER"]["BRIDGE_ALL"] = self.bridge_all.get()
-        self.config["ORBITER"]["WAIT_FOR_FUNDS_TO_ARRIVE"] = self.orbiter_wait.get()
+        self.config["ORBITER"]["BRIDGE_ALL"] = bool(self.bridge_all.get())
+        self.config["ORBITER"]["WAIT_FOR_FUNDS_TO_ARRIVE"] = bool(self.orbiter_wait.get())
         self.config["ORBITER"]["MAX_WAIT_TIME"] = int(self.orbiter_wait_time.get())
 
         # EXCHANGES
@@ -1191,14 +1197,14 @@ class ConfigUI:
                 "min_amount": float(self.withdrawal_min_amount.get()),
                 "max_amount": float(self.withdrawal_max_amount.get()),
                 "max_balance": float(self.withdrawal_max_balance.get()),
-                "wait_for_funds": self.withdrawal_wait.get(),
+                "wait_for_funds": bool(self.withdrawal_wait.get()),
                 "max_wait_time": int(self.withdrawal_wait_time.get()),
                 "retries": int(self.withdrawal_retries.get()),
             }
         ]
 
         # BIMA
-        self.config["BIMA"]["LEND"] = self.bima_lend.get()
+        self.config["BIMA"]["LEND"] = bool(self.bima_lend.get())
         self.config["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"] = [
             int(float(self.bima_percent_min.get())),
             int(float(self.bima_percent_max.get())),
@@ -1209,10 +1215,10 @@ class ConfigUI:
             float(self.nostra_deposit_min.get()),
             float(self.nostra_deposit_max.get()),
         ]
-        self.config["NOSTRA"]["DEPOSIT"] = self.nostra_deposit.get()
-        self.config["NOSTRA"]["BORROW"] = self.nostra_borrow.get()
-        self.config["NOSTRA"]["REPAY"] = self.nostra_repay.get()
-        self.config["NOSTRA"]["WITHDRAW"] = self.nostra_withdraw.get()
+        self.config["NOSTRA"]["DEPOSIT"] = bool(self.nostra_deposit.get())
+        self.config["NOSTRA"]["BORROW"] = bool(self.nostra_borrow.get())
+        self.config["NOSTRA"]["REPAY"] = bool(self.nostra_repay.get())
+        self.config["NOSTRA"]["WITHDRAW"] = bool(self.nostra_withdraw.get())
 
         # Save to file with improved formatting
         config_path = os.path.join(os.path.dirname(__file__), "..", "..", "config.yaml")
