@@ -8,7 +8,7 @@ from web3.contract import Contract
 from src.utils.constants import EXPLORER_URL, RPC_URL
 from src.utils.config import Config
 from loguru import logger
-from src.utils.rpc_utils import create_web3_client
+
 
 # Обновляем ABI для ERC1155
 ERC1155_ABI = [
@@ -48,11 +48,12 @@ class MonadverseMint:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = create_web3_client(
-            rpc_url=RPC_URL,
-            account_index=account_index,
-            proxy=proxy,
-        )
+        self.web3 = AsyncWeb3(
+             AsyncWeb3.AsyncHTTPProvider(
+                 RPC_URL,
+                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+             )
+        ) 
         self.nft_contract_address = "0xba838E4Cca4b852e1AebD32f248967aD98C3AA45"
         self.nft_contract: Contract = self.web3.eth.contract(
             address=self.nft_contract_address, abi=ERC1155_ABI

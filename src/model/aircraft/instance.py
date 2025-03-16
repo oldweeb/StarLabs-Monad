@@ -11,7 +11,7 @@ import functools
 
 from src.utils.config import Config
 from src.utils.constants import RPC_URL, EXPLORER_URL
-from src.utils.rpc_utils import create_web3_client
+
 
 # Global database lock for thread safety
 _db_lock = asyncio.Lock()
@@ -88,11 +88,12 @@ class Aircraft:
         self.auth_token = None
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = create_web3_client(
-            rpc_url=RPC_URL,
-            account_index=account_index,
-            proxy=proxy,
-        )
+        self.web3 = AsyncWeb3(
+             AsyncWeb3.AsyncHTTPProvider(
+                 RPC_URL,
+                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+             )
+        ) 
     def get_auth_headers(self) -> Dict[str, str]:
         """Get headers with authorization if token is available."""
         headers = {}

@@ -12,7 +12,7 @@ from functools import wraps
 
 from src.utils.config import Config
 from src.utils.constants import EXPLORER_URL, RPC_URL
-from src.utils.rpc_utils import create_web3_client
+
 from .constants import (
     WMON_CONTRACT, USDC_CONTRACT, USDT_CONTRACT, CDP_MANAGER,
     WMON_LENDING_MANAGER_ADDRESS, WMON_LENDING_MANAGER_ABI,
@@ -43,11 +43,12 @@ class Nostra:
         self.account: Account = Account.from_key(private_key=private_key)
         
         # Create a configured Web3 client with retry middleware
-        self.web3 = create_web3_client(
-            rpc_url=RPC_URL,
-            account_index=account_index,
-            proxy=proxy,
-        )
+        self.web3 = AsyncWeb3(
+             AsyncWeb3.AsyncHTTPProvider(
+                 RPC_URL,
+                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+             )
+        ) 
         
         # Define assets mapping
         self.assets = {

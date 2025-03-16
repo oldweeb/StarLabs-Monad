@@ -9,10 +9,10 @@ from typing import Dict
 
 from src.utils.config import Config
 from src.utils.constants import EXPLORER_URL, RPC_URL
-
+from primp import AsyncClient
 
 class Talentum:
-    def __init__(self, account_index: int, private_key: str, config: Config, session: Session):
+    def __init__(self, account_index: int, private_key: str, config: Config, session: AsyncClient):
         self.account_index = account_index
         self.private_key = private_key
         self.config = config

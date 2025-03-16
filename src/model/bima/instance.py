@@ -8,7 +8,7 @@ from primp import AsyncClient
 from web3 import AsyncWeb3, Web3
 from src.utils.config import Config
 from src.utils.constants import RPC_URL, EXPLORER_URL
-from src.utils.rpc_utils import create_web3_client
+
 
 from .constants import (
     FAUCET_ADDRESS,
@@ -37,11 +37,12 @@ class Bima:
         self.session = session
 
         self.account: Account = Account.from_key(private_key=private_key)
-        self.web3 = create_web3_client(
-            rpc_url=RPC_URL,
-            account_index=account_index,
-            proxy=proxy,
-        )
+        self.web3 = AsyncWeb3(
+             AsyncWeb3.AsyncHTTPProvider(
+                 RPC_URL,
+                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+             )
+        ) 
     async def login(self):
         for retry in range(self.config.SETTINGS.ATTEMPTS):
             try:
