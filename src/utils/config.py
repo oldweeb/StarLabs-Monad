@@ -180,6 +180,11 @@ class MagicEdenConfig:
 
 
 @dataclass
+class MonaiyakuzaConfig:
+    MAX_PER_ACCOUNT: Tuple[int, int]
+
+
+@dataclass
 class WithdrawalConfig:
     currency: str
     networks: List[str]
@@ -201,6 +206,10 @@ class ExchangesConfig:
 
 
 @dataclass
+class OctoSwapConfig:
+    SWAP_ALL_TO_MONAD: bool
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     EXCHANGES: ExchangesConfig
@@ -214,6 +223,7 @@ class Config:
     SHMONAD: ShmonadConfig
     ACCOUNTABLE: AccountableConfig
     ORBITER: OrbiterConfig
+    OCTO_SWAP: OctoSwapConfig
     DISPERSE: DisperseConfig
     LILCHOGSTARS: LilchogstarsConfig
     DEMASK: DemaskConfig
@@ -224,6 +234,7 @@ class Config:
     TESTNET_BRIDGE: TestnetBridgeConfig
     DUSTED: DustedConfig
     NOSTRA: NostraConfig
+    MONAIYAKUZA: MonaiyakuzaConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -435,6 +446,12 @@ class Config:
             ),
             MAGICEDEN=MagicEdenConfig(
                 NFT_CONTRACTS=data["MAGICEDEN"]["NFT_CONTRACTS"],
+            ),
+            MONAIYAKUZA=MonaiyakuzaConfig(
+                MAX_PER_ACCOUNT=tuple(data["MONAIYAKUZA"]["MAX_PER_ACCOUNT"]),
+            ),
+            OCTO_SWAP=OctoSwapConfig(
+                SWAP_ALL_TO_MONAD=data["OCTO_SWAP"]["SWAP_ALL_TO_MONAD"],
             ),
         )
 

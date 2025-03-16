@@ -1,8 +1,6 @@
 TASKS = [
-    "MONADVERSE",
+    "FAUCET",
 ]
-
-MONADVERSE = ["monadverse"]
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
 
@@ -128,13 +126,14 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "bean" - swap tokens on Bean DEX
 # "ambient" - swap tokens on Ambient DEX
 # "izumi" - swap tokens on Izumi DEX
+# "octo_swap" - swap tokens on octo.exchange/swap
 
 # STAKES
 # "apriori" - stake MON token
 # "magma" - stake MON token on Magma
 # "shmonad" - buy and stake shmon on shmonad.xyz | LOOK SETTINGS BELOW
 # "kintsu" - stake MON token on kintsu.xyz/
-# "nostra" - deposit, borrow, repay, withdraw 
+# "nostra" - deposit, borrow, repay, withdraw
 
 # MINT
 # "magiceden" - mint NFT on magiceden.io
@@ -143,7 +142,8 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "demask" - mint NFT on app.demask.finance/launchpad/0x2cdd146aa75ffa605ff7c5cc5f62d3b52c140f9c/0
 # "monadking" - mint NFT on nerzo.xyz/monadking
 # "monadking_unlocked" - mint NFT on www.nerzo.xyz/unlocked
-# "monadverse" - mint NFT on monadverse.xyz
+# "monaiyakuza_mint" - mint NFT on monai.gg/nft
+# "easynode_deploy" - deploy contract on easynode.xyz
 
 # REFUEL
 # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad
@@ -153,7 +153,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # CEX WITHDRAWAL
 # "cex_withdrawal" - withdraw tokens from cex
 
-#GAMES
+# GAMES
 # "frontrunner" - play frontrunner game
 
 # OTHER

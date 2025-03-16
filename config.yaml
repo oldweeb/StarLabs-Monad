@@ -26,7 +26,7 @@ SETTINGS:
     RANDOM_PAUSE_BETWEEN_ACTIONS: [3, 10]
     # random pause before start of every account
     # to make sure that all accounts will be started at different times
-    RANDOM_INITIALIZATION_PAUSE: [5, 30]
+    RANDOM_INITIALIZATION_PAUSE: [3, 30]
     # pause multiplier for browser actions
     BROWSER_PAUSE_MULTIPLIER: 1.5
     # telegram settings
@@ -108,6 +108,9 @@ NOSTRA:
     REPAY: true
     WITHDRAW: true
 
+OCTO_SWAP:
+    SWAP_ALL_TO_MONAD: false
+
 SHMONAD:
     BUY_AND_STAKE_SHMON: true
     UNSTAKE_AND_SELL_SHMON: true
@@ -149,13 +152,13 @@ FAUCET:
 
     # optional
     USE_CAPSOLVER_FOR_CLOUDFLARE: false
-    CAPSOLVER_API_KEY: CAP-asdfasldjkfashdfadhasd
+    CAPSOLVER_API_KEY: CAP-
 
     # Using Nocaptcha by default
-    NOCAPTCHA_API_KEY: abc
+    NOCAPTCHA_API_KEY: ""
     # if does not work without proxy, set proxy here
     # format: username:password@ip:port
-    PROXY_FOR_NOCAPTCHA: ""
+    PROXY_FOR_NOCAPTCHA: "x"
     
 # --------------------------- #
 # EXCHANGES SECTION
@@ -175,3 +178,6 @@ EXCHANGES:
           max_wait_time: 99999  # in seconds
           retries: 3
 
+
+MONAIYAKUZA:
+    MAX_PER_ACCOUNT: [1, 1]
