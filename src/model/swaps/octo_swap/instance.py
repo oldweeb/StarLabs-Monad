@@ -572,7 +572,7 @@ class OctoSwap:
                     transaction, self.private_key
                 )
                 tx_hash = await self.web3.eth.send_raw_transaction(
-                    signed_tx.rawTransaction
+                    signed_tx.raw_transaction
                 )
                 logger.info(
                     f"[{self.account_index}] 🚀 [TX SENT] Transaction hash: {EXPLORER_URL}{tx_hash.hex()}"
