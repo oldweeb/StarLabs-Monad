@@ -779,23 +779,17 @@ class OctoSwap:
             balance = await self.get_token_balance(self.account.address, token_info)
 
             # Определяем процент баланса для свапа из настроек
-            if (
-                hasattr(self.config.FLOW, "PERCENT_OF_BALANCE_TO_SWAP")
-                and isinstance(self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP, list)
-                and len(self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP) == 2
-            ):
-                min_percent, max_percent = self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP
-                percent = random.uniform(min_percent, max_percent)
-            else:
-                # Если настройка отсутствует или некорректна, используем значения по умолчанию
-                percent = random.uniform(30, 70)
+            random_percent = random.randint(
+                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[0],
+                self.config.FLOW.PERCENT_OF_BALANCE_TO_SWAP[1],
+            )
 
             # Рассчитываем сумму для свапа
-            amount = balance * (percent / 100)
+            amount = balance * (random_percent / 100)
 
             logger.info(
                 f"[{self.account_index}] Swap {swap_num}: {token_from} -> {token_to}, "
-                f"amount: {amount} ({percent:.2f}% of balance)"
+                f"amount: {amount} ({random_percent:.2f}% of balance)"
             )
 
             # Проверяем, что сумма достаточна для свапа
