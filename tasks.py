@@ -56,7 +56,7 @@ TASKS = [
     "CREATE_YOUR_OWN_TASK",
 ]
 CREATE_YOUR_OWN_TASK = [
-    "memebridge",
+    "crusty_refuel",
     ("apriori", "magma", "shmonad"),
     ["ambient", "izumi", "bean"],
     "collect_all_to_monad",
@@ -71,7 +71,7 @@ BELOW ARE THE READY-MADE TASKS THAT YOU CAN USE:
 
 
 BRIDGE_AND_SWAPS = [
-    "memebridge",
+    "crusty_refuel",
     ("izumi", "ambient", "bean", "swaps"),
     "collect_all_to_monad",
 ]
