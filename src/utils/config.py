@@ -116,6 +116,17 @@ class MemebridgeConfig:
     BRIDGE_ALL: bool
     BRIDGE_ALL_MAX_AMOUNT: float
 
+@dataclass
+class CrustySwapConfig:
+    NETWORKS_TO_REFUEL_FROM: List[str]
+    AMOUNT_TO_REFUEL: Tuple[float, float]
+    MINIMUM_BALANCE_TO_REFUEL: float
+    WAIT_FOR_FUNDS_TO_ARRIVE: bool
+    MAX_WAIT_TIME: int
+    BRIDGE_ALL: bool
+    BRIDGE_ALL_MAX_AMOUNT: float
+    SELL_PERCENT_OF_BALANCE: Tuple[int, int]
+    SELL_MAXIMUM_AMOUNT: float
 
 @dataclass
 class TestnetBridgeConfig:
@@ -239,6 +250,7 @@ class Config:
     FRONT_RUNNER: FrontRunnerConfig
     MAGICEDEN: MagicEdenConfig
     MEMEBRIDGE: MemebridgeConfig
+    CRUSTY_SWAP: CrustySwapConfig
     TESTNET_BRIDGE: TestnetBridgeConfig
     DUSTED: DustedConfig
     NOSTRA: NostraConfig
@@ -394,6 +406,18 @@ class Config:
                 BRIDGE_ALL=data["MEMEBRIDGE"]["BRIDGE_ALL"],
                 BRIDGE_ALL_MAX_AMOUNT=data["MEMEBRIDGE"]["BRIDGE_ALL_MAX_AMOUNT"],
             ),
+            CRUSTY_SWAP=CrustySwapConfig(
+                NETWORKS_TO_REFUEL_FROM=data["CRUSTY_SWAP"]["NETWORKS_TO_REFUEL_FROM"],
+                AMOUNT_TO_REFUEL=tuple(data["CRUSTY_SWAP"]["AMOUNT_TO_REFUEL"]),
+                MINIMUM_BALANCE_TO_REFUEL=data["CRUSTY_SWAP"]["MINIMUM_BALANCE_TO_REFUEL"],
+                WAIT_FOR_FUNDS_TO_ARRIVE=data["CRUSTY_SWAP"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
+                MAX_WAIT_TIME=data["CRUSTY_SWAP"]["MAX_WAIT_TIME"],
+                BRIDGE_ALL=data["CRUSTY_SWAP"]["BRIDGE_ALL"],
+                BRIDGE_ALL_MAX_AMOUNT=data["CRUSTY_SWAP"]["BRIDGE_ALL_MAX_AMOUNT"],
+                SELL_PERCENT_OF_BALANCE=tuple(data["CRUSTY_SWAP"]["SELL_PERCENT_OF_BALANCE"]),
+                SELL_MAXIMUM_AMOUNT=data["CRUSTY_SWAP"]["SELL_MAXIMUM_AMOUNT"],
+            ),
+            
             TESTNET_BRIDGE=TestnetBridgeConfig(
                 NETWORKS_TO_REFUEL_FROM=data["TESTNET_BRIDGE"][
                     "NETWORKS_TO_REFUEL_FROM"

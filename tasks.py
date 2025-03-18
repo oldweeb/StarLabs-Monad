@@ -1,10 +1,16 @@
 TASKS = [
-    "GAMBLE",
+    "CRUSTY_SWAP",
 ]
 
 
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
+
+# BUY AND SELL MON https://crustyswap.vercel.app/
+CRUSTY_SWAP = [
+    "crusty_refuel",
+    # "crusty_sell",
+]
 
 FAUCET = [
     "faucet",
@@ -114,6 +120,11 @@ EXCHANGE_AND_TESTNET_BRIDGE_TASK = [
     "testnet_bridge",
     "orbiter",
     "collect_all_to_monad",
+]
+
+EXCHANGE_AND_CRUSTY_SWAP_TASK = [
+    "cex_withdrawal",
+    "crusty_refuel",
 ]
 
 EXCHANGE_AND_MEMEBRIDGE_TASK = [

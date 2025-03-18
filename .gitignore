@@ -9,3 +9,4 @@ app.log
 /data/profiles
 /data/version.txt
 /backup
+/src/version.txt

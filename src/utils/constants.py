@@ -1,6 +1,6 @@
 EXPLORER_URL = "https://testnet.monadexplorer.com/tx/0x"
 RPC_URL = "https://testnet-rpc.monad.xyz"
-
+ETH_RPC_URL = "https://eth1.lava.build"
 
 TOKENS = {
     "native": "native",  # MON

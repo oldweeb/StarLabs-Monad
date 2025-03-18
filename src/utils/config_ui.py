@@ -258,7 +258,7 @@ class ConfigUI:
         )
         header.pack(fill="x", pady=(20, 10), padx=5)
 
-    def create_network_checkboxes(self, parent, label, config_value):
+    def create_network_checkboxes(self, parent, label, config_value, available_networks=None):
         frame = ctk.CTkFrame(parent, fg_color=self.colors["frame_bg"])
         frame.pack(fill="x", pady=5)
 
@@ -275,7 +275,8 @@ class ConfigUI:
         networks_frame = ctk.CTkFrame(frame, fg_color=self.colors["frame_bg"])
         networks_frame.pack(fill="x", padx=10, pady=5)
 
-        networks = ["Arbitrum", "Base", "Optimism"]
+        # Use provided networks or default to the standard three
+        networks = available_networks or ["Arbitrum", "Base", "Optimism"]
         checkboxes = []
 
         for network in networks:
@@ -667,6 +668,61 @@ class ConfigUI:
         # Bridge & Refuel Category
         self.create_category_header(right_column, "🌉 BRIDGE & REFUEL")
 
+        # Add CRUSTY_SWAP section as the first item
+        crusty_swap = self.create_section(right_column, "CRUSTY_SWAP")
+        self.crusty_swap_networks = self.create_network_checkboxes(
+            crusty_swap,
+            "NETWORKS_TO_REFUEL_FROM",
+            self.config["CRUSTY_SWAP"]["NETWORKS_TO_REFUEL_FROM"],
+            # available_networks=["Arbitrum", "Base", "Optimism", "ZkSync"]
+            available_networks=["Arbitrum", "Base", "Optimism"]
+        )
+        self.crusty_swap_amount_min, self.crusty_swap_amount_max = self.create_range_inputs(
+            crusty_swap,
+            "AMOUNT_TO_REFUEL",
+            self.config["CRUSTY_SWAP"]["AMOUNT_TO_REFUEL"],
+        )
+        self.crusty_swap_min_balance = self.create_single_input(
+            crusty_swap,
+            "MINIMUM_BALANCE_TO_REFUEL",
+            self.config["CRUSTY_SWAP"]["MINIMUM_BALANCE_TO_REFUEL"],
+            width=self.input_sizes["tiny"],
+        )
+        self.crusty_swap_wait = self.create_checkbox(
+            crusty_swap,
+            "WAIT_FOR_FUNDS_TO_ARRIVE",
+            self.config["CRUSTY_SWAP"]["WAIT_FOR_FUNDS_TO_ARRIVE"],
+        )
+        self.crusty_swap_wait_time = self.create_single_input(
+            crusty_swap,
+            "MAX_WAIT_TIME",
+            self.config["CRUSTY_SWAP"]["MAX_WAIT_TIME"],
+            width=self.input_sizes["tiny"],
+        )
+        self.crusty_swap_bridge_all = self.create_checkbox(
+            crusty_swap,
+            "BRIDGE_ALL (bridge maximum available balance)",
+            self.config["CRUSTY_SWAP"]["BRIDGE_ALL"],
+        )
+        self.crusty_swap_bridge_max = self.create_single_input(
+            crusty_swap,
+            "BRIDGE_ALL_MAX_AMOUNT (max to bridge with 1-3% random reduction)",
+            self.config["CRUSTY_SWAP"]["BRIDGE_ALL_MAX_AMOUNT"],
+            width=self.input_sizes["small"],
+        )
+        # Add CRUSTY_SWAP specific fields
+        self.crusty_swap_sell_min, self.crusty_swap_sell_max = self.create_range_inputs(
+            crusty_swap,
+            "SELL_PERCENT_OF_BALANCE",
+            self.config["CRUSTY_SWAP"]["SELL_PERCENT_OF_BALANCE"],
+        )
+        self.crusty_swap_sell_max_amount = self.create_single_input(
+            crusty_swap,
+            "SELL_MAXIMUM_AMOUNT",
+            self.config["CRUSTY_SWAP"]["SELL_MAXIMUM_AMOUNT"],
+            width=self.input_sizes["small"],
+        )
+
         # Add GASZIP section
         gaszip = self.create_section(right_column, "GASZIP")
         self.gaszip_networks = self.create_network_checkboxes(
@@ -755,6 +811,7 @@ class ConfigUI:
             testnet,
             "NETWORKS_TO_REFUEL_FROM",
             self.config["TESTNET_BRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
+            available_networks=["Arbitrum", "Optimism"]
         )
         self.testnet_amount_min, self.testnet_amount_max = self.create_range_inputs(
             testnet,
