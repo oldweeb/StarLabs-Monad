@@ -185,6 +185,14 @@ class MonaiyakuzaConfig:
 
 
 @dataclass
+class NarwhalFinanceConfig:
+    AMOUNT_USDT_FOR_BET: Tuple[float, float]
+    NUMBER_OF_BETS_PER_START: Tuple[int, int]
+    PLAY_SLOTS: bool
+    PLAY_DICE: bool
+    PLAY_COINFLIP: bool
+
+@dataclass
 class WithdrawalConfig:
     currency: str
     networks: List[str]
@@ -235,6 +243,7 @@ class Config:
     DUSTED: DustedConfig
     NOSTRA: NostraConfig
     MONAIYAKUZA: MonaiyakuzaConfig
+    NARWHAL_FINANCE: NarwhalFinanceConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -452,6 +461,13 @@ class Config:
             ),
             OCTO_SWAP=OctoSwapConfig(
                 SWAP_ALL_TO_MONAD=data["OCTO_SWAP"]["SWAP_ALL_TO_MONAD"],
+            ),
+            NARWHAL_FINANCE=NarwhalFinanceConfig(
+                AMOUNT_USDT_FOR_BET=tuple(data["NARWHAL_FINANCE"]["AMOUNT_USDT_FOR_BET"]),
+                NUMBER_OF_BETS_PER_START=tuple(data["NARWHAL_FINANCE"]["NUMBER_OF_BETS_PER_START"]),
+                PLAY_SLOTS=data["NARWHAL_FINANCE"]["PLAY_SLOTS"],
+                PLAY_DICE=data["NARWHAL_FINANCE"]["PLAY_DICE"],
+                PLAY_COINFLIP=data["NARWHAL_FINANCE"]["PLAY_COINFLIP"],
             ),
         )
 

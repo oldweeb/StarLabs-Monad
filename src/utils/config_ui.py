@@ -124,6 +124,22 @@ class ConfigUI:
         with open(config_path, "r") as file:
             self.config = yaml.safe_load(file)
 
+        # Проверяем наличие всех необходимых секций
+        if "NARWHAL_FINANCE" not in self.config:
+            self.config["NARWHAL_FINANCE"] = {
+                "AMOUNT_USDT_FOR_BET": [5, 50],
+                "NUMBER_OF_BETS_PER_START": [1, 3],
+                "PLAY_SLOTS": True,
+                "PLAY_DICE": True,
+                "PLAY_COINFLIP": True,
+            }
+
+        if "MONAIYAKUZA" not in self.config:
+            self.config["MONAIYAKUZA"] = {"MAX_PER_ACCOUNT": [1, 1]}
+
+        if "OCTO_SWAP" not in self.config:
+            self.config["OCTO_SWAP"] = {"SWAP_ALL_TO_MONAD": False}
+
     def create_range_inputs(self, parent, label, config_value, width=120):
         frame = ctk.CTkFrame(parent, fg_color=self.colors["frame_bg"])
         frame.pack(fill="x", pady=5)
@@ -952,6 +968,50 @@ class ConfigUI:
             self.config["NOSTRA"]["WITHDRAW"],
         )
 
+        # Add NARWHAL_FINANCE section
+        self.create_category_header(right_column, "�� NARWHAL FINANCE")
+        narwhal = self.create_section(right_column, "NARWHAL_FINANCE")
+
+        # Проверяем существование раздела в конфиге
+        if "NARWHAL_FINANCE" not in self.config:
+            self.config["NARWHAL_FINANCE"] = {
+                "AMOUNT_USDT_FOR_BET": [5, 50],
+                "NUMBER_OF_BETS_PER_START": [1, 3],
+                "PLAY_SLOTS": True,
+                "PLAY_DICE": True,
+                "PLAY_COINFLIP": True,
+            }
+
+        self.narwhal_amount_min, self.narwhal_amount_max = self.create_range_inputs(
+            narwhal,
+            "AMOUNT_USDT_FOR_BET",
+            self.config["NARWHAL_FINANCE"]["AMOUNT_USDT_FOR_BET"],
+        )
+
+        self.narwhal_bets_min, self.narwhal_bets_max = self.create_range_inputs(
+            narwhal,
+            "NUMBER_OF_BETS_PER_START",
+            self.config["NARWHAL_FINANCE"]["NUMBER_OF_BETS_PER_START"],
+        )
+
+        self.narwhal_slots = self.create_checkbox(
+            narwhal,
+            "PLAY_SLOTS",
+            self.config["NARWHAL_FINANCE"]["PLAY_SLOTS"],
+        )
+
+        self.narwhal_dice = self.create_checkbox(
+            narwhal,
+            "PLAY_DICE",
+            self.config["NARWHAL_FINANCE"]["PLAY_DICE"],
+        )
+
+        self.narwhal_coinflip = self.create_checkbox(
+            narwhal,
+            "PLAY_COINFLIP",
+            self.config["NARWHAL_FINANCE"]["PLAY_COINFLIP"],
+        )
+
     def _save_and_close(self):
         """Save config and close the window"""
         self.save_config()
@@ -1239,13 +1299,31 @@ class ConfigUI:
             True if self.nostra_withdraw.get() else False
         )
 
-        # Убедимся, что OCTO_SWAP присутствует в конфиге
-        if "OCTO_SWAP" not in self.config:
-            self.config["OCTO_SWAP"] = {"SWAP_ALL_TO_MONAD": False}
+        # NARWHAL_FINANCE
+        if "NARWHAL_FINANCE" not in self.config:
+            self.config["NARWHAL_FINANCE"] = {}
 
-        # Убедимся, что MONAIYAKUZA присутствует в конфиге
-        if "MONAIYAKUZA" not in self.config:
-            self.config["MONAIYAKUZA"] = {"MAX_PER_ACCOUNT": [1, 1]}
+        self.config["NARWHAL_FINANCE"]["AMOUNT_USDT_FOR_BET"] = [
+            float(self.narwhal_amount_min.get()),
+            float(self.narwhal_amount_max.get()),
+        ]
+
+        self.config["NARWHAL_FINANCE"]["NUMBER_OF_BETS_PER_START"] = [
+            int(self.narwhal_bets_min.get()),
+            int(self.narwhal_bets_max.get()),
+        ]
+
+        self.config["NARWHAL_FINANCE"]["PLAY_SLOTS"] = (
+            True if self.narwhal_slots.get() else False
+        )
+
+        self.config["NARWHAL_FINANCE"]["PLAY_DICE"] = (
+            True if self.narwhal_dice.get() else False
+        )
+
+        self.config["NARWHAL_FINANCE"]["PLAY_COINFLIP"] = (
+            True if self.narwhal_coinflip.get() else False
+        )
 
         # Save to file with improved formatting
         config_path = os.path.join(os.path.dirname(__file__), "..", "..", "config.yaml")
@@ -1332,6 +1410,12 @@ class ConfigUI:
 # Удалить или закомментировать эту часть, так как теперь запуск будет через метод run()
 # def main():
 #     app = ConfigUI()
+#     app.root.mainloop()
+
+
+# if __name__ == "__main__":
+#     main()
+
 #     app.root.mainloop()
 
 

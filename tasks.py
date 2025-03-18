@@ -1,6 +1,8 @@
 TASKS = [
-    "FAUCET",
+    "GAMBLE",
 ]
+
+
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
 
@@ -11,6 +13,9 @@ FAUCET = [
 DUSTED = [
     "dusted",
 ]
+
+GAMBLE = ["narwhal_finance"]
+
 """
 EN:
 You can create your own task with the modules you need 
@@ -144,6 +149,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "monadking_unlocked" - mint NFT on www.nerzo.xyz/unlocked
 # "monaiyakuza_mint" - mint NFT on monai.gg/nft
 # "easynode_deploy" - deploy contract on easynode.xyz
+# "onchaingm_deploy" - deploy contract on onchaingm.com/deploy
 
 # REFUEL
 # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad
@@ -160,3 +166,4 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 # "nad_domains" - register random domain on nad.domains
 # "aircraft" - mint NFT on aircraft.fun
+# "narwhal_finance" - play games on testnet.narwhal.finance/carnival

@@ -3,6 +3,8 @@ import primp
 import random
 import asyncio
 
+from src.model.narwhal_finance.instance import NarwhalFinance
+from src.model.deploy.onchaingm.instance import OnChainGM
 from src.model.deploy.easy_node.instance import EasyNode
 from src.model.swaps.octo_swap import OctoSwap
 from src.model.nfts.monaigg_nft import MonAIYakuzaMint
@@ -44,7 +46,6 @@ class Start:
         twitter_token: str,
         email: str,
         config: Config,
-
     ):
         self.account_index = account_index
         self.proxy = proxy
@@ -399,7 +400,7 @@ class Start:
                 self.session,
             )
             await octo_swap.execute()
-        
+
         elif task == "easynode_deploy":
             easynode_deploy = EasyNode(
                 self.account_index,
@@ -410,7 +411,27 @@ class Start:
             )
             await easynode_deploy.deploy_contract()
 
-            
+        elif task == "onchaingm_deploy":
+            onchaingm_deploy = OnChainGM(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await onchaingm_deploy.deploy_contract()
+
+        elif task == "narwhal_finance":
+            narwhal_finance = NarwhalFinance(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await narwhal_finance.faucet()
+            await narwhal_finance.gamble()
+
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""
         pause = random.randint(
