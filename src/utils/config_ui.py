@@ -969,18 +969,12 @@ class ConfigUI:
         )
 
         # Add NARWHAL_FINANCE section
-        self.create_category_header(right_column, "�� NARWHAL FINANCE")
+        self.create_category_header(right_column, "💸 NARWHAL FINANCE")
         narwhal = self.create_section(right_column, "NARWHAL_FINANCE")
 
         # Проверяем существование раздела в конфиге
         if "NARWHAL_FINANCE" not in self.config:
-            self.config["NARWHAL_FINANCE"] = {
-                "AMOUNT_USDT_FOR_BET": [5, 50],
-                "NUMBER_OF_BETS_PER_START": [1, 3],
-                "PLAY_SLOTS": True,
-                "PLAY_DICE": True,
-                "PLAY_COINFLIP": True,
-            }
+            self.config["NARWHAL_FINANCE"] = {}
 
         self.narwhal_amount_min, self.narwhal_amount_max = self.create_range_inputs(
             narwhal,
@@ -1304,13 +1298,13 @@ class ConfigUI:
             self.config["NARWHAL_FINANCE"] = {}
 
         self.config["NARWHAL_FINANCE"]["AMOUNT_USDT_FOR_BET"] = [
-            float(self.narwhal_amount_min.get()),
-            float(self.narwhal_amount_max.get()),
+            int(float(self.narwhal_amount_min.get())),
+            int(float(self.narwhal_amount_max.get())),
         ]
 
         self.config["NARWHAL_FINANCE"]["NUMBER_OF_BETS_PER_START"] = [
-            int(self.narwhal_bets_min.get()),
-            int(self.narwhal_bets_max.get()),
+            int(float(self.narwhal_bets_min.get())),
+            int(float(self.narwhal_bets_max.get())),
         ]
 
         self.config["NARWHAL_FINANCE"]["PLAY_SLOTS"] = (
