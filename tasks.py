@@ -163,6 +163,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "onchaingm_deploy" - deploy contract on onchaingm.com/deploy
 
 # REFUEL
+# "crusty_refuel" - refuel from arbitrum, optimism, base to monad
 # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad
 # "orbiter" - bridge ETH from Sepolia to Monad via Orbiter
 # "memebridge" - memebridge refuel from arbitrum, optimism, base to monad
