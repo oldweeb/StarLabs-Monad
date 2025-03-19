@@ -1,6 +1,6 @@
 TESTNET_BRIDGE_RPCS = {
-    "Arbitrum": "https://rpc.ankr.com/arbitrum",
-    "Optimism": "https://rpc.ankr.com/optimism",
+    "Arbitrum": "https://arb1.lava.build",
+    "Optimism": "https://optimism.lava.build",
     "Sepolia": "https://sepolia.drpc.org",
 }
 

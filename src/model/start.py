@@ -5,6 +5,7 @@ import asyncio
 
 from src.model.narwhal_finance.instance import NarwhalFinance
 from src.model.deploy.onchaingm.instance import OnChainGM
+from src.model.crusty_swap.instance import CrustySwap
 from src.model.deploy.easy_node.instance import EasyNode
 from src.model.swaps.octo_swap import OctoSwap
 from src.model.nfts.monaigg_nft import MonAIYakuzaMint
@@ -165,6 +166,24 @@ class Start:
                 self.config,
             )
             await memebridge.refuel()
+
+        elif task == "crusty_refuel":
+            crusty_swap = CrustySwap(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+            )
+            await crusty_swap.refuel()
+
+        elif task == "crusty_sell":
+            crusty_swap = CrustySwap(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+            )
+            await crusty_swap.sell_monad()
 
         elif task == "apriori":
             apriori = Apriori(

@@ -1,10 +1,16 @@
 TASKS = [
-    "GAMBLE",
+    "CRUSTY_SWAP",
 ]
 
 
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
+
+# BUY AND SELL MON https://crustyswap.vercel.app/
+CRUSTY_SWAP = [
+    "crusty_refuel",
+    # "crusty_sell",
+]
 
 FAUCET = [
     "faucet",
@@ -50,7 +56,7 @@ TASKS = [
     "CREATE_YOUR_OWN_TASK",
 ]
 CREATE_YOUR_OWN_TASK = [
-    "memebridge",
+    "crusty_refuel",
     ("apriori", "magma", "shmonad"),
     ["ambient", "izumi", "bean"],
     "collect_all_to_monad",
@@ -65,7 +71,7 @@ BELOW ARE THE READY-MADE TASKS THAT YOU CAN USE:
 
 
 BRIDGE_AND_SWAPS = [
-    "memebridge",
+    "crusty_refuel",
     ("izumi", "ambient", "bean", "swaps"),
     "collect_all_to_monad",
 ]
@@ -116,6 +122,11 @@ EXCHANGE_AND_TESTNET_BRIDGE_TASK = [
     "collect_all_to_monad",
 ]
 
+EXCHANGE_AND_CRUSTY_SWAP_TASK = [
+    "cex_withdrawal",
+    "crusty_refuel",
+]
+
 EXCHANGE_AND_MEMEBRIDGE_TASK = [
     "cex_withdrawal",
     "memebridge",
@@ -152,6 +163,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "onchaingm_deploy" - deploy contract on onchaingm.com/deploy
 
 # REFUEL
+# "crusty_refuel" - refuel from arbitrum, optimism, base to monad
 # "gaszip" - gaszip refuel from arbitrum, optimism, base to monad
 # "orbiter" - bridge ETH from Sepolia to Monad via Orbiter
 # "memebridge" - memebridge refuel from arbitrum, optimism, base to monad
