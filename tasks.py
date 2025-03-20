@@ -8,7 +8,7 @@ MONAI_LEGACY = [
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
 
-# BUY AND SELL MON https://www.crustyswap.com/
+# BUY AND SELL MON https://www.crustyswap.xyz/
 
 CRUSTY_SWAP = [
     "crusty_refuel",
