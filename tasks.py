@@ -1,5 +1,9 @@
 TASKS = [
-    "FAUCET",
+    "MONAI_LEGACY",
+]
+
+MONAI_LEGACY = [
+    "monai_legacy",
 ]
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
@@ -158,6 +162,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "monadking_unlocked" - mint NFT on www.nerzo.xyz/unlocked
 # "easynode_deploy" - deploy contract on easynode.xyz
 # "onchaingm_deploy" - deploy contract on onchaingm.com/deploy
+# "monai_legacy" - mint NFT on monaigg.xyz
 
 # REFUEL
 # "crusty_refuel" - refuel from arbitrum, optimism, base to monad

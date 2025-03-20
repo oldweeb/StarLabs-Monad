@@ -1,4 +1,4 @@
-from .monaigg_nft import MonAIYakuzaMint
+from .monaigg_nft import Legacy
 
-__all__ = ["MonAIYakuzaMint"]
+__all__ = ["Legacy"]
 

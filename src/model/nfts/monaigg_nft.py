@@ -2,7 +2,7 @@ import asyncio
 import random
 from eth_account import Account
 from primp import AsyncClient
-from web3 import AsyncWeb3
+from web3 import AsyncWeb3, Web3
 from web3.contract import Contract
 
 from src.utils.constants import EXPLORER_URL, RPC_URL
@@ -31,8 +31,29 @@ MONAI_YAKUZA_ABI = [
     },
 ]
 
+# Обновляем ABI для MonAI Qingyi NFT
+MONAI_QINGYI_ABI = [
+    {
+        "type": "function",
+        "name": "mint",
+        "inputs": [
+            {"name": "quantity", "type": "uint256", "internalType": "uint256"},
+            {"name": "refer", "type": "address", "internalType": "address"},
+        ],
+        "outputs": [],
+        "stateMutability": "payable",
+    },
+    {
+        "type": "function",
+        "name": "balanceOf",
+        "inputs": [{"name": "owner", "type": "address", "internalType": "address"}],
+        "outputs": [{"name": "", "type": "uint256", "internalType": "uint256"}],
+        "stateMutability": "view",
+    },
+]
 
-class MonAIYakuzaMint:
+
+class Legacy:
     def __init__(
         self,
         account_index: int,
@@ -54,15 +75,19 @@ class MonAIYakuzaMint:
                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
             )
         )
-        
-        self.nft_contract_address = (
-            "0x2742937d49D4ef6DFb8073ad7D33b203d6232a88"  # MonAI Yakuza контракт
+
+        # Изменяем адрес контракта на MonAI Qingyi (Week2NFT)
+        self.nft_contract_address = Web3.to_checksum_address(
+            "0x252390af40ab02C0B8D05Fe6f8BAe145C6F26989"
         )
+        # Используем MONAI_QINGYI_ABI вместо MONAI_YAKUZA_ABI
         self.nft_contract: Contract = self.web3.eth.contract(
-            address=self.nft_contract_address, abi=MONAI_YAKUZA_ABI
+            address=self.nft_contract_address, abi=MONAI_QINGYI_ABI
         )
-        # Адрес для реферала (можно использовать нулевой адрес или другой адрес)
-        self.refer_address = "0x0000000000000000000000000000000000000000"
+        # Адрес для реферала
+        self.refer_address = Web3.to_checksum_address(
+            "0xf8dd242cf234ecfcbfaba05e35fef5ff57cb9c0b"
+        )
 
     async def get_nft_balance(self) -> int:
         """
@@ -91,11 +116,11 @@ class MonAIYakuzaMint:
 
                 if balance >= random_nft_amount:
                     logger.success(
-                        f"[{self.account_index}] MonAI Yakuza NFT already minted"
+                        f"[{self.account_index}] MonAI Qingyi NFT already minted"
                     )
                     return True
 
-                logger.info(f"[{self.account_index}] Minting MonAI Yakuza NFT")
+                logger.info(f"[{self.account_index}] Minting MonAI Qingyi NFT")
 
                 # Подготавливаем транзакцию минта
                 mint_txn = await self.nft_contract.functions.mint(
@@ -104,7 +129,9 @@ class MonAIYakuzaMint:
                 ).build_transaction(
                     {
                         "from": self.account.address,
-                        "value": self.web3.to_wei(0.2, "ether"),  # 0.2 MON для минта
+                        "value": self.web3.to_wei(
+                            0.518, "ether"
+                        ),  # 0.518 MON для минта
                         "nonce": await self.web3.eth.get_transaction_count(
                             self.account.address
                         ),
@@ -128,12 +155,12 @@ class MonAIYakuzaMint:
 
                 if receipt["status"] == 1:
                     logger.success(
-                        f"[{self.account_index}] Successfully minted MonAI Yakuza NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                        f"[{self.account_index}] Successfully minted MonAI Qingyi NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
                     )
                     return True
                 else:
                     logger.error(
-                        f"[{self.account_index}] Failed to mint MonAI Yakuza NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                        f"[{self.account_index}] Failed to mint MonAI Qingyi NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
                     )
                     return False
 
@@ -143,7 +170,7 @@ class MonAIYakuzaMint:
                     self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
                 )
                 logger.error(
-                    f"[{self.account_index}] Error in mint on MonAI Yakuza: {e}. Sleeping for {random_pause} seconds"
+                    f"[{self.account_index}] Error in mint on MonAI Qingyi: {e}. Sleeping for {random_pause} seconds"
                 )
                 await asyncio.sleep(random_pause)
 
