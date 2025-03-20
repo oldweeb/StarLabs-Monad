@@ -5,6 +5,7 @@ import os
 
 from loguru import logger
 
+from src.model.crusty_swap.instance import CrustySwap
 from src.model.disperse_from_one.instance import DisperseFromOneWallet
 from src.model.balance_checker.instance import BalanceChecker
 from src.model.disperse_one_one.instance import DisperseOneOne
@@ -129,7 +130,6 @@ async def start():
         private_keys = src.utils.read_txt_file(
             "private keys", "data/keys_for_faucet.txt"
         )
-    
     else:
         private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
 
@@ -140,7 +140,19 @@ async def start():
             return
     else:
         twitter_tokens = [""] * len(private_keys)
-        
+    
+    if "crusty_refuel_from_one_to_all" in config.FLOW.TASKS:
+        private_keys_to_distribute = private_keys[1:]
+        crusty_swap = CrustySwap(
+            1,
+            proxies[0],
+            private_keys[0],
+            config
+        )
+        await crusty_swap.refuel_from_one_to_all(private_keys_to_distribute)
+        return
+
+
     # Определяем диапазон аккаунтов
     start_index = config.SETTINGS.ACCOUNTS_RANGE[0]
     end_index = config.SETTINGS.ACCOUNTS_RANGE[1]
