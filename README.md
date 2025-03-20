@@ -37,13 +37,9 @@ TUTORIAL - https://star-labs.gitbook.io/star-labs/monad-eng
 # MINT
 "magiceden" - mint NFT on magiceden.io
 
-"accountable" - mint accountable nft
-
 "owlto" - deploy contract on Owlto
 
 "lilchogstars" - mint NFT on testnet.lilchogstars.com/
-
-"demask" - mint NFT on app.demask.finance/launchpad/0x2cdd146aa75ffa605ff7c5cc5f62d3b52c140f9c/0
 
 "monadking" - mint NFT on nerzo.xyz/monadking
 

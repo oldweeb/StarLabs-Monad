@@ -18,15 +18,12 @@ from src.model.dusted.instance import Dusted
 from src.model.aircraft.instance import Aircraft
 from src.model.magiceden.instance import MagicEden
 from src.model.monadking_mint.instance import Monadking
-from src.model.demask_mint.instance import Demask
 from src.model.lilchogstars_mint.instance import Lilchogstars
 from src.model.kintsu.instance import Kintsu
 from src.model.orbiter.instance import Orbiter
-from src.model.accountable.instance import Accountable
 from src.model.shmonad.instance import Shmonad
 from src.model.gaszip.instance import Gaszip
 from src.model.monadverse_mint.instance import MonadverseMint
-from src.model.bima.instance import Bima
 from src.model.owlto.instance import Owlto
 from src.model.magma.instance import Magma
 from src.model.apriori import Apriori
@@ -215,20 +212,6 @@ class Start:
             )
             await owlto.deploy_contract()
 
-        elif task == "bima":
-            bima = Bima(
-                self.account_index,
-                self.proxy,
-                self.private_key,
-                self.config,
-                self.session,
-            )
-            await bima.get_faucet_tokens()
-            await self.sleep("bima_faucet")
-
-            if self.config.BIMA.LEND:
-                await bima.lend()
-
         elif task == "monadverse":
             monadverse_mint = MonadverseMint(
                 self.account_index,
@@ -248,16 +231,6 @@ class Start:
                 self.session,
             )
             await shmonad.swaps()
-
-        # elif task == "accountable":
-        #     accountable = Accountable(
-        #         self.account_index,
-        #         self.proxy,
-        #         self.private_key,
-        #         self.config,
-        #         self.session,
-        #     )
-        #     await accountable.mint()
 
         elif task == "orbiter":
             orbiter = Orbiter(
@@ -312,16 +285,6 @@ class Start:
                 self.session,
             )
             await lilchogstars.mint()
-
-        elif task == "demask":
-            demask = Demask(
-                self.account_index,
-                self.proxy,
-                self.private_key,
-                self.config,
-                self.session,
-            )
-            await demask.mint()
 
         elif task == "monadking":
             monadking = Monadking(

@@ -542,29 +542,12 @@ class ConfigUI:
         # NFT Category
         self.create_category_header(left_column, "🎨 NFT")
 
-        # Add ACCOUNTABLE section
-        accountable = self.create_section(left_column, "ACCOUNTABLE")
-        self.accountable_limit = self.create_single_input(
-            accountable,
-            "NFT_PER_ACCOUNT_LIMIT",
-            self.config["ACCOUNTABLE"]["NFT_PER_ACCOUNT_LIMIT"],
-            width=100,
-        )
-
         # Add LILCHOGSTARS section
         lilchog = self.create_section(left_column, "LILCHOGSTARS")
         self.lilchog_amount_min, self.lilchog_amount_max = self.create_range_inputs(
             lilchog,
             "MAX_AMOUNT_FOR_EACH_ACCOUNT",
             self.config["LILCHOGSTARS"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"],
-        )
-
-        # Add DEMASK section
-        demask = self.create_section(left_column, "DEMASK")
-        self.demask_amount_min, self.demask_amount_max = self.create_range_inputs(
-            demask,
-            "MAX_AMOUNT_FOR_EACH_ACCOUNT",
-            self.config["DEMASK"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"],
         )
 
         # Add MONADKING section
@@ -984,19 +967,6 @@ class ConfigUI:
             width=self.input_sizes["tiny"],
         )
 
-        # Add BIMA section
-        bima = self.create_section(right_column, "BIMA")
-        self.bima_lend = self.create_checkbox(
-            bima,
-            "LEND",
-            self.config["BIMA"]["LEND"],
-        )
-        self.bima_percent_min, self.bima_percent_max = self.create_range_inputs(
-            bima,
-            "PERCENT_OF_BALANCE_TO_LEND",
-            self.config["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"],
-        )
-
         # Add NOSTRA section
         nostra = self.create_section(right_column, "NOSTRA")
         self.nostra_deposit_min, self.nostra_deposit_max = self.create_range_inputs(
@@ -1246,21 +1216,10 @@ class ConfigUI:
             self.testnet_bridge_max.get()
         )
 
-        # ACCOUNTABLE
-        self.config["ACCOUNTABLE"]["NFT_PER_ACCOUNT_LIMIT"] = int(
-            self.accountable_limit.get()
-        )
-
         # LILCHOGSTARS
         self.config["LILCHOGSTARS"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"] = [
             int(self.lilchog_amount_min.get()),
             int(self.lilchog_amount_max.get()),
-        ]
-
-        # DEMASK
-        self.config["DEMASK"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"] = [
-            int(self.demask_amount_min.get()),
-            int(self.demask_amount_max.get()),
         ]
 
         # MONADKING
@@ -1329,13 +1288,6 @@ class ConfigUI:
                 "max_wait_time": int(self.withdrawal_wait_time.get()),
                 "retries": int(self.withdrawal_retries.get()),
             }
-        ]
-
-        # BIMA
-        self.config["BIMA"]["LEND"] = True if self.bima_lend.get() else False
-        self.config["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"] = [
-            int(float(self.bima_percent_min.get())),
-            int(float(self.bima_percent_max.get())),
         ]
 
         # NOSTRA

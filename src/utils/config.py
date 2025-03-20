@@ -59,13 +59,6 @@ class KintsuConfig:
     STAKE: bool
     UNSTAKE: bool
 
-
-@dataclass
-class BimaConfig:
-    LEND: bool
-    PERCENT_OF_BALANCE_TO_LEND: Tuple[int, int]
-
-
 @dataclass
 class DustedConfig:
     CLAIM: bool
@@ -145,12 +138,6 @@ class ShmonadConfig:
     BUY_AND_STAKE_SHMON: bool
     UNSTAKE_AND_SELL_SHMON: bool
 
-
-@dataclass
-class AccountableConfig:
-    NFT_PER_ACCOUNT_LIMIT: int
-
-
 @dataclass
 class OrbiterConfig:
     AMOUNT_TO_BRIDGE: Tuple[float, float]
@@ -167,12 +154,6 @@ class DisperseConfig:
 @dataclass
 class LilchogstarsConfig:
     MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
-
-
-@dataclass
-class DemaskConfig:
-    MAX_AMOUNT_FOR_EACH_ACCOUNT: Tuple[int, int]
-
 
 @dataclass
 class MonadkingConfig:
@@ -237,15 +218,12 @@ class Config:
     APRIORI: AprioriConfig
     MAGMA: MagmaConfig
     KINTSU: KintsuConfig
-    BIMA: BimaConfig
     GASZIP: GaszipConfig
     SHMONAD: ShmonadConfig
-    ACCOUNTABLE: AccountableConfig
     ORBITER: OrbiterConfig
     OCTO_SWAP: OctoSwapConfig
     DISPERSE: DisperseConfig
     LILCHOGSTARS: LilchogstarsConfig
-    DEMASK: DemaskConfig
     MONADKING: MonadkingConfig
     FRONT_RUNNER: FrontRunnerConfig
     MAGICEDEN: MagicEdenConfig
@@ -369,12 +347,6 @@ class Config:
                 STAKE=data["KINTSU"]["STAKE"],
                 UNSTAKE=data["KINTSU"]["UNSTAKE"],
             ),
-            BIMA=BimaConfig(
-                LEND=data["BIMA"]["LEND"],
-                PERCENT_OF_BALANCE_TO_LEND=tuple(
-                    data["BIMA"]["PERCENT_OF_BALANCE_TO_LEND"]
-                ),
-            ),
             DUSTED=DustedConfig(
                 CLAIM=data["DUSTED"]["CLAIM"],
                 SKIP_TWITTER_VERIFICATION=data["DUSTED"]["SKIP_TWITTER_VERIFICATION"],
@@ -440,9 +412,6 @@ class Config:
                 BUY_AND_STAKE_SHMON=data["SHMONAD"]["BUY_AND_STAKE_SHMON"],
                 UNSTAKE_AND_SELL_SHMON=data["SHMONAD"]["UNSTAKE_AND_SELL_SHMON"],
             ),
-            ACCOUNTABLE=AccountableConfig(
-                NFT_PER_ACCOUNT_LIMIT=data["ACCOUNTABLE"]["NFT_PER_ACCOUNT_LIMIT"],
-            ),
             ORBITER=OrbiterConfig(
                 AMOUNT_TO_BRIDGE=tuple(data["ORBITER"]["AMOUNT_TO_BRIDGE"]),
                 BRIDGE_ALL=data["ORBITER"]["BRIDGE_ALL"],
@@ -457,11 +426,6 @@ class Config:
             LILCHOGSTARS=LilchogstarsConfig(
                 MAX_AMOUNT_FOR_EACH_ACCOUNT=tuple(
                     data["LILCHOGSTARS"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"]
-                ),
-            ),
-            DEMASK=DemaskConfig(
-                MAX_AMOUNT_FOR_EACH_ACCOUNT=tuple(
-                    data["DEMASK"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"]
                 ),
             ),
             MONADKING=MonadkingConfig(
