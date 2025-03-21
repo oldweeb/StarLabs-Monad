@@ -251,15 +251,14 @@ class TestnetBridge:
             # Use the existing session instead of creating a new aiohttp session
             response = await self.session.post(rpc_url, json=json_data)
             result = response.json()
-                    
             # Get the result and convert to an integer
-            if "result" in result[0]:
-                amount_out_hex = int(result[0]["result"], 16)
-                
+            if "result" in result:                
+                amount_out_hex = int(result["result"], 16)
                 # Apply a safety factor (95% of the quoted amount)
                 amount_out = float(amount_out_hex) * 0.95
+
                 amount_out = Web3.to_wei(amount_out, "ether")
-                
+
                 # Handle very large numbers
                 if len(str(amount_out)) > 18:
                     amount_out = int(amount_out / 1e18)
