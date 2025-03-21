@@ -1,9 +1,5 @@
 TASKS = [
-    "MONAI_LEGACY",
-]
-
-MONAI_LEGACY = [
-    "monai_legacy",
+    "CRUSTY_SWAP",
 ]
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
@@ -181,3 +177,4 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "nad_domains" - register random domain on nad.domains
 # "aircraft" - mint NFT on aircraft.fun
 # "narwhal_finance" - play games on testnet.narwhal.finance/carnival
+# "monsternad_whitelist" - add to monsternad whitelist airdrop.monsternad.xyz/dashboard/
