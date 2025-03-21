@@ -4,13 +4,6 @@ TASKS = [
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
 
-# BUY AND SELL MON https://www.crustyswap.com/
-
-CRUSTY_SWAP = [
-    "crusty_refuel",
-    # "crusty_sell",
-    # "crusty_refuel_from_one_to_all",
-]
 
 FAUCET = [
     "faucet",

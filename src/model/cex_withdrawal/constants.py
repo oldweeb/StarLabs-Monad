@@ -12,7 +12,7 @@ NETWORK_MAPPINGS = {
         "Optimism": "OPTIMISM"
     },
     "bitget": {
-        "Arbitrum": "ARBITRUMONE",
+        "Arbitrum": "ARBONE",
         "Base": "BASE",
         "Optimism": "OPTIMISM"
     }
