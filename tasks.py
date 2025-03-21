@@ -4,6 +4,11 @@ TASKS = [
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
 
+CRUSTY_SWAP = [
+     "crusty_refuel",
+     # "crusty_sell",
+     # "crusty_refuel_from_one_to_all",
+]
 
 FAUCET = [
     "faucet",
