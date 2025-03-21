@@ -1,5 +1,12 @@
 TASKS = [
-    "MONAI_LEGACY",
+    "CRUSTY_SWAP",
+]
+
+# BUY AND SELL MON https://www.crustyswap.xyz/
+CRUSTY_SWAP = [
+    "crusty_refuel",
+    # "crusty_sell",
+    # "crusty_refuel_from_one_to_all",
 ]
 
 MONAI_LEGACY = [
@@ -8,13 +15,6 @@ MONAI_LEGACY = [
 
 # MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
 
-# BUY AND SELL MON https://www.crustyswap.xyz/
-
-CRUSTY_SWAP = [
-    "crusty_refuel",
-    # "crusty_sell",
-    # "crusty_refuel_from_one_to_all",
-]
 
 FAUCET = [
     "faucet",
