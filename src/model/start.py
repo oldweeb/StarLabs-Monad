@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.stakings import Multiplifi
 from src.model.others.monsternad import monsternad_whitelist
 from src.model.narwhal_finance.instance import NarwhalFinance
 from src.model.deploy.onchaingm.instance import OnChainGM
@@ -422,7 +423,18 @@ class Start:
                 self.config,
                 self.private_key,
             )
-            
+        
+        elif task == "multiplifi":
+            multiplifi = Multiplifi(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await multiplifi.faucet()
+            await multiplifi.stake()
+        
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""
         pause = random.randint(
