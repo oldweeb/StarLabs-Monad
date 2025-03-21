@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.swaps.flapsh.instance import Flapsh
 from src.model.stakings import Multiplifi
 from src.model.others.monsternad import monsternad_whitelist
 from src.model.narwhal_finance.instance import NarwhalFinance
@@ -435,6 +436,16 @@ class Start:
             await multiplifi.faucet()
             await multiplifi.stake()
         
+        elif task == "flapsh":
+            flapsh = Flapsh(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await flapsh.execute()
+
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""
         pause = random.randint(

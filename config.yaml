@@ -150,7 +150,7 @@ MAGICEDEN:
 FAUCET:
     USE_SOLVIUM_FOR_CLOUDFLARE: true
     # CHEAPEST CAPTCHA SOLVER - https://t.me/solvium_crypto_bot
-    SOLVIUM_API_KEY: sadfhasldfhalsdjfhalsdjf
+    SOLVIUM_API_KEY: awdawdadawdadawd
 
     # optional
     USE_CAPSOLVER_FOR_CLOUDFLARE: false
@@ -194,4 +194,14 @@ NARWHAL_FINANCE:
     PLAY_SLOTS: true
     PLAY_DICE: true
     PLAY_COINFLIP: true
+
+
+FLAPSH:
+    # Amount of mon we will buy memcoin for
+    AMOUNT_TO_PAY: [0.0001, 0.0003]
+    # how many memcoins we will buy per run
+    NUMBER_OF_MEMCOINS_TO_BUY: [1, 3]
+    # Addresses of the memcoins we will buy (takes random from list)
+    # if the list is empty, the bot will parse the list of memcoins from the flapsh.xyz
+    TOKEN_ADDRESS: []
 

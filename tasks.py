@@ -140,7 +140,6 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "bean" - swap tokens on Bean DEX
 # "ambient" - swap tokens on Ambient DEX
 # "izumi" - swap tokens on Izumi DEX
-
 # STAKES
 # "apriori" - stake MON token
 # "magma" - stake MON token on Magma
@@ -148,6 +147,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "kintsu" - stake MON token on kintsu.xyz/
 # "nostra" - deposit, borrow, repay, withdraw
 # "multiplifi" - stake USDC token on https://testnet.multipli.fi/?stake-tab=stake
+# "flapsh" - buy memcoin for MON on https://monad.flap.sh/board
 
 # MINT
 # "magiceden" - mint NFT on magiceden.io
