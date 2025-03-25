@@ -152,8 +152,7 @@ class Gaszip:
                         total_gas_cost_wei = int(estimated_gas * gas_price_wei * 1.1)
                         
                         # Convert to ETH
-                        gas_reserve = float(web3.from_wei(total_gas_cost_wei, 'ether'))
-                        
+                        gas_reserve = float(web3.from_wei(total_gas_cost_wei, 'ether')) + random.uniform(0.000005, 0.00001)    
                         logger.info(f"[{self.account_index}] Estimated gas for {network} transaction: {estimated_gas} units")
                         logger.info(f"[{self.account_index}] Calculated gas reserve: {gas_reserve} ETH")
                         
