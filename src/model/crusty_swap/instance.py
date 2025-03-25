@@ -184,19 +184,38 @@ class CrustySwap:
             logger.error(f"[{self.account_index}] Error getting minimum deposit: {str(e)}")
             return 0
         
-    async def get_eligible_networks(self):
-        try:
-            eligible_networks = []
+    async def get_eligible_networks(self, max_retries=5, retry_delay=5):
+        """
+        Get eligible networks for refueling with retry mechanism.
+        
+        Args:
+            max_retries: Maximum number of retry attempts (default: 5)
+            retry_delay: Delay between retries in seconds (default: 5)
             
-            networks_to_refuel_from = self.config.CRUSTY_SWAP.NETWORKS_TO_REFUEL_FROM
-            for network in networks_to_refuel_from:
-                balance = await self.get_native_balance(network)
-                if balance > await self.get_minimum_deposit(network):
-                    eligible_networks.append((network, balance))
-            return eligible_networks
-        except Exception as e:
-            logger.error(f"[{self.account_index}] Error getting eligible networks: {str(e)}")
-            return False
+        Returns:
+            List of tuples (network, balance) or False if no eligible networks found
+        """
+        for attempt in range(1, max_retries + 1):
+            try:
+                eligible_networks = []
+                
+                networks_to_refuel_from = self.config.CRUSTY_SWAP.NETWORKS_TO_REFUEL_FROM
+                for network in networks_to_refuel_from:
+                    balance = await self.get_native_balance(network)
+                    if balance > await self.get_minimum_deposit(network):
+                        eligible_networks.append((network, balance))
+                return eligible_networks
+            except Exception as e:
+                if attempt < max_retries:
+                    logger.warning(f"[{self.account_index}] Attempt {attempt}/{max_retries} failed to get eligible networks: {str(e)}")
+                    logger.info(f"[{self.account_index}] Retrying in {retry_delay} seconds...")
+                    await asyncio.sleep(retry_delay)
+                else:
+                    logger.error(f"[{self.account_index}] All {max_retries} attempts failed to get eligible networks: {str(e)}")
+                    return False
+        
+        # We should never reach here, but just in case
+        return False
 
     async def pick_network_to_refuel_from(self):
         eligible_networks = await self.get_eligible_networks()
