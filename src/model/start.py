@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.nfts.morkie import Morkie
 from src.model.swaps.flapsh.instance import Flapsh
 from src.model.stakings import Multiplifi
 from src.model.others.monsternad import monsternad_whitelist
@@ -445,7 +446,21 @@ class Start:
                 self.session,
             )
             await flapsh.execute()
+        
+        elif task.startswith("morkie_"):
+            morkie = Morkie(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            if task == "morkie_monhog":
+                await morkie.mint_monhog()
+            elif task == "morkie_monarch":
+                await morkie.mint_monarch()
 
+            
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""
         pause = random.randint(

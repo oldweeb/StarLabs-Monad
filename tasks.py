@@ -140,6 +140,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "bean" - swap tokens on Bean DEX
 # "ambient" - swap tokens on Ambient DEX
 # "izumi" - swap tokens on Izumi DEX
+
 # STAKES
 # "apriori" - stake MON token
 # "magma" - stake MON token on Magma
@@ -158,6 +159,9 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "easynode_deploy" - deploy contract on easynode.xyz
 # "onchaingm_deploy" - deploy contract on onchaingm.com/deploy
 # "monai_legacy" - mint NFT on monaigg.xyz
+# "morkie_monhog" - mint NFT on https://morkie.xyz/monhog # price 0.5 MON
+# "morkie_monarch" - mint NFT on https://morkie.xyz/monarch # price 0.1 MON
+
 
 # REFUEL
 # "crusty_refuel" - refuel from arbitrum, optimism, base to monad
