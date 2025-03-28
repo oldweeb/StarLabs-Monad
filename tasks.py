@@ -15,6 +15,10 @@ FAUCET = [
 ]
 
 
+NERZO_SOULBOUND = [
+    "nerzo_soulbound",
+]
+
 MONAIGG = [
     "monaigg",
 ]
@@ -160,6 +164,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "morkie_monhog" - mint NFT on https://morkie.xyz/monhog # price 0.5 MON
 # "morkie_monarch" - mint NFT on https://morkie.xyz/monarch # price 0.1 MON
 # "monaigg" - mint NFT on https://monai.gg/nft
+# "nerzo_soulbound" - mint NFT on https://nerzo.xyz/soulbound
 
 # REFUEL
 # "crusty_refuel" - refuel from arbitrum, optimism, base to monad

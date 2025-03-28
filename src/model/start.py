@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.nfts.nerzo import Nerzo
 from src.model.nfts.morkie import Morkie
 from src.model.swaps.flapsh.instance import Flapsh
 from src.model.stakings import Multiplifi
@@ -460,6 +461,18 @@ class Start:
             )
             await monaigg.mint()
         
+        elif task == "nerzo_soulbound":
+            nerzo = Nerzo(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await nerzo.mint()
+
+        
+
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""
         pause = random.randint(
