@@ -53,7 +53,7 @@ MONAI_QINGYI_ABI = [
 ]
 
 
-class Legacy:
+class Monai:
     def __init__(
         self,
         account_index: int,
@@ -76,9 +76,9 @@ class Legacy:
             )
         )
 
-        # Изменяем адрес контракта на MonAI Qingyi (Week2NFT)
+        # Изменяем адрес контракта на новый
         self.nft_contract_address = Web3.to_checksum_address(
-            "0x252390af40ab02C0B8D05Fe6f8BAe145C6F26989"
+            "0xcf9666810c3d9F8Ffe912A40738a91e19040b84D"
         )
         # Используем MONAI_QINGYI_ABI вместо MONAI_YAKUZA_ABI
         self.nft_contract: Contract = self.web3.eth.contract(
@@ -116,11 +116,11 @@ class Legacy:
 
                 if balance >= random_nft_amount:
                     logger.success(
-                        f"[{self.account_index}] MonAI Qingyi NFT already minted"
+                        f"[{self.account_index}] MonAI Chosen NFT already minted"
                     )
                     return True
 
-                logger.info(f"[{self.account_index}] Minting MonAI Qingyi NFT")
+                logger.info(f"[{self.account_index}] Minting Chosen NFT")
 
                 # Подготавливаем транзакцию минта
                 mint_txn = await self.nft_contract.functions.mint(
@@ -130,8 +130,8 @@ class Legacy:
                     {
                         "from": self.account.address,
                         "value": self.web3.to_wei(
-                            0.518, "ether"
-                        ),  # 0.518 MON для минта
+                            0.9, "ether"  # Обновляем сумму для минта на 0.9 MON
+                        ),
                         "nonce": await self.web3.eth.get_transaction_count(
                             self.account.address
                         ),
@@ -155,12 +155,12 @@ class Legacy:
 
                 if receipt["status"] == 1:
                     logger.success(
-                        f"[{self.account_index}] Successfully minted MonAI Qingyi NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                        f"[{self.account_index}] Successfully minted Chosen NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
                     )
                     return True
                 else:
                     logger.error(
-                        f"[{self.account_index}] Failed to mint MonAI Qingyi NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                        f"[{self.account_index}] Failed to mint Chosen NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
                     )
                     return False
 
@@ -170,7 +170,7 @@ class Legacy:
                     self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
                 )
                 logger.error(
-                    f"[{self.account_index}] Error in mint on MonAI Qingyi: {e}. Sleeping for {random_pause} seconds"
+                    f"[{self.account_index}] Error in mint on Chosen NFT: {e}. Sleeping for {random_pause} seconds"
                 )
                 await asyncio.sleep(random_pause)
 

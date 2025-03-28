@@ -14,11 +14,10 @@ FAUCET = [
     "faucet",
 ]
 
-DUSTED = [
-    "dusted",
-]
 
-GAMBLE = ["narwhal_finance"]
+MONAIGG = [
+    "monaigg",
+]
 
 """
 EN:
@@ -158,10 +157,9 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "monadking_unlocked" - mint NFT on www.nerzo.xyz/unlocked
 # "easynode_deploy" - deploy contract on easynode.xyz
 # "onchaingm_deploy" - deploy contract on onchaingm.com/deploy
-# "monai_legacy" - mint NFT on monaigg.xyz
 # "morkie_monhog" - mint NFT on https://morkie.xyz/monhog # price 0.5 MON
 # "morkie_monarch" - mint NFT on https://morkie.xyz/monarch # price 0.1 MON
-
+# "monaigg" - mint NFT on https://monai.gg/nft
 
 # REFUEL
 # "crusty_refuel" - refuel from arbitrum, optimism, base to monad

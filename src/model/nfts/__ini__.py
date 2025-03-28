@@ -1,5 +1,5 @@
-from .monaigg_nft import Legacy
+from .monaigg_nft import Monai
 from .morkie import Morkie
     
-__all__ = ["Legacy", "Morkie"]
+__all__ = ["Monai", "Morkie"]
 

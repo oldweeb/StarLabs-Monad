@@ -12,7 +12,7 @@ from src.model.deploy.onchaingm.instance import OnChainGM
 from src.model.crusty_swap.instance import CrustySwap
 from src.model.deploy.easy_node.instance import EasyNode
 from src.model.swaps.octo_swap import OctoSwap
-from src.model.nfts.monaigg_nft import Legacy
+from src.model.nfts.monaigg_nft import Monai
 from src.model.nostra.instance import Nostra
 from src.model.frontrunner.instance import Frontrunner
 from src.model.cex_withdrawal.instance import CexWithdraw
@@ -367,16 +367,6 @@ class Start:
             )
             await cex_withdrawal.withdraw()
 
-        elif task == "monai_legacy":
-            monai_legacy = Legacy(
-                self.account_index,
-                self.proxy,
-                self.private_key,
-                self.config,
-                self.session,
-            )
-            await monai_legacy.mint()
-
         elif task == "octo_swap":
             octo_swap = OctoSwap(
                 self.account_index,
@@ -459,8 +449,17 @@ class Start:
                 await morkie.mint_monhog()
             elif task == "morkie_monarch":
                 await morkie.mint_monarch()
-
-            
+                
+        elif task == "monaigg":
+            monaigg = Monai(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await monaigg.mint()
+        
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""
         pause = random.randint(
