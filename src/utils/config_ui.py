@@ -258,7 +258,9 @@ class ConfigUI:
         )
         header.pack(fill="x", pady=(20, 10), padx=5)
 
-    def create_network_checkboxes(self, parent, label, config_value, available_networks=None):
+    def create_network_checkboxes(
+        self, parent, label, config_value, available_networks=None
+    ):
         frame = ctk.CTkFrame(parent, fg_color=self.colors["frame_bg"])
         frame.pack(fill="x", pady=5)
 
@@ -658,12 +660,14 @@ class ConfigUI:
             "NETWORKS_TO_REFUEL_FROM",
             self.config["CRUSTY_SWAP"]["NETWORKS_TO_REFUEL_FROM"],
             # available_networks=["Arbitrum", "Base", "Optimism", "ZkSync"]
-            available_networks=["Arbitrum", "Base", "Optimism"]
+            available_networks=["Arbitrum", "Base", "Optimism"],
         )
-        self.crusty_swap_amount_min, self.crusty_swap_amount_max = self.create_range_inputs(
-            crusty_swap,
-            "AMOUNT_TO_REFUEL",
-            self.config["CRUSTY_SWAP"]["AMOUNT_TO_REFUEL"],
+        self.crusty_swap_amount_min, self.crusty_swap_amount_max = (
+            self.create_range_inputs(
+                crusty_swap,
+                "AMOUNT_TO_REFUEL",
+                self.config["CRUSTY_SWAP"]["AMOUNT_TO_REFUEL"],
+            )
         )
         self.crusty_swap_min_balance = self.create_single_input(
             crusty_swap,
@@ -794,7 +798,7 @@ class ConfigUI:
             testnet,
             "NETWORKS_TO_REFUEL_FROM",
             self.config["TESTNET_BRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
-            available_networks=["Arbitrum", "Optimism"]
+            available_networks=["Arbitrum", "Optimism"],
         )
         self.testnet_amount_min, self.testnet_amount_max = self.create_range_inputs(
             testnet,
@@ -1031,6 +1035,14 @@ class ConfigUI:
             narwhal,
             "PLAY_COINFLIP",
             self.config["NARWHAL_FINANCE"]["PLAY_COINFLIP"],
+        )
+
+        # Add MADNESS section
+        madness = self.create_section(right_column, "MADNESS")
+        self.madness_swap_all = self.create_checkbox(
+            madness,
+            "SWAP_ALL_TO_MONAD",
+            self.config["MADNESS"]["SWAP_ALL_TO_MONAD"],
         )
 
     def _save_and_close(self):
@@ -1326,6 +1338,11 @@ class ConfigUI:
 
         self.config["NARWHAL_FINANCE"]["PLAY_COINFLIP"] = (
             True if self.narwhal_coinflip.get() else False
+        )
+
+        # MADNESS
+        self.config["MADNESS"]["SWAP_ALL_TO_MONAD"] = (
+            True if self.madness_swap_all.get() else False
         )
 
         # Save to file with improved formatting

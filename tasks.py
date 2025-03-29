@@ -143,6 +143,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "bean" - swap tokens on Bean DEX
 # "ambient" - swap tokens on Ambient DEX
 # "izumi" - swap tokens on Izumi DEX
+# "madness_swaps" - swap tokens on madness.finance/swap
 
 # STAKES
 # "apriori" - stake MON token

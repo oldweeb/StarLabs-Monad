@@ -40,7 +40,7 @@ FLOW:
     # number of swaps. bean ambient monad etc
     NUMBER_OF_SWAPS: [1, 1]
     # percent of balance to swap
-    PERCENT_OF_BALANCE_TO_SWAP: [10, 15]
+    PERCENT_OF_BALANCE_TO_SWAP: [5, 15]
 
 # --------------------------- #
 # OTHER SECTIONS
@@ -150,7 +150,7 @@ MAGICEDEN:
 FAUCET:
     USE_SOLVIUM_FOR_CLOUDFLARE: true
     # CHEAPEST CAPTCHA SOLVER - https://t.me/solvium_crypto_bot
-    SOLVIUM_API_KEY: awdawdadawdadawd
+    SOLVIUM_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
 
     # optional
     USE_CAPSOLVER_FOR_CLOUDFLARE: false
@@ -205,3 +205,6 @@ FLAPSH:
     # if the list is empty, the bot will parse the list of memcoins from the flapsh.xyz
     TOKEN_ADDRESS: []
 
+
+MADNESS:
+    SWAP_ALL_TO_MONAD: false
