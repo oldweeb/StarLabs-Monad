@@ -5,6 +5,7 @@ This tool automates interactions with the Monad testnet, including various DeFi 
 TUTORIAL - https://star-labs.gitbook.io/star-labs/monad-eng
 
 # All features are available in config:
+"crusty_refuel" - buy testnet monad from this bridge https://www.crustyswap.com/
 # FAUCETS
 "faucet" - get tokens from faucet
 
