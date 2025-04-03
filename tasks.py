@@ -82,13 +82,13 @@ FULL_TASK = [
     ["izumi", "swaps", "ambient", "bean", "skip"],
     ["izumi", "swaps", "ambient", "bean", "skip", "skip", "skip"],
     ["izumi", "swaps", "ambient", "bean", "skip", "skip", "skip"],
-    ["izumi", "aircraft", "lilchogstars", "bean", "swaps", "skip"],
+    ["izumi", "lilchogstars", "bean", "swaps", "skip"],
     ["ambient", "izumi", "bean", "skip", "skip"],
     "collect_all_to_monad",
     ["apriori", "magma", "shmonad", "kintsu", "skip", "skip"],
     ["apriori", "magma", "shmonad", "kintsu", "skip"],
     ["ambient", "izumi", "bean", "magiceden", "monadking", "skip"],
-    ["magiceden", "monadking", "aircraft", "skip", "skip"],
+    ["magiceden", "monadking", "skip", "skip"],
     "collect_all_to_monad",
     ["ambient", "izumi", "bean", "magiceden", "monadking", "skip"],
     ["izumi", "swaps", "ambient", "bean", "skip", "skip", "skip"],
@@ -182,6 +182,5 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # OTHER
 # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 # "nad_domains" - register random domain on nad.domains
-# "aircraft" - mint NFT on aircraft.fun
 # "narwhal_finance" - play games on testnet.narwhal.finance/carnival
 # "monsternad_whitelist" - add to monsternad whitelist airdrop.monsternad.xyz/dashboard/
