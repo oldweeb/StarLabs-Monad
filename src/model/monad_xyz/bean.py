@@ -275,7 +275,7 @@ class BeanDex:
                 tokens_to_swap = [
                     (t, b)
                     for t, b in tokens_with_balance
-                    if t not in ["native", "wmon", "bean"]
+                    if t not in ["native", "wmon"]
                 ]
                 if not tokens_to_swap:
                     logger.info("No tokens to collect to native")
@@ -289,9 +289,7 @@ class BeanDex:
                 for token_in, balance in tokens_to_swap:
                     try:
                         decimals = BEAN_TOKENS[token_in]["decimals"]
-                        amount_wei = int(
-                            Decimal(str(balance)) * Decimal(str(10**decimals))
-                        )
+                        amount_wei = int(Decimal(str(round(balance, 6))) * Decimal(str(10**decimals)))
 
                         # First check and approve if needed
                         logger.info(f"Checking allowance for {balance} {token_in}")
