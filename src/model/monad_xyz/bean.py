@@ -275,7 +275,7 @@ class BeanDex:
                 tokens_to_swap = [
                     (t, b)
                     for t, b in tokens_with_balance
-                    if t not in ["native", "wmon"]
+                    if t not in ["native", "wmon", "bean"]
                 ]
                 if not tokens_to_swap:
                     logger.info("No tokens to collect to native")
