@@ -330,15 +330,15 @@ class Start:
             )
             await magiceden.mint()
 
-        elif task == "aircraft":
-            aircraft = Aircraft(
-                self.account_index,
-                self.proxy,
-                self.private_key,
-                self.config,
-                self.session,
-            )
-            await aircraft.execute()
+        # elif task == "aircraft":
+        #     aircraft = Aircraft(
+        #         self.account_index,
+        #         self.proxy,
+        #         self.private_key,
+        #         self.config,
+        #         self.session,
+        #     )
+        #     await aircraft.execute()
 
         elif task == "dusted":
             dusty = Dusted(

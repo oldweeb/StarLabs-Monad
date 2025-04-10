@@ -78,7 +78,7 @@ class Monai:
 
         # Изменяем адрес контракта на новый
         self.nft_contract_address = Web3.to_checksum_address(
-            "0xcf9666810c3d9F8Ffe912A40738a91e19040b84D"
+            "0xc1711Ff6B4F81AE45c36f370a3914Da53b98bcDc"
         )
         # Используем MONAI_QINGYI_ABI вместо MONAI_YAKUZA_ABI
         self.nft_contract: Contract = self.web3.eth.contract(
@@ -130,7 +130,7 @@ class Monai:
                     {
                         "from": self.account.address,
                         "value": self.web3.to_wei(
-                            0.9, "ether"  # Обновляем сумму для минта на 0.9 MON
+                            1.35, "ether"  # Обновляем сумму для минта на 0.9 MON
                         ),
                         "nonce": await self.web3.eth.get_transaction_count(
                             self.account.address
