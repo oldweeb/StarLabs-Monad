@@ -182,5 +182,4 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # OTHER
 # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 # "nad_domains" - register random domain on nad.domains
-# "narwhal_finance" - play games on testnet.narwhal.finance/carnival
 # "monsternad_whitelist" - add to monsternad whitelist airdrop.monsternad.xyz/dashboard/
