@@ -277,8 +277,8 @@ class ConfigUI:
         networks_frame = ctk.CTkFrame(frame, fg_color=self.colors["frame_bg"])
         networks_frame.pack(fill="x", padx=10, pady=5)
 
-        # Use provided networks or default to the standard three
-        networks = available_networks or ["Arbitrum", "Base", "Optimism"]
+        # Use provided networks or default to the standard networks including ZkSync
+        networks = available_networks or ["Arbitrum", "Base", "Optimism", "ZkSync"]
         checkboxes = []
 
         for network in networks:
@@ -560,6 +560,16 @@ class ConfigUI:
             self.config["MONADKING"]["MAX_AMOUNT_FOR_EACH_ACCOUNT"],
         )
 
+        # Add MONAIYAKUZA section
+        monaiyakuza = self.create_section(left_column, "MONAIYAKUZA")
+        self.monaiyakuza_amount_min, self.monaiyakuza_amount_max = (
+            self.create_range_inputs(
+                monaiyakuza,
+                "MAX_PER_ACCOUNT",
+                self.config["MONAIYAKUZA"]["MAX_PER_ACCOUNT"],
+            )
+        )
+
         # Add MAGICEDEN section
         magiceden = self.create_section(left_column, "MAGICEDEN")
         self.magiceden_contracts = self.create_nft_contracts_list(
@@ -569,7 +579,7 @@ class ConfigUI:
         )
 
         # FRONT_RUNNER
-        frame_front_runner = self.create_section(right_column, "FRONT_RUNNER")
+        frame_front_runner = self.create_section(left_column, "FRONT_RUNNER")
 
         self.max_transactions_for_one_run = self.create_range_inputs(
             frame_front_runner,
@@ -659,8 +669,7 @@ class ConfigUI:
             crusty_swap,
             "NETWORKS_TO_REFUEL_FROM",
             self.config["CRUSTY_SWAP"]["NETWORKS_TO_REFUEL_FROM"],
-            # available_networks=["Arbitrum", "Base", "Optimism", "ZkSync"]
-            available_networks=["Arbitrum", "Base", "Optimism"],
+            available_networks=["Arbitrum", "Base", "Optimism", "ZkSync"],
         )
         self.crusty_swap_amount_min, self.crusty_swap_amount_max = (
             self.create_range_inputs(
@@ -716,6 +725,7 @@ class ConfigUI:
             gaszip,
             "NETWORKS_TO_REFUEL_FROM",
             self.config["GASZIP"]["NETWORKS_TO_REFUEL_FROM"],
+            available_networks=["Arbitrum", "Base", "Optimism", "ZkSync"],
         )
         self.gaszip_amount_min, self.gaszip_amount_max = self.create_range_inputs(
             gaszip, "AMOUNT_TO_REFUEL", self.config["GASZIP"]["AMOUNT_TO_REFUEL"]
@@ -755,6 +765,7 @@ class ConfigUI:
             memebridge,
             "NETWORKS_TO_REFUEL_FROM",
             self.config["MEMEBRIDGE"]["NETWORKS_TO_REFUEL_FROM"],
+            available_networks=["Arbitrum", "Base", "Optimism", "ZkSync"],
         )
         self.memebridge_amount_min, self.memebridge_amount_max = (
             self.create_range_inputs(
@@ -928,6 +939,7 @@ class ConfigUI:
             withdrawal_frame,
             "Networks",
             self.config["EXCHANGES"]["withdrawals"][0]["networks"],
+            available_networks=["Arbitrum", "Base", "Optimism", "ZkSync"],
         )
 
         # Min/Max amount
@@ -1043,6 +1055,55 @@ class ConfigUI:
             madness,
             "SWAP_ALL_TO_MONAD",
             self.config["MADNESS"]["SWAP_ALL_TO_MONAD"],
+        )
+
+        # Add OCTO_SWAP section
+        octo_swap = self.create_section(right_column, "OCTO_SWAP")
+        self.octo_swap_all = self.create_checkbox(
+            octo_swap,
+            "SWAP_ALL_TO_MONAD",
+            self.config["OCTO_SWAP"]["SWAP_ALL_TO_MONAD"],
+        )
+
+        # Add ZKCODEX section
+        zkcodex = self.create_section(right_column, "ZKCODEX")
+        self.zkcodex_deploy_token = self.create_checkbox(
+            zkcodex,
+            "DEPLOY_TOKEN",
+            self.config["ZKCODEX"]["DEPLOY_TOKEN"],
+        )
+        self.zkcodex_deploy_nft = self.create_checkbox(
+            zkcodex,
+            "DEPLOY_NFT",
+            self.config["ZKCODEX"]["DEPLOY_NFT"],
+        )
+        self.zkcodex_deploy_contract = self.create_checkbox(
+            zkcodex,
+            "DEPLOY_CONTRACT",
+            self.config["ZKCODEX"]["DEPLOY_CONTRACT"],
+        )
+        self.zkcodex_one_action = self.create_checkbox(
+            zkcodex,
+            "ONE_ACTION_PER_LAUNCH",
+            self.config["ZKCODEX"]["ONE_ACTION_PER_LAUNCH"],
+        )
+
+        # Add FLAPSH section
+        flapsh = self.create_section(right_column, "FLAPSH")
+        self.flapsh_amount_min, self.flapsh_amount_max = self.create_range_inputs(
+            flapsh,
+            "AMOUNT_TO_PAY",
+            self.config["FLAPSH"]["AMOUNT_TO_PAY"],
+        )
+        self.flapsh_number_min, self.flapsh_number_max = self.create_range_inputs(
+            flapsh,
+            "NUMBER_OF_MEMCOINS_TO_BUY",
+            self.config["FLAPSH"]["NUMBER_OF_MEMCOINS_TO_BUY"],
+        )
+        self.flapsh_tokens = self.create_nft_contracts_list(
+            flapsh,
+            "TOKEN_ADDRESS",
+            self.config["FLAPSH"]["TOKEN_ADDRESS"],
         )
 
     def _save_and_close(self):
@@ -1240,6 +1301,12 @@ class ConfigUI:
             int(self.monadking_amount_max.get()),
         ]
 
+        # MONAIYAKUZA
+        self.config["MONAIYAKUZA"]["MAX_PER_ACCOUNT"] = [
+            int(self.monaiyakuza_amount_min.get()),
+            int(self.monaiyakuza_amount_max.get()),
+        ]
+
         # MAGICEDEN
         self.config["MAGICEDEN"]["NFT_CONTRACTS"] = [
             x.strip()
@@ -1344,6 +1411,40 @@ class ConfigUI:
         self.config["MADNESS"]["SWAP_ALL_TO_MONAD"] = (
             True if self.madness_swap_all.get() else False
         )
+
+        # OCTO_SWAP
+        self.config["OCTO_SWAP"]["SWAP_ALL_TO_MONAD"] = (
+            True if self.octo_swap_all.get() else False
+        )
+
+        # ZKCODEX
+        self.config["ZKCODEX"]["DEPLOY_TOKEN"] = (
+            True if self.zkcodex_deploy_token.get() else False
+        )
+        self.config["ZKCODEX"]["DEPLOY_NFT"] = (
+            True if self.zkcodex_deploy_nft.get() else False
+        )
+        self.config["ZKCODEX"]["DEPLOY_CONTRACT"] = (
+            True if self.zkcodex_deploy_contract.get() else False
+        )
+        self.config["ZKCODEX"]["ONE_ACTION_PER_LAUNCH"] = (
+            True if self.zkcodex_one_action.get() else False
+        )
+
+        # FLAPSH
+        self.config["FLAPSH"]["AMOUNT_TO_PAY"] = [
+            float(self.flapsh_amount_min.get()),
+            float(self.flapsh_amount_max.get()),
+        ]
+        self.config["FLAPSH"]["NUMBER_OF_MEMCOINS_TO_BUY"] = [
+            int(float(self.flapsh_number_min.get())),
+            int(float(self.flapsh_number_max.get())),
+        ]
+        self.config["FLAPSH"]["TOKEN_ADDRESS"] = [
+            x.strip()
+            for x in self.flapsh_tokens.get("1.0", "end-1c").split("\n")
+            if x.strip()
+        ]
 
         # Save to file with improved formatting
         config_path = os.path.join(os.path.dirname(__file__), "..", "..", "config.yaml")

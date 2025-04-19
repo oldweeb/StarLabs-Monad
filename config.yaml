@@ -150,7 +150,7 @@ MAGICEDEN:
 FAUCET:
     USE_SOLVIUM_FOR_CLOUDFLARE: true
     # CHEAPEST CAPTCHA SOLVER - https://t.me/solvium_crypto_bot
-    SOLVIUM_API_KEY: xxxxxxxxxxxxxxxxxxxxxxxx
+    SOLVIUM_API_KEY: xxxxxxxxxxxxxxxx
 
     # optional
     USE_CAPSOLVER_FOR_CLOUDFLARE: false
@@ -187,13 +187,13 @@ MONAIYAKUZA:
 
 NARWHAL_FINANCE:
     # AMOUNT OF USDT TO PLAY
-    AMOUNT_USDT_FOR_BET: [5, 50]
+    AMOUNT_USDT_FOR_BET: [0.01, 0.03]
     # Will play random number of bets and choose random game
     NUMBER_OF_BETS_PER_START: [1, 3]
 
-    PLAY_SLOTS: true
+    PLAY_SLOTS: false
     PLAY_DICE: true
-    PLAY_COINFLIP: true
+    PLAY_COINFLIP: false
 
 
 FLAPSH:
@@ -208,3 +208,13 @@ FLAPSH:
 
 MADNESS:
     SWAP_ALL_TO_MONAD: false
+
+
+ZKCODEX:
+    DEPLOY_TOKEN: true
+    DEPLOY_NFT: true
+    DEPLOY_CONTRACT: true
+
+    # if true, the bot will perform only one action per launch randomly
+    # if false, the bot will perform all actions in random order
+    ONE_ACTION_PER_LAUNCH: false

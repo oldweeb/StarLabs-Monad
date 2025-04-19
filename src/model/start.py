@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.zkcodex.instance import ZkCodex
 from src.model.nfts.nerzo_monad import NerzoMonad
 from src.model.swaps.madness.instance import Madness
 from src.model.nfts.nerzo import Nerzo
@@ -491,6 +492,16 @@ class Start:
                 self.session,
             )
             await nerzo_monad.mint()
+
+        elif task == "zkcodex":
+            zkcodex = ZkCodex(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await zkcodex.deploy()
             
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""

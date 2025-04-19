@@ -221,6 +221,13 @@ class FlapshConfig:
     TOKEN_ADDRESS: List[str]
 
 @dataclass
+class ZkcodexConfig:
+    DEPLOY_TOKEN: bool
+    DEPLOY_NFT: bool
+    DEPLOY_CONTRACT: bool
+    ONE_ACTION_PER_LAUNCH: bool
+
+@dataclass
 class Config:
     SETTINGS: SettingsConfig
     EXCHANGES: ExchangesConfig
@@ -247,6 +254,7 @@ class Config:
     NARWHAL_FINANCE: NarwhalFinanceConfig
     FLAPSH: FlapshConfig
     MADNESS: MadnessConfig
+    ZKCODEX: ZkcodexConfig
     WALLETS: WalletsConfig = field(default_factory=WalletsConfig)
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -477,6 +485,12 @@ class Config:
             ),
             MADNESS=MadnessConfig(
                 SWAP_ALL_TO_MONAD=data["MADNESS"]["SWAP_ALL_TO_MONAD"],
+            ),
+            ZKCODEX=ZkcodexConfig(
+                DEPLOY_TOKEN=data["ZKCODEX"]["DEPLOY_TOKEN"],
+                DEPLOY_NFT=data["ZKCODEX"]["DEPLOY_NFT"],
+                DEPLOY_CONTRACT=data["ZKCODEX"]["DEPLOY_CONTRACT"],
+                ONE_ACTION_PER_LAUNCH=data["ZKCODEX"]["ONE_ACTION_PER_LAUNCH"],
             ),
         )
 
