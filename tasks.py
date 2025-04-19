@@ -166,6 +166,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "morkie_monarch" - mint NFT on https://morkie.xyz/monarch # price 0.1 MON
 # "monaigg" - mint NFT on https://monai.gg/nft
 # "nerzo_soulbound" - mint NFT on https://nerzo.xyz/soulbound
+# "nerzo_monad" - mint NFT on https://www.nerzo.xyz/monad
 
 # REFUEL
 # "crusty_refuel" - refuel from arbitrum, optimism, base to monad

@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.nfts.nerzo_monad import NerzoMonad
 from src.model.swaps.madness.instance import Madness
 from src.model.nfts.nerzo import Nerzo
 from src.model.nfts.morkie import Morkie
@@ -480,6 +481,16 @@ class Start:
                 self.session,
             )
             await madness.execute()
+        
+        elif task == "nerzo_monad":
+            nerzo_monad = NerzoMonad(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await nerzo_monad.mint()
             
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""
