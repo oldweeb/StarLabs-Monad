@@ -2,6 +2,7 @@ from .monaigg_nft import Monai
 from .morkie import Morkie
 from .nerzo import Nerzo
 from .nerzo_monad import NerzoMonad
+from .nerzo_monadid import NerzoMonadId
 
-__all__ = ["Monai", "Morkie", "Nerzo", "NerzoMonad"]
+__all__ = ["Monai", "Morkie", "Nerzo", "NerzoMonad", "NerzoMonadId"]
 

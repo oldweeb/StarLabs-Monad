@@ -2,8 +2,6 @@ TASKS = [
     "CRUSTY_SWAP",
 ]
 
-# MAGICEDEN WORKS ONLY WITH THESE NFT https://magiceden.io/mint-terminal/monad-testnet
-
 CRUSTY_SWAP = [
     "crusty_refuel",
     # "crusty_sell",
@@ -168,6 +166,7 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "nerzo_soulbound" - mint NFT on https://nerzo.xyz/soulbound
 # "nerzo_monad" - mint NFT on https://www.nerzo.xyz/monad # price 0.01 MON
 # "zkcodex" - deploys on https://zkcodex.com/onchain/deploy
+# "nerzo_monadid" - mint NFT on https://www.nerzo.xyz/monadid # price 0.25 MON
 
 # REFUEL
 # "crusty_refuel" - refuel from arbitrum, optimism, base to monad
