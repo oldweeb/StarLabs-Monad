@@ -112,7 +112,7 @@ class NerzoMonadId:
 
                 # Адрес контракта
                 contract_address = Web3.to_checksum_address(
-                    "0xc5D75b6F3F1d936B17923Df228409800DD31A1DA"
+                    "0xabcbBb3bd9614bbC90816F4E88Dec3589B080ca0"
                 )
 
                 # Получаем адрес кошелька без 0x для пейлоада
