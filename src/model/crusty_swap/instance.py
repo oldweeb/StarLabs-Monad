@@ -3,6 +3,7 @@ from eth_account import Account
 from typing import Dict, Optional, List, Tuple
 from decimal import Decimal
 import random
+import numpy as np
 import asyncio
 from loguru import logger
 from src.utils.config import Config
@@ -163,12 +164,30 @@ class CrustySwap:
         return False
     
     async def get_gas_params(self, web3: AsyncWeb3) -> Dict[str, int]:
-        """Get gas parameters for transaction."""
-        latest_block = await web3.eth.get_block('latest')
-        base_fee = latest_block['baseFeePerGas']
-        max_priority_fee = await web3.eth.max_priority_fee
-        max_fee = int((base_fee + max_priority_fee) * 1.5)
-        
+        """Get gas parameters based on the top 80% values from the last 5 blocks."""
+        latest_block_number = await web3.eth.block_number
+        num_blocks = 5
+
+        base_fees = []
+        priority_fees = []
+
+        for block_num in range(latest_block_number - num_blocks + 1, latest_block_number + 1):
+            block = await web3.eth.get_block(block_num, full_transactions=True)
+            if block.get("baseFeePerGas") is not None:
+                base_fees.append(block["baseFeePerGas"])
+
+            # Collect maxPriorityFeePerGas from each transaction
+            for tx in block.get("transactions", []):
+                if "maxPriorityFeePerGas" in tx and tx["maxPriorityFeePerGas"] is not None:
+                    priority_fees.append(tx["maxPriorityFeePerGas"])
+
+        if not base_fees or not priority_fees:
+            raise Exception("Unable to collect enough base or priority fee data from recent blocks.")
+
+        base_fee = int(np.percentile(base_fees, 80))
+        max_priority_fee = int(np.percentile(priority_fees, 80))
+        max_fee = int(base_fee + max_priority_fee)
+
         return {
             "maxFeePerGas": max_fee,
             "maxPriorityFeePerGas": max_priority_fee,
