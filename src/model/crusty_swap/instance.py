@@ -164,9 +164,9 @@ class CrustySwap:
         return False
     
     async def get_gas_params(self, web3: AsyncWeb3) -> Dict[str, int]:
-        """Get gas parameters based on the top 80% values from the last 5 blocks."""
+        """Get gas parameters based on the top 90% values from the last 5 blocks."""
         latest_block_number = await web3.eth.block_number
-        num_blocks = 5
+        num_blocks = 3
 
         base_fees = []
         priority_fees = []
@@ -184,8 +184,8 @@ class CrustySwap:
         if not base_fees or not priority_fees:
             raise Exception("Unable to collect enough base or priority fee data from recent blocks.")
 
-        base_fee = int(np.percentile(base_fees, 80))
-        max_priority_fee = int(np.percentile(priority_fees, 80))
+        base_fee = int(np.percentile(base_fees, 90))
+        max_priority_fee = int(np.percentile(priority_fees, 90))
         max_fee = int(base_fee + max_priority_fee)
 
         return {
