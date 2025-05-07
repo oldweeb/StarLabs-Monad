@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.others.superboard import Superboard
 from src.model.nfts.nerzo_monadid import NerzoMonadId
 from src.model.zkcodex.instance import ZkCodex
 from src.model.nfts.nerzo_monad import NerzoMonad
@@ -130,6 +131,7 @@ class Start:
         except Exception as e:
             # import traceback
             # traceback.print_exc()
+            # input()
             logger.error(f"[{self.account_index}] | Error: {e}")
             return False
 
@@ -513,6 +515,15 @@ class Start:
                 self.session,
             )
             await nerzo_monadid.mint()
+        
+        elif task == "superboard":
+            superboard = Superboard(
+                self.session,
+                self.account_index,
+                self.config,
+                self.private_key,
+            )
+            await superboard.quests()
             
     async def sleep(self, task_name: str):
         """Делает рандомную паузу между действиями"""

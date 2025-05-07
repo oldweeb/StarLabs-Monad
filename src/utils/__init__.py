@@ -5,6 +5,7 @@ from .config import get_config
 from .constants import TOKENS, ERC20_ABI, RPC_URL, EXPLORER_URL
 from .statistics import print_wallets_stats
 from .config_ui import ConfigUI
+from .decorators import retry_async
 
 __all__ = [
     "create_client",
@@ -18,4 +19,5 @@ __all__ = [
     "show_logo",
     "show_menu",
     "ConfigUI",
+    "retry_async",
 ]

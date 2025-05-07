@@ -184,3 +184,4 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "logs" - show logs: MON balance | number of transactions | avarage balance | avarage number of transactions
 # "nad_domains" - register random domain on nad.domains
 # "monsternad_whitelist" - add to monsternad whitelist airdrop.monsternad.xyz/dashboard/
+# "superboard" - complete quests on https://superboard.xyz/campaign/nads-on-testnet
