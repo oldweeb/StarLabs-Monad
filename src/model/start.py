@@ -3,6 +3,7 @@ import primp
 import random
 import asyncio
 
+from src.model.nfts.nerzo_rebels import NerzoRebels
 from src.model.others.superboard import Superboard
 from src.model.nfts.nerzo_monadid import NerzoMonadId
 from src.model.zkcodex.instance import ZkCodex
@@ -455,7 +456,9 @@ class Start:
                 await morkie.mint_monhog()
             elif task == "morkie_monarch":
                 await morkie.mint_monarch()
-                
+            elif task == "morkie_gtm":
+                await morkie.mint_gtm()
+
         elif task == "monaigg":
             monaigg = Monai(
                 self.account_index,
@@ -476,6 +479,16 @@ class Start:
             )
             await nerzo.mint()
 
+        elif task == "nerzo_rebels":
+            nerzo_rebels = NerzoRebels(
+                self.account_index,
+                self.proxy,
+                self.private_key,
+                self.config,
+                self.session,
+            )
+            await nerzo_rebels.mint()
+        
         elif task == "madness_swaps":
             madness = Madness(
                 self.account_index,

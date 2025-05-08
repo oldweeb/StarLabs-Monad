@@ -167,6 +167,8 @@ EXCHANGE_AND_MEMEBRIDGE_TASK = [
 # "nerzo_monad" - mint NFT on https://www.nerzo.xyz/monad # price 0.01 MON
 # "zkcodex" - deploys on https://zkcodex.com/onchain/deploy
 # "nerzo_monadid" - mint NFT on https://www.nerzo.xyz/monadid # price 0.25 MON
+# "morkie_gtm" - mint NFT on https://morkie.xyz/gtm # price 0.1 MON
+# "nerzo_rebels" - mint NFT on https://www.nerzo.xyz/rebels # price 0.25 MON
 
 # REFUEL
 # "crusty_refuel" - refuel from arbitrum, optimism, base to monad

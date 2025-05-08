@@ -9,9 +9,9 @@ from src.utils.constants import EXPLORER_URL, RPC_URL
 from src.utils.config import Config
 from loguru import logger
 
-
-# Обновляем ABI для MonAI DeFAI NFT
-MONAI_DeFAI = [
+# Обновляем ABI для ERC1155
+# Обновляем ABI для MonAI Rebels NFT
+NERZO_REBELS_ABI = [
     {
         "type": "function",
         "name": "mint",
@@ -32,7 +32,7 @@ MONAI_DeFAI = [
 ]
 
 
-class Monai:
+class NerzoRebels:
     def __init__(
         self,
         account_index: int,
@@ -57,11 +57,11 @@ class Monai:
 
         # Изменяем адрес контракта на новый
         self.nft_contract_address = Web3.to_checksum_address(
-            "0xd29959795a350C63e0315139A71ff6ec7ee9f0fd"
+            "0x674Fe48De2ea71ceE28df361aDd7615BC53caAE3"
         )
         # Используем MONAI_QINGYI_ABI вместо MONAI_YAKUZA_ABI
         self.nft_contract: Contract = self.web3.eth.contract(
-            address=self.nft_contract_address, abi=MONAI_DeFAI
+            address=self.nft_contract_address, abi=NERZO_REBELS_ABI
         )
         # Адрес для реферала
         self.refer_address = Web3.to_checksum_address(
@@ -87,41 +87,53 @@ class Monai:
     async def mint(self):
         for retry in range(self.config.SETTINGS.ATTEMPTS):
             try:
-                random_nft_amount = random.randint(
-                    self.config.MONAIYAKUZA.MAX_PER_ACCOUNT[0],
-                    self.config.MONAIYAKUZA.MAX_PER_ACCOUNT[1],
+                logger.info(f"[{self.account_index}] Minting Nerzo Rebels")
+
+                # Адрес контракта
+                contract_address = Web3.to_checksum_address(
+                    "0x674Fe48De2ea71ceE28df361aDd7615BC53caAE3"
                 )
-                balance = await self.get_nft_balance()
 
-                if balance >= random_nft_amount:
-                    logger.success(
-                        f"[{self.account_index}] MonAI MontichAIn NFT already minted"
-                    )
-                    return True
+                # Получаем адрес кошелька без 0x для пейлоада
+                wallet_address_without_0x = self.account.address[2:].lower()
 
-                logger.info(f"[{self.account_index}] Minting MontichAIn NFT")
+                # Значение в wei (0.1 MON)
+                value_in_wei = self.web3.to_wei(0.25, "ether")
+                value_in_wei_hex = hex(value_in_wei)[2:].zfill(
+                    64
+                )  # Convert to hex and pad
 
-                # Подготавливаем транзакцию минта
-                mint_txn = await self.nft_contract.functions.mint(
-                    1,  # quantity - минтим 1 NFT
-                    self.refer_address,  # refer - адрес реферала
-                ).build_transaction(
-                    {
-                        "from": self.account.address,
-                        "value": self.web3.to_wei(
-                            3.49, "ether"  # Обновляем сумму для минта на 3.49 MON
-                        ),
-                        "nonce": await self.web3.eth.get_transaction_count(
-                            self.account.address
-                        ),
-                        "maxFeePerGas": await self.web3.eth.gas_price,
-                        "maxPriorityFeePerGas": await self.web3.eth.gas_price,
-                    }
-                )
+                # Формируем данные для пейлоада - метод claim с адресом кошелька
+                data = f"0x84bb1e42000000000000000000000000{wallet_address_without_0x}0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee00000000000000000000000000000000000000000000000003782dace9d9000000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+                # Формируем предварительную транзакцию для расчета газа
+                transaction = {
+                    "from": self.account.address,
+                    "to": contract_address,
+                    "value": value_in_wei,
+                    "data": data,
+                    "nonce": await self.web3.eth.get_transaction_count(
+                        self.account.address
+                    ),
+                    "maxFeePerGas": await self.web3.eth.gas_price,
+                    "maxPriorityFeePerGas": await self.web3.eth.gas_price,
+                    "chainId": 10143,
+                }
+
+                # Получаем оценку газа
+                try:
+                    estimated_gas = await self.web3.eth.estimate_gas(transaction)
+                    # Добавляем небольшой запас для надежности (10%)
+                    gas_limit = int(estimated_gas * 1.1)
+                except Exception as gas_error:
+                    raise gas_error
+
+                # Добавляем gas_limit в транзакцию
+                transaction["gas"] = gas_limit
 
                 # Подписываем транзакцию
                 signed_txn = self.web3.eth.account.sign_transaction(
-                    mint_txn, self.private_key
+                    transaction, self.private_key
                 )
 
                 # Отправляем транзакцию
@@ -134,12 +146,12 @@ class Monai:
 
                 if receipt["status"] == 1:
                     logger.success(
-                        f"[{self.account_index}] Successfully minted MontichAIn NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                        f"[{self.account_index}] Successfully minted Nerzo Rebels. TX: {EXPLORER_URL}{tx_hash.hex()}"
                     )
                     return True
                 else:
                     logger.error(
-                        f"[{self.account_index}] Failed to mint MontichAIn NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                        f"[{self.account_index}] Transaction failed. TX: {EXPLORER_URL}{tx_hash.hex()}"
                     )
                     return False
 
@@ -149,7 +161,7 @@ class Monai:
                     self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
                 )
                 logger.error(
-                    f"[{self.account_index}] Error in mint on MontichAIn NFT: {e}. Sleeping for {random_pause} seconds"
+                    f"[{self.account_index}] Error sending transaction: {e}. Pause {random_pause} seconds"
                 )
                 await asyncio.sleep(random_pause)
 
