@@ -78,7 +78,7 @@ class Dusted:
         self.web3 = AsyncWeb3(
              AsyncWeb3.AsyncHTTPProvider(
                  RPC_URL,
-                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+                 request_kwargs={"proxy": (f"http://{proxy}") if proxy else None, "ssl": False},
              )
         ) 
     def get_auth_headers(self) -> Dict[str, str]:
@@ -809,6 +809,8 @@ class Dusted:
     async def execute(self):
         """Main execution function for Dusted platform."""
         try:
+            if not self.config.DUSTED.ENABLED:
+                return
             logger.info(f"[{self.account_index}] Starting Dusted execution")
 
             # Initialize user_id and wallet_id

@@ -37,13 +37,13 @@ class CrustySwap:
         self.monad_web3 = AsyncWeb3(
             AsyncWeb3.AsyncHTTPProvider(
                 RPC_URL,
-                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+                request_kwargs={"proxy": (f"http://{proxy}") if proxy else None, "ssl": False},
             )
         )
         self.eth_web3 = AsyncWeb3(
             AsyncWeb3.AsyncHTTPProvider(
                 ETH_RPC_URL,
-                request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+                request_kwargs={"proxy": (f"http://{proxy}") if proxy else None, "ssl": False},
             )
         )
         self.monad_contract = self.monad_web3.eth.contract(address=DESTINATION_CONTRACT_ADDRESS, abi=CRUSTY_SWAP_ABI)

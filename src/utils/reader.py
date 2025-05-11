@@ -23,7 +23,9 @@ def check_proxy_format(proxies: list):
     formatted_proxies = []
     
     for proxy in proxies:
-        
+        if proxy == '-':
+            formatted_proxies.append(None)
+            continue
         # Step 1: Strip protocols if present (http://, https://, socks://, etc.)
         for protocol in ["http://", "https://", "socks://", "socks4://", "socks5://"]:
             if proxy.startswith(protocol):

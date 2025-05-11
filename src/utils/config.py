@@ -4,6 +4,8 @@ import yaml
 from pathlib import Path
 import asyncio
 
+from src.model.run_config.run_config import RunConfiguration
+
 
 @dataclass
 class SettingsConfig:
@@ -259,39 +261,46 @@ class Config:
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
     @classmethod
-    def load(cls, path: str = "config.yaml") -> "Config":
+    def load_tasks(cls, task_preset_name):
+        # Try to import tasks from tasks.py using a regular import
+        import tasks
+
+        if task_preset_name == 'default':
+            task_preset_name = 'TASKS'
+        if hasattr(tasks, task_preset_name.upper()):
+            task_preset = getattr(tasks, task_preset_name.upper())
+            preset_names = [preset_name.upper() for preset_name in task_preset]
+
+            # Combine tasks from all specified presets
+            combined_tasks = []
+            for preset_name in preset_names:
+                if hasattr(tasks, preset_name):
+                    preset_tasks = getattr(tasks, preset_name)
+                    combined_tasks.extend(preset_tasks)
+                else:
+                    print(f"Warning: Preset {preset_name} not found in tasks.py")
+
+            if combined_tasks:
+                tasks_list = combined_tasks
+                return tasks_list
+            else:
+                error_msg = "No valid presets found in tasks.py"
+                print(f"Error: {error_msg}")
+                raise ValueError(error_msg)
+        else:
+            error_msg = "No TASKS list found in tasks.py"
+            print(f"Error: {error_msg}")
+            raise ValueError(error_msg)
+
+    @classmethod
+    def load(cls, path: str = "config.yaml", task_preset_name: str = 'default') -> "Config":
         """Load configuration from yaml file"""
         with open(path, "r", encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
         # Load tasks from tasks.py
         try:
-            # Try to import tasks from tasks.py using a regular import
-            import tasks
-
-            if hasattr(tasks, "TASKS"):
-                # TASKS now contains preset names
-                preset_names = [preset_name.upper() for preset_name in tasks.TASKS]
-
-                # Combine tasks from all specified presets
-                combined_tasks = []
-                for preset_name in preset_names:
-                    if hasattr(tasks, preset_name):
-                        preset_tasks = getattr(tasks, preset_name)
-                        combined_tasks.extend(preset_tasks)
-                    else:
-                        print(f"Warning: Preset {preset_name} not found in tasks.py")
-
-                if combined_tasks:
-                    tasks_list = combined_tasks
-                else:
-                    error_msg = "No valid presets found in tasks.py"
-                    print(f"Error: {error_msg}")
-                    raise ValueError(error_msg)
-            else:
-                error_msg = "No TASKS list found in tasks.py"
-                print(f"Error: {error_msg}")
-                raise ValueError(error_msg)
+            tasks_list = cls.load_tasks(task_preset_name)
         except ImportError as e:
             error_msg = f"Could not import tasks.py: {e}"
             print(f"Error: {error_msg}")
@@ -496,8 +505,10 @@ class Config:
 
 
 # Singleton pattern
-def get_config() -> Config:
+def get_config(run_configuration: RunConfiguration | None = None) -> Config:
     """Get configuration singleton"""
     if not hasattr(get_config, "_config"):
-        get_config._config = Config.load()
+        get_config._config = Config.load(task_preset_name=run_configuration.task_preset if run_configuration else 'default')
+    elif run_configuration:
+        get_config._config.FLOW.TASKS = Config.load_tasks(run_configuration.task_preset)
     return get_config._config

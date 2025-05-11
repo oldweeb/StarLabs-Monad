@@ -80,15 +80,17 @@ pip install -r requirements.txt
 ![image](https://github.com/user-attachments/assets/0d887865-049b-4804-9e11-ffc80ae21ce3)
 
 ```
-
 4. Add your data to the following files:
 - `data/private_keys.txt` - One private key per line
-- `data/proxies.txt` - One proxy per line (format: `user:pass@ip:port`)
+- `data/proxies.txt` - One proxy per line (format: `user:pass@ip:port`). Leave "-" if you do not want to use proxy
+```
 
+> ℹ️ **Note:** you can create multiple files, e.g. for each account
 
+```
 5. Run the bot
 ```bash
-python main.py
+python main.py -p <path-to-file-with-proxies> -pk <path-to-file-with-private-keys> -t <preset-name>
 ```
 
 ## Support

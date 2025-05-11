@@ -51,7 +51,7 @@ class MonadverseMint:
         self.web3 = AsyncWeb3(
              AsyncWeb3.AsyncHTTPProvider(
                  RPC_URL,
-                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+                 request_kwargs={"proxy": (f"http://{proxy}") if proxy else None, "ssl": False},
              )
         ) 
         self.nft_contract_address = "0xba838E4Cca4b852e1AebD32f248967aD98C3AA45"

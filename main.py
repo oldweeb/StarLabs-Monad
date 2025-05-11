@@ -1,3 +1,5 @@
+import argparse
+
 from loguru import logger
 import urllib3
 import sys
@@ -6,6 +8,7 @@ import platform
 
 from process import start
 import src
+from src.model.run_config.run_config import RunConfiguration
 
 
 # SETTING POLICY FOR WINDOWS
@@ -19,8 +22,8 @@ import src
 
 
 async def main():
-    configuration()
-    await start()
+    run_configuration = configure()
+    await start(run_configuration)
 
 
 log_format = (
@@ -31,7 +34,7 @@ log_format = (
 )
 
 
-def configuration():
+def configure() -> RunConfiguration:
     urllib3.disable_warnings()
     logger.remove()
     logger.add(
@@ -46,7 +49,18 @@ def configuration():
         format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{line} - {message}",
         level="INFO",
     )
+    args_parser = argparse.ArgumentParser(description='StarLabs Monad')
+    args_parser.add_argument('-p', '--proxy', type=str, required=True, help='Path to the txt file with proxy')
+    args_parser.add_argument('-pk', '--privatekey', type=str, required=True, help='Path to the private key file')
+    args_parser.add_argument('-t', '--taskpreset', type=str, required=False, help='Task Preset', default='default')
+    args = args_parser.parse_args()
 
+    configuration = RunConfiguration(
+        proxy_file=args.proxy,
+        private_key_file=args.privatekey,
+        task_preset=args.taskpreset
+    )
+    return configuration
 
 if __name__ == "__main__":
     asyncio.run(main())
