@@ -1,6 +1,6 @@
 CRUSTY_SWAP_RPCS = {
     "Arbitrum": "https://arb1.lava.build",
-    "Optimism": "https://optimism.lava.build",
+    "Optimism": "https://optimism.drpc.org",
     "Base": "https://base.lava.build",
     # "ZkSync": "https://mainnet.era.zksync.io",
 }

@@ -86,6 +86,9 @@ class Morkie:
         self.morkie_contract_address = Web3.to_checksum_address(
             "0xdC8eDF8e9cA33EDBBd81b42b303bFE12298E717E"
         )  # price 0
+        self.gtm_contract_address = Web3.to_checksum_address(
+            "0xC5349931A6D89a01F46f9197FeAc282b181F8ee7"
+        )  # price 0.1
 
         # Создаем контракты для каждого NFT
         self.monhog_contract = self.web3.eth.contract(
@@ -96,6 +99,9 @@ class Morkie:
         )
         self.morkie_contract = self.web3.eth.contract(
             address=self.morkie_contract_address, abi=MONAI_QINGYI_ABI
+        )
+        self.gtm_contract = self.web3.eth.contract(
+            address=self.gtm_contract_address, abi=MONAI_QINGYI_ABI
         )
 
         # Адрес для реферала (используйте свой или нулевой адрес)
@@ -379,6 +385,95 @@ class Morkie:
                 )
                 logger.error(
                     f"[{self.account_index}] Error in mint Morkie: {e}. Sleeping for {random_pause} seconds"
+                )
+                await asyncio.sleep(random_pause)
+
+        return False
+
+
+    async def mint_gtm(self):
+        """Минтит GTM NFT с использованием специального payload"""
+        for retry in range(self.config.SETTINGS.ATTEMPTS):
+            try:
+                balance = await self.get_nft_balance(self.gtm_contract)
+
+                if balance >= 1:
+                    logger.success(f"[{self.account_index}] GTM NFT already minted")
+                    return True
+
+                logger.info(f"[{self.account_index}] Minting GTM NFT")
+
+                # Создаем специальный payload для GTM
+                # Заменяем адрес в payload на адрес текущего кошелька (без 0x)
+                wallet_address_without_0x = self.account.address[2:].lower()
+
+                # Базовый payload с замененным адресом
+                payload = f"0x84bb1e42000000000000000000000000{wallet_address_without_0x}0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee000000000000000000000000000000000000000000000000016345785d8a000000000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+                # Создаем транзакцию для оценки газа
+                tx_for_estimate = {
+                    "from": self.account.address,
+                    "to": self.gtm_contract_address,
+                    "value": self.web3.to_wei(0.1, "ether"),  # 0.1 MON для минта
+                    "data": payload,
+                    "chainId": 10143,  # Добавляем Chain ID
+                }
+
+                # Получаем оценку газа
+                try:
+                    estimated_gas = await self.web3.eth.estimate_gas(tx_for_estimate)
+                    # Добавляем запас газа (+30%)
+                    estimated_gas = int(estimated_gas * 1.3)
+                except Exception as e:
+                    logger.error(f"[{self.account_index}] Failed to estimate gas: {e}")
+                    raise
+
+                # Создаем окончательную транзакцию с полученным gas
+                tx = {
+                    "from": self.account.address,
+                    "to": self.gtm_contract_address,
+                    "value": self.web3.to_wei(0.1, "ether"),  # 0.1 MON для минта
+                    "data": payload,
+                    "nonce": await self.web3.eth.get_transaction_count(
+                        self.account.address
+                    ),
+                    "chainId": 10143,  # Добавляем Chain ID
+                    "maxFeePerGas": await self.web3.eth.gas_price,
+                    "maxPriorityFeePerGas": await self.web3.eth.gas_price,
+                    "gas": estimated_gas,
+                }
+
+                # Подписываем транзакцию
+                signed_txn = self.web3.eth.account.sign_transaction(
+                    tx, self.private_key
+                )
+
+                # Отправляем транзакцию
+                tx_hash = await self.web3.eth.send_raw_transaction(
+                    signed_txn.raw_transaction
+                )
+
+                # Ждем подтверждения
+                receipt = await self.web3.eth.wait_for_transaction_receipt(tx_hash)
+
+                if receipt["status"] == 1:
+                    logger.success(
+                        f"[{self.account_index}] Successfully minted GTM NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                    )
+                    return True
+                else:
+                    logger.error(
+                        f"[{self.account_index}] Failed to mint GTM NFT. TX: {EXPLORER_URL}{tx_hash.hex()}"
+                    )
+                    return False
+
+            except Exception as e:
+                random_pause = random.randint(
+                    self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[0],
+                    self.config.SETTINGS.RANDOM_PAUSE_BETWEEN_ACTIONS[1],
+                )
+                logger.error(
+                    f"[{self.account_index}] Error in mint GTM: {e}. Sleeping for {random_pause} seconds"
                 )
                 await asyncio.sleep(random_pause)
 
