@@ -1,5 +1,13 @@
 TASKS = [
-    "CRUSTY_SWAP",
+    'main'
+]
+
+TASKS_MAIN = [
+    'main'
+]
+
+TASKS_TWINK = [
+    'twink'
 ]
 
 CRUSTY_SWAP = [
@@ -75,6 +83,32 @@ BRIDGE_AND_SWAPS = [
     "collect_all_to_monad",
 ]
 
+MAIN = [
+    ("izumi", "swaps", "ambient", "bean", "skip"),
+    ["ambient", "lilchogstars", "bean", "swaps", "skip"],
+    'collect_all_to_monad',
+    ["apriori", "magma", "shmonad", "kintsu", "skip", "skip", 'flapsh', 'skip'],
+    ('magiceden', 'monadking', 'flapsh', 'skip'),
+    ['skip', 'skip', 'skip'],
+    ('owlto', 'skip', 'easynode_deploy', 'skip', 'onchaingm_deploy', 'skip'),
+    ['morkie_monhog', 'morkie_monarch', 'monaigg', 'zkcodex', 'skip'],
+    ('frontrunner', 'skip', 'monsternad_whitelist', 'nad_domains'),
+    ['nerzo_monadid', 'nerzo_monad', 'nerzo_soulbound'],
+]
+
+TWINK = [
+    ("ambient", "lilchogstars", "skip"),
+    ["izumi", "swaps", "ambient", "bean", "skip"],
+    'collect_all_to_monad',
+    ['owlto', 'skip', 'easynode_deploy', 'skip', 'onchaingm_deploy', 'madness_swaps', 'skip'],
+    ['magiceden', 'monadking', 'monadking_unlocked', 'skip'],
+    ("shmonad", "kintsu"),
+    ['morkie_monhog', 'monaigg', 'skip'],
+    ('flapsh', 'multiplifi', 'nostra', 'morkie_monarch'),
+    ["apriori", "magma", "skip"],
+    ["bean", "swaps", 'zkcodex'],
+    'collect_all_to_monad'
+]
 
 FULL_TASK = [
     ["izumi", "swaps", "ambient", "bean", "skip"],

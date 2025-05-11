@@ -10,6 +10,7 @@ from src.model.disperse_from_one.instance import DisperseFromOneWallet
 from src.model.balance_checker.instance import BalanceChecker
 from src.model.disperse_one_one.instance import DisperseOneOne
 import src.utils
+from src.model.run_config.run_config import RunConfiguration
 from src.utils.output import show_dev_info, show_logo
 import src.model
 from src.utils.statistics import print_wallets_stats
@@ -17,7 +18,7 @@ from src.utils.check_github_version import check_version
 from src.utils.logs import ProgressTracker, create_progress_tracker
 
 
-async def start():
+async def start(configuration: RunConfiguration):
     async def launch_wrapper(index, proxy, private_key, discord_token, twitter_token, email):
         async with semaphore:
             await account_flow(
@@ -30,6 +31,7 @@ async def start():
                 config,
                 lock,
                 progress_tracker,
+                configuration
             )
 
     show_logo()
@@ -44,6 +46,7 @@ async def start():
         logger.error(f"Failed to check version: {e}")
         logger.info("Continue with current version\n")
 
+    logger.info(f"Run configuration: {configuration}")
     print("")
 
     print("Available options:\n")
@@ -79,14 +82,14 @@ async def start():
             logger.error(f"Failed to run update script: {e}")
             return
     elif choice == "3":
-        proxies = src.utils.read_txt_file("proxies", "data/proxies.txt")
+        proxies = src.utils.read_txt_file("proxies", configuration.proxy_file)
         if len(proxies) == 0:
             logger.error("No proxies found in data/proxies.txt")
             return
         proxies = src.utils.check_proxy_format(proxies)
         if proxies is False:
             return
-        private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
+        private_keys = src.utils.read_txt_file("private keys", configuration.private_key_file)
         balance_checker = BalanceChecker(private_keys, proxies[0])
         await balance_checker.run()
         return
@@ -100,10 +103,10 @@ async def start():
         logger.error(f"Invalid choice: {choice}")
         return
 
-    config = src.utils.get_config()
+    config = src.utils.get_config(configuration)
 
     # Читаем все файлы
-    proxies = src.utils.read_txt_file("proxies", "data/proxies.txt")
+    proxies = src.utils.read_txt_file("proxies", configuration.proxy_file)
     if len(proxies) == 0:
         logger.error("No proxies found in data/proxies.txt")
         return
@@ -112,13 +115,13 @@ async def start():
         return
     
     if "disperse_farm_accounts" in config.FLOW.TASKS:
-        main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
+        main_keys = src.utils.read_txt_file("private keys", configuration.private_key_file)
         farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
         disperse_one_one = DisperseOneOne(main_keys, farm_keys, proxies, config)
         await disperse_one_one.disperse()
         return
     elif "disperse_from_one_wallet" in config.FLOW.TASKS:
-        main_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
+        main_keys = src.utils.read_txt_file("private keys", configuration.private_key_file)
         farm_keys = src.utils.read_txt_file("private keys", "data/keys_for_faucet.txt")
         disperse_one_wallet = DisperseFromOneWallet(
             farm_keys[0], main_keys, proxies, config
@@ -131,7 +134,7 @@ async def start():
             "private keys", "data/keys_for_faucet.txt"
         )
     else:
-        private_keys = src.utils.read_txt_file("private keys", "data/private_keys.txt")
+        private_keys = src.utils.read_txt_file("private keys", configuration.private_key_file)
 
     if "dusted" in config.FLOW.TASKS and not config.DUSTED.SKIP_TWITTER_VERIFICATION:
         twitter_tokens = src.utils.read_txt_file("twitter tokens", "data/twitter_tokens.txt")
@@ -242,6 +245,7 @@ async def account_flow(
     config: src.utils.config.Config,
     lock: asyncio.Lock,
     progress_tracker: ProgressTracker,
+    run_configuration: RunConfiguration
 ):
     try:
         pause = random.randint(

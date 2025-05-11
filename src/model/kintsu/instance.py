@@ -32,7 +32,7 @@ class Kintsu:
         self.web3 = AsyncWeb3(
              AsyncWeb3.AsyncHTTPProvider(
                  RPC_URL,
-                 request_kwargs={"proxy": (f"http://{proxy}"), "ssl": False},
+                 request_kwargs={"proxy": (f"http://{proxy}") if proxy else None, "ssl": False},
              )
         ) 
     async def get_gas_params(self) -> Dict[str, int]:
